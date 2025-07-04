@@ -3,3 +3,5 @@ selenium
 selenium_stealth
 undetected_chromedriver
 bs4
+
+pytest_playwright
