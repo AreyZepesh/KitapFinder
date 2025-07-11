@@ -28,6 +28,11 @@ class EBook():
     isbns: list[str] = field(default_factory=list,)
     prices: list[ShopCard] = field(default_factory=list)
 
+    def get_search_text(self):
+        if self.author:
+                return f"{self.title} {self.author}"
+        return self.title
+
     def sort_by_store(self, reverse: bool = False):
         self.prices = sorted(self.prices, key=lambda b: (b.store, b.price), reverse=reverse)
 
@@ -35,6 +40,10 @@ class EBook():
         self.prices = sorted(self.prices, key=lambda b: b.price, reverse=reverse)
 
     def add_price(self, card: ShopCard):
+        # Вынес нормализацию цены из utils, возможно зря. Ранее нормализовал сразу после парсинга нужного элемента
+        if not isinstance(card.price, (int, float)):
+            card.price = int("".join(c for c in card.price if  c.isdecimal()))
+
         for i, p in enumerate(self.prices):
             if p.store == card.store and p.article == card.article:
                 if p.price > card.price:
@@ -42,17 +51,42 @@ class EBook():
                 return
         self.prices.append(card)
 
+    def add_prices(self, data: list[ShopCard]):
+        for item in data:
+            self.add_price(item)
+
     def to_dict(self):
         return asdict(self)
+    
+    @staticmethod
+    def _str_from_comparison(text: str) -> str:
+        """Удаляет всё, кроме букв, цифр и пробелов, нормализует регистр"""
+        import re
+        text = text.replace('ё', 'е').replace('Ё', 'Е')
+        text = re.sub(r"[^a-zA-Zа-яА-Я0-9]+", " ", text)
+        return text.strip().lower()
 
-    # def has_price_from(self, store: str, article: str) -> bool:
-    #     # TODO Оставлять с минимальной ценой
-    #     return any(p.store == store and p.article == article for p in self.prices)
+    def is_TITLE_in_STR(self, string: str) -> bool:
+        """Проверяет, содержится ли заголовок книги в строке.\n\n
+        Проверяет вхождение title в string.
+        Сперва проверяется наличие title как есть: 
+        если является частью string, вернется True.
+        Иначе запускается цикл, по слову из title:
+        если одного из слов нет string, вернется False;
+        иначе, если все слова содержатся в строке, вернется True.
+        Я понимаю что такой метод оставляет возможность для ошибки.
+        Для фикса этого добавил проверку наличия точки и длины title больше 2"""
+        norm_title = self._str_from_comparison(self.title)
+        norm_string = self._str_from_comparison(string)
+        if norm_title in norm_string:
+            return True
+        if "." in self.title:
+            title_words = norm_title.split()
+            if len(title_words) > 2:
+                for word in title_words: 
+                    if word not in norm_string:
+                        return False
+            return True
+        return False
 
-    # def add_price(self, price: int, store: str, article: str, screen_file: str):
-    #     if self.has_price_from(store, article):
-    #         return
-    #     self.prices.append( ShopCard(price = price, 
-    #                                 store = store, 
-    #                                 article = article, 
-    #                                 screen_file = screen_file) )
+#

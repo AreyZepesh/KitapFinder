@@ -3,11 +3,8 @@ def normalizeStr(string: str) -> str:
      - заменяет табуляции на пробелы
      - убирает лишние пробелы"""
     import re
-    string = re.sub("[^a-zA-Zа-яёА-ЯЁ0-9,.:!?+-]", " ", string)
-    while '  ' in string:
-        string = string.replace('  ', ' ')
-    string = string.strip()
-    return string
+    string = re.sub(r"[^a-zA-Zа-яёА-ЯЁ0-9,.!'+-–]+", " ", string)
+    return string.strip()
 
 def normalizePrice(string: str) -> int:
     """Нормализует цену, делает из строки число"""
@@ -18,12 +15,9 @@ def strFromComparison(string: str) -> str:
     """Убирает из строки все кроме букв, цифр и пробелов.
     Так же нормализует"""
     import re
-    string = re.sub("ё", "е", string)
-    string = re.sub("Ё", "Е", string)
-    string = re.sub("[^a-zA-Zа-яА-Я0-9]", " ", string)
-    string = normalizeStr(string)
-    string = string.lower()
-    return string
+    text = text.replace('ё', 'е').replace('Ё', 'Е')
+    text = re.sub(r"[^a-zA-Zа-яА-Я0-9]+", " ", text)
+    return text.strip().lower()
 
 def isTITLEinSTR(title: str, string: str) -> bool:
     """Проверяет вхождение title в string.
@@ -35,14 +29,16 @@ def isTITLEinSTR(title: str, string: str) -> bool:
     Я понимаю что такой метод оставляет возможность для ошибки.
     Для фикса этого добавил проверку наличия точки и длины title больше 2"""
     haveDot = True if "." in title else False
-    title = strFromComparison(title)
-    string = strFromComparison(string)
-    if title in string:
+    norm_title = strFromComparison(title)
+    norm_string = strFromComparison(string)
+    if norm_title in norm_string:
         return True
-    if haveDot and (' ' in title) and (len(title.strip(' ')) > 2):
-        for word in title.split(' '): 
-            if word not in string:
-                return False
+    if "." in title:
+        title_words = norm_title.split()
+        if len(title_words) > 2:
+            for word in title_words: 
+                if word not in norm_string:
+                    return False
         return True
     return False
 

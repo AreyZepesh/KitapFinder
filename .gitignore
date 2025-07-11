@@ -1,5 +1,6 @@
 */*
 **/__pycache__/*
+!parser/*
 .note.md
 test*.*
 *.db
