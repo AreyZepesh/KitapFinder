@@ -6,7 +6,7 @@ sys.path.append( os.getcwd() )
 
 from parser.common import (
     async_playwright, expect,
-    asyncio, 
+    asyncio, datetime as dt,
     utils,
     EBook, ShopCard,
     scroll_to_last,
@@ -17,7 +17,7 @@ from parser.wb import wb
 async def async_work(books: list[EBook]):
     async with async_playwright() as p:
         browser = await p.chromium.launch(
-                    headless=False,
+                    # headless=False,
                     args=[
                     "--start-maximized", 
                     '--disable-blink-features=AutomationControlled',
@@ -40,8 +40,9 @@ async def async_work(books: list[EBook]):
                     # device_scale_factor=1,
                     # is_mobile=False,
                                             )
+        context.my_data = {}
         zero_page = await context.new_page()
-        # await zero_page.goto("")
+
         # Паралельный запуск
         for book in books:
             print(book.title)
@@ -60,7 +61,7 @@ async def async_work(books: list[EBook]):
             for res in results:
                 book.add_prices(res)
 
-        # wbpage = await context.new_page()
+        # page = await context.new_page()
         
         await browser.close()
 
@@ -70,14 +71,27 @@ def main():
     books = []
     for book in all_book:
         books.append(EBook(**book))
-    books = [EBook("Преступление и наказание", "Достоевский"), EBook("Ключ из желтого металла", "Фрай")]
+    # books = [EBook("Преступление и наказание", "Достоевский"), EBook("Ключ из желтого металла", "Фрай")]
+    # books = [
+    #     EBook(**{'title': 'Мечи дня и ночи', 'author': 'Дэвид Геммел', 'isbns': ['5-9578-3095-X']}),
+    #     EBook(**{'title': 'Виртуальный свет. Идору. Все вечеринки завтрашнего дня', 'author': 'Гибсон', 'isbns': ['978-5-389-22043-0']}),
+    #     EBook(**{'title': 'Мечи против колдовства', 'author': 'Сага о Фафхрде и Сером Мышелове Фриц Лейбер', 'isbns': ['978-5-389-21407-1']}),
+    #     EBook(**{'title': 'Машина различий', 'author': 'Гибсон Стерлинг', 'isbns': ['978-5-389-08318-9', '978-5-389-23683-7']}),
+    #     # EBook(**),
+    #     ]
     asyncio.run(async_work(books=books))
-    x = input("send anything") 
+    # x = input("send anything") 
     for b in books:
-        print(b.title, len(b.prices))
-        # for p in b.prices:
-        #     print(p.to_dict())
-        #     print(p.get_url())
+        b.sort_by_price()
+        text = f"{b.title}: {len(b.prices)}\n"
+        with open(f"./logs/resutls_{dt.now().strftime("%Y-%m-%d %H-%M")}.txt", 'a', encoding="utf8") as file:
+            print(text)
+            file.write(text)
+            for p in b.prices:
+                print(p.to_dict())
+                print(p.get_url())
+                file.write(f"{p.price}: {p.get_url()}\n")
+            file.write(f"\n")
         # print()
         # print(b)
 

@@ -4,6 +4,7 @@
 
 from playwright.async_api import async_playwright, expect
 import asyncio
+from datetime import datetime
 
 import utils
 from models import EBook, ShopCard
@@ -23,5 +24,5 @@ async def scroll_to_last(elem_locator):
                 retries = 0
             prev_count = count
             await elem_locator.nth(count - 1).scroll_into_view_if_needed()
-            await asyncio.sleep(1)
+            await asyncio.sleep(0.5)
             # await wbpage.wait_for_timeout(1000)

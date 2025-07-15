@@ -26,6 +26,7 @@ class EBook():
     title: str
     author: str = field(default=None)
     isbns: list[str] = field(default_factory=list,)
+    only_isbn: bool = field(default=False)
     prices: list[ShopCard] = field(default_factory=list)
 
     def get_search_text(self):

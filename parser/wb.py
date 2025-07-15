@@ -1,6 +1,6 @@
 from .common import (
     async_playwright, expect,
-    asyncio, 
+    asyncio, datetime as dt,
     utils,
     EBook, ShopCard,
     scroll_to_last,
@@ -8,7 +8,7 @@ from .common import (
 
 async def _wb_currency(page):
     """Переключаем валюту"""
-    # await page.goto(base_url)
+    # TODO: потестить с единичным исполнением и сохранением статус в контексте
     try:
         country = page.locator('//span[@data-wba-header-name="Country"]').first
         await expect(country).to_be_attached()
@@ -19,7 +19,7 @@ async def _wb_currency(page):
             kzt = page.locator('//input[@value="KZT"]/parent::label').first
             await expect(kzt).to_be_attached()
             await kzt.click()
-            await page.wait_for_timeout(1500)
+            await page.wait_for_timeout(500)
         else:
             # print("! Валюта уже норм")
             pass
@@ -27,47 +27,53 @@ async def _wb_currency(page):
         print("!!! Ошибка при переключении валюты:")
         print(ex)
 
-async def wb(context, book: EBook) ->  list[ShopCard]:
+async def _create_search_context(page, url):
+    """Попытка создать контекст поиска, низкая эффективность"""
+    await page.goto(url+"книги")
+    await page.wait_for_load_state("networkidle")
+    await page.wait_for_timeout(1000)
+    await page.goto(url+"преступление и наказание")
+    await page.wait_for_load_state("networkidle")
+    await page.wait_for_timeout(1000)
+    # page.context.my_data = {"wb" : True}
 
+async def wb(context, book: EBook) ->  list[ShopCard]:
+    """Парсер wildberries, принимает контекст и объект книги, возвращает список объектов с 'карточками'"""
     store = 'WB'
     all_items = []
-
-    onlyBookWB = "xsubject=381;3455;3456;5322&"
-    # nocorrection = "nocorrection=1&"
-    base_url = f"https://global.wildberries.ru/catalog/0/search.aspx?{onlyBookWB}search="
-    search_urls = [base_url+book.get_search_text()]
-    if book.isbns:
-        for isbn in book.isbns:
-            search_urls.append(base_url+isbn)
-    #         search_urls.append(base_url+"ISBN/ISSN "+isbn)
-
-    # # TODO test
-    for url in search_urls[:]:
-        search_urls.append(url.replace(onlyBookWB, ""))
-    search_urls.reverse()
+    options = ""
+    # options += "xsubject=381;3455;3456;5322&" #только ру книги 
+    base_url = f"https://global.wildberries.ru/catalog/0/search.aspx?{options}search=книга "
+    search_urls = [base_url+book.get_search_text()] if not book.only_isbn else []
+    search_urls.extend( [base_url+isbn for isbn in book.isbns] )
     
     page = await context.new_page()
 
     for url in search_urls:
         try:
             await page.goto(url)
-            # await page.wait_for_load_state("networkidle")
+            # Возможно самое долгое, но верное решение: "networkidle", 
+            # альтернатива пусто и "domcontentloaded", но слишком быстро
+            await page.wait_for_load_state("networkidle")
+            # await page.wait_for_timeout(1000)
+
+            noresults = await page.locator("div.not-found-result").count()
+            # print(noresults)
+            if noresults > 0:
+                print("!пропуск итерации - нет результатов")
+                continue
+
+            # проверяем и переключаем валюту
+            await _wb_currency(page)
 
             # Парсим карточки товаров, сперва получаем "каталог"
             cat = page.locator('//div[@class="product-card-list"]').get_by_role('article')
-            # TODO если нет результатов - ошибка, пример мечи дня и ночи isbs с X
-            
-            # проверяем и переключаем валюту
-            await _wb_currency(page)
             # Ищем последний элемент на странице, 
             await scroll_to_last(cat)
 
             # TODO убрать: скриншоты начала страницы для отладки
-            await cat.nth(0).scroll_into_view_if_needed()
-            noc = ""
-            if onlyBookWB in url:
-                noc = "_book"
-            await page.screenshot(path=f"./tmp/{book.title}_{url.split("=")[-1].replace("/", "-").replace(":","")}{noc}.png")
+            # await cat.nth(0).scroll_into_view_if_needed()
+            # await page.screenshot(path=f"./tmp/STAT-{dt.now().strftime("%Y-%m-%d")}/{book.title}_{url.split("=")[-1].replace("/", "-")}.png")
 
             # Католог прогружен, получаем все элементы и обходим по одному,
             # что по названию не подходит - пропускаем
@@ -79,13 +85,13 @@ async def wb(context, book: EBook) ->  list[ShopCard]:
                         (await card.locator('xpath=.//span[@class="price__wrap"]').inner_text()).split("₸")[0]
                                                         )
                     article = (await card.get_attribute("id")).replace("c",'')
-                    screen_file = f"./tmp/{book.title.replace(":","")}/wb_{article}.png"
+                    screen_file = f"./tmp/SCREEN-{dt.now().strftime("%Y-%m-%d")}/{book.title.replace(":","")}/wb_{price}_{article}.png"
                     all_items.append(ShopCard(price=price, store=store, article=article, screen_file=screen_file))
                     # TODO Убрать коммент скриншота
                     await card.screenshot(path=screen_file)
 
         except Exception as ex:
-            with open(f"./tmp/_error.txt", 'a', encoding="utf8") as file:
+            with open(f"./logs/_error.txt", 'a', encoding="utf8") as file:
                 file.write(url+"\n")
             print(ex)
 
