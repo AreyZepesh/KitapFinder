@@ -3,7 +3,8 @@ from .common import (
     asyncio, datetime as dt,
     utils,
     EBook, ShopCard,
-    scroll_to_last,
+    scroll_to_last, 
+    get_search_urls,
     )
 
 async def _wb_currency(page):
@@ -14,7 +15,7 @@ async def _wb_currency(page):
         await expect(country).to_be_attached()
         await page.wait_for_timeout(100)
         if await country.inner_text() != "KZT":
-            print(f"Меняю валюту: |{await country.inner_text()}|")
+            # print(f"Меняю валюту: |{await country.inner_text()}|")
             await country.click()
             kzt = page.locator('//input[@value="KZT"]/parent::label').first
             await expect(kzt).to_be_attached()
@@ -44,23 +45,19 @@ async def wb(context, book: EBook) ->  list[ShopCard]:
     options = ""
     # options += "xsubject=381;3455;3456;5322&" #только ру книги 
     base_url = f"https://global.wildberries.ru/catalog/0/search.aspx?{options}search=книга "
-    search_urls = [base_url+book.get_search_text()] if not book.only_isbn else []
-    search_urls.extend( [base_url+isbn for isbn in book.isbns] )
+    search_urls = get_search_urls(base_url, book)
     
     page = await context.new_page()
 
     for url in search_urls:
         try:
             await page.goto(url)
-            # Возможно самое долгое, но верное решение: "networkidle", 
-            # альтернатива пусто и "domcontentloaded", но слишком быстро
             await page.wait_for_load_state("networkidle")
             # await page.wait_for_timeout(1000)
 
             noresults = await page.locator("div.not-found-result").count()
-            # print(noresults)
             if noresults > 0:
-                print("!пропуск итерации - нет результатов")
+                # print("!пропуск итерации - нет результатов")
                 continue
 
             # проверяем и переключаем валюту

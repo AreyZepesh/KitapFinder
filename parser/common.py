@@ -9,20 +9,36 @@ from datetime import datetime
 import utils
 from models import EBook, ShopCard
 
-async def scroll_to_last(elem_locator):
-        # TODO В отдельную функцию? если буду использовать в других частях
-        # Крутим к последнему элементу, если 5 раз колво не изменилось - далее
+async def scroll_to_last(elem_locator, ozon_mode = False):
+        """Крутим к последнему элементу, если 5 раз колво не изменилось - далее\n
+        ozon_mode ограничевает прокрутку тремя первыми блоками"""
         prev_count = 0
         retries = 0
         max_retries = 5
+        ozon_cat_size = 0
         while retries < max_retries:
             count = await elem_locator.count()
+            # print("!", len( await elem_locator.evaluate_all("els => els.map(el => el.innerText)") ))
             # print(f"Загружено карточек: {count}") # TODO log
             if count == prev_count:
                 retries += 1
             else:
                 retries = 0
             prev_count = count
+
+            if ozon_mode:
+                if not ozon_cat_size:
+                    ozon_cat_size = count
+                elif count >= ozon_cat_size*3:
+                     break
+            
             await elem_locator.nth(count - 1).scroll_into_view_if_needed()
             await asyncio.sleep(0.5)
-            # await wbpage.wait_for_timeout(1000)
+        # return count
+
+def get_search_urls(base_url, book: EBook) -> list[str]:
+    """Генерируем список url для поиска книги, 
+    принимает базовый url к которому добавляет данные из объекта книги"""
+    search_urls = [base_url+book.get_search_text()] if not book.only_isbn else []
+    search_urls.extend( [base_url+isbn for isbn in book.isbns] )
+    return search_urls

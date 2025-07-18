@@ -13,12 +13,13 @@ from parser.common import (
     )
 
 from parser.wb import wb
+from parser.ozon import ozon
 
-async def async_work(books: list[EBook]):
+async def async_work(books: list[EBook], headless = False):
     async with async_playwright() as p:
         browser = await p.chromium.launch(
-                    # headless=False,
-                    args=[
+                    headless = headless,
+                    args = [
                     "--start-maximized", 
                     '--disable-blink-features=AutomationControlled',
                     # "--disable-infobars",
@@ -32,6 +33,7 @@ async def async_work(books: list[EBook]):
         # Например разрешение 1600*900 отлично подходит для wb, а для других? TODO
         context = await browser.new_context(
                     viewport={"width": 1600, "height": 900},
+                    # viewport={"width": 1920, "height": 1080},
                     no_viewport=True,
                     user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
                     locale="ru-RU",
@@ -49,7 +51,7 @@ async def async_work(books: list[EBook]):
 
             results = await asyncio.gather(
                 wb(context = context, book = book),
-                # ozon(context),
+                ozon(context = context, book = book),
                                         )
             # wblist = results[0]
             # Последовательный запуск
@@ -61,8 +63,8 @@ async def async_work(books: list[EBook]):
             for res in results:
                 book.add_prices(res)
 
-        # page = await context.new_page()
-        
+        page = await context.new_page()
+
         await browser.close()
 
 def main():
@@ -71,7 +73,10 @@ def main():
     books = []
     for book in all_book:
         books.append(EBook(**book))
-    # books = [EBook("Преступление и наказание", "Достоевский"), EBook("Ключ из желтого металла", "Фрай")]
+    # books = [
+    #     EBook("Преступление и наказание", "Достоевский"), 
+    #     EBook("Ключ из желтого металла", "Фрай"),
+    #     ]
     # books = [
     #     EBook(**{'title': 'Мечи дня и ночи', 'author': 'Дэвид Геммел', 'isbns': ['5-9578-3095-X']}),
     #     EBook(**{'title': 'Виртуальный свет. Идору. Все вечеринки завтрашнего дня', 'author': 'Гибсон', 'isbns': ['978-5-389-22043-0']}),
@@ -79,7 +84,8 @@ def main():
     #     EBook(**{'title': 'Машина различий', 'author': 'Гибсон Стерлинг', 'isbns': ['978-5-389-08318-9', '978-5-389-23683-7']}),
     #     # EBook(**),
     #     ]
-    asyncio.run(async_work(books=books))
+    headless = False
+    asyncio.run(async_work(books=books, headless = headless))
     # x = input("send anything") 
     for b in books:
         b.sort_by_price()
