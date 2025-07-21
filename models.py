@@ -3,6 +3,7 @@ from dataclasses import dataclass, field, asdict
 STORE_URLS= {
     "wb": "https://global.wildberries.ru/catalog/{article}/detail.aspx",
     "ozon": "https://ozon.kz/product/{article}",
+    "flip": "https://www.flip.kz/catalog?prod={article}",
     }
 
 @dataclass(order=True)

@@ -48,9 +48,11 @@ async def ozon(context, book: EBook) ->  list[ShopCard]:
             await page.goto(url)
             await page.wait_for_load_state("networkidle")
             
-            if "category/knigi-16500" not in page.url:
+            noresults = await page.get_by_text("По вашему запросу товаров сейчас нет").count() 
+            if "category/knigi-16500" not in page.url or noresults > 0:
                 # print("!пропуск итерации - нет результатов")
                 continue
+
 
             # проверяем и переключаем валюту
             await _ozon_currency(page)
@@ -60,24 +62,17 @@ async def ozon(context, book: EBook) ->  list[ShopCard]:
             # Ищем последний элемент на странице, 
             await scroll_to_last(cat, ozon_mode=True)
  
-            # TODO убрать: скриншоты начала страницы для отладки
-            # await cat.nth(0).scroll_into_view_if_needed()
-            # await page.screenshot(path=f"./tmp/STAT-{dt.now().strftime("%Y-%m-%d")}/{book.title}_{url.split("=")[-1].replace("/", "-")}.png")
-
             # Католог прогружен, получаем все элементы и обходим по одному,
             # что по названию не подходит - пропускаем
             cat = await cat.all()
             for card in cat:
                 card_title = await card.locator("xpath=.//a[@href]//span[contains(@class, 'tsBody500Medium')]").first.inner_text()
-                # print(await card.inner_html())
-                # input()
                 if book.is_TITLE_in_STR(card_title):
-                    # price = await card.locator("xpath=.//span[contains(@class, 'tsHeadline')]" ).first.inner_text()
                     price = utils.normalizePrice(
                         ( await card.locator("xpath=.//span[contains(@class, 'tsHeadline')]" ).first.inner_text() ).split("₸")[0]
                                                         )
                     article = (await card.get_by_role("link").first.get_attribute("href")).split('/?')[0].split('-')[-1]
-                    screen_file = f"./tmp/SCREEN-{dt.now().strftime("%Y-%m-%d")}/{book.title.replace(":","")}/ozon_{price}_{article}.png"
+                    screen_file = f"./tmp/SCREEN-{dt.now().strftime("%Y-%m-%d")}/{book.title.replace(":","")}/{store}_{price}_{article}.png"
                     all_items.append(ShopCard(price=price, store=store, article=article, screen_file=screen_file))
                     # TODO Убрать коммент скриншота
                     await card.screenshot(path=screen_file)
@@ -86,8 +81,6 @@ async def ozon(context, book: EBook) ->  list[ShopCard]:
             with open(f"./logs/_error.txt", 'a', encoding="utf8") as file:
                 file.write(url+"\n")
             print(ex)
-            # raise ex
 
-    # x = input("send anything") 
     await page.close()
     return all_items

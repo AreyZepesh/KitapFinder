@@ -53,7 +53,6 @@ async def wb(context, book: EBook) ->  list[ShopCard]:
         try:
             await page.goto(url)
             await page.wait_for_load_state("networkidle")
-            # await page.wait_for_timeout(1000)
 
             noresults = await page.locator("div.not-found-result").count()
             if noresults > 0:
@@ -68,10 +67,6 @@ async def wb(context, book: EBook) ->  list[ShopCard]:
             # Ищем последний элемент на странице, 
             await scroll_to_last(cat)
 
-            # TODO убрать: скриншоты начала страницы для отладки
-            # await cat.nth(0).scroll_into_view_if_needed()
-            # await page.screenshot(path=f"./tmp/STAT-{dt.now().strftime("%Y-%m-%d")}/{book.title}_{url.split("=")[-1].replace("/", "-")}.png")
-
             # Католог прогружен, получаем все элементы и обходим по одному,
             # что по названию не подходит - пропускаем
             cat = await cat.all()
@@ -82,7 +77,7 @@ async def wb(context, book: EBook) ->  list[ShopCard]:
                         (await card.locator('xpath=.//span[@class="price__wrap"]').inner_text()).split("₸")[0]
                                                         )
                     article = (await card.get_attribute("id")).replace("c",'')
-                    screen_file = f"./tmp/SCREEN-{dt.now().strftime("%Y-%m-%d")}/{book.title.replace(":","")}/wb_{price}_{article}.png"
+                    screen_file = f"./tmp/SCREEN-{dt.now().strftime("%Y-%m-%d")}/{book.title.replace(":","")}/{store}_{price}_{article}.png"
                     all_items.append(ShopCard(price=price, store=store, article=article, screen_file=screen_file))
                     # TODO Убрать коммент скриншота
                     await card.screenshot(path=screen_file)
@@ -92,6 +87,5 @@ async def wb(context, book: EBook) ->  list[ShopCard]:
                 file.write(url+"\n")
             print(ex)
 
-    # x = input("send anything") 
     await page.close()
     return all_items

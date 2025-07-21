@@ -14,6 +14,7 @@ from parser.common import (
 
 from parser.wb import wb
 from parser.ozon import ozon
+from parser.flip import flip
 
 async def async_work(books: list[EBook], headless = False):
     async with async_playwright() as p:
@@ -52,6 +53,7 @@ async def async_work(books: list[EBook], headless = False):
             results = await asyncio.gather(
                 wb(context = context, book = book),
                 ozon(context = context, book = book),
+                flip(context = context, book = book),
                                         )
             # wblist = results[0]
             # Последовательный запуск
@@ -70,6 +72,8 @@ async def async_work(books: list[EBook], headless = False):
 def main():
     from test_books import all_book
 
+    time_start = dt.now().strftime("%Y-%m-%d %H-%M")
+
     books = []
     for book in all_book:
         books.append(EBook(**book))
@@ -84,22 +88,24 @@ def main():
     #     EBook(**{'title': 'Машина различий', 'author': 'Гибсон Стерлинг', 'isbns': ['978-5-389-08318-9', '978-5-389-23683-7']}),
     #     # EBook(**),
     #     ]
-    headless = False
+    headless = True
     asyncio.run(async_work(books=books, headless = headless))
     # x = input("send anything") 
     for b in books:
         b.sort_by_price()
         text = f"{b.title}: {len(b.prices)}\n"
         with open(f"./logs/resutls_{dt.now().strftime("%Y-%m-%d %H-%M")}.txt", 'a', encoding="utf8") as file:
-            print(text)
+            # print(text)
             file.write(text)
             for p in b.prices:
-                print(p.to_dict())
-                print(p.get_url())
+                # print(p.to_dict())
+                # print(p.get_url())
                 file.write(f"{p.price}: {p.get_url()}\n")
             file.write(f"\n")
-        # print()
-        # print(b)
+
+
+    print(time_start)
+    print(dt.now().strftime("%Y-%m-%d %H-%M"))
 
 if __name__  == '__main__':
     main()
