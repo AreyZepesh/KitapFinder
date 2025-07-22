@@ -51,7 +51,7 @@ async def wb(context, book: EBook) ->  list[ShopCard]:
 
     for url in search_urls:
         try:
-            await page.goto(url)
+            await page.goto(url[0])
             await page.wait_for_load_state("networkidle")
 
             noresults = await page.locator("div.not-found-result").count()
@@ -78,7 +78,7 @@ async def wb(context, book: EBook) ->  list[ShopCard]:
                                                         )
                     article = (await card.get_attribute("id")).replace("c",'')
                     screen_file = f"./tmp/SCREEN-{dt.now().strftime("%Y-%m-%d")}/{book.title.replace(":","")}/{store}_{price}_{article}.png"
-                    all_items.append(ShopCard(price=price, store=store, article=article, screen_file=screen_file))
+                    all_items.append(ShopCard(price=price, store=store, article=article, screen_file=screen_file, type_search=url[-1]))
                     # TODO Убрать коммент скриншота
                     await card.screenshot(path=screen_file)
 

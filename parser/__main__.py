@@ -100,7 +100,7 @@ def main():
             for p in b.prices:
                 # print(p.to_dict())
                 # print(p.get_url())
-                file.write(f"{p.price}: {p.get_url()}\n")
+                file.write(f"{p.price}: {p.get_url()} ({p.type_search})\n")
             file.write(f"\n")
 
 

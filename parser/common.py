@@ -39,6 +39,7 @@ async def scroll_to_last(elem_locator, ozon_mode = False):
 def get_search_urls(base_url, book: EBook) -> list[str]:
     """Генерируем список url для поиска книги, 
     принимает базовый url к которому добавляет данные из объекта книги"""
-    search_urls = [base_url+book.get_search_text()] if not book.only_isbn else []
-    search_urls.extend( [base_url+isbn for isbn in book.isbns] )
+    search_urls = [(base_url+book.get_search_text(), "text")] if (not book.only_isbn) and book.isbns else []
+    if book.isbns:
+        search_urls.extend( [(base_url+isbn, "isbn") for isbn in book.isbns] )
     return search_urls
