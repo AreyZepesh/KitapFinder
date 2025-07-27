@@ -50,10 +50,11 @@ class EBook():
         for i, self_price in enumerate(self.prices):
             if self_price.store == card.store and self_price.article == card.article:
                 if self_price.price > card.price:
-                    print("замена цены на меньшую")
+                    # print("замена цены на меньшую")
                     self.prices[i] = card
                 if card.type_search == "isbn" and card.type_search != self_price.type_search:
-                    print("замена цены на цену с isbn")
+                    # print("замена цены на цену с isbn")
+                    # print(f"{self_price.to_dict()} > {card.to_dict()}")
                     self.prices[i] = card
                 return
         self.prices.append(card)
