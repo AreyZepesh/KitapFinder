@@ -94,7 +94,7 @@ def main():
     #     EBook(**{'title': 'Машина различий', 'author': 'Гибсон Стерлинг', 'isbns': ['978-5-389-08318-9', '978-5-389-23683-7']}),
     #     # EBook(**),
     #     ]
-    headless = False
+    headless = True
     asyncio.run(async_work(books=books, headless = headless))
     # x = input("send anything") 
     for b in books:

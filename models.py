@@ -1,4 +1,5 @@
 from dataclasses import dataclass, field, asdict
+from collections import defaultdict
 
 STORE_URLS= {
     "wb": "https://global.wildberries.ru/catalog/{article}/detail.aspx",
@@ -36,10 +37,15 @@ class EBook():
                 return f"{self.title} {self.author}"
         return self.title
 
-    def sort_by_store(self, reverse: bool = False):
+    def sort_by_store(self, reverse: bool = False, clean: bool = False):
+        if clean:
+            self.clean_prices()
         self.prices = sorted(self.prices, key=lambda b: (b.store, b.price), reverse=reverse)
 
-    def sort_by_price(self, reverse: bool = False):
+    def sort_by_price(self, reverse: bool = False, clean: bool = False):
+        """Сортировка карточек по цене. clean включает clean_prices() до сортировки"""
+        if clean:
+            self.clean_prices()
         self.prices = sorted(self.prices, key=lambda b: b.price, reverse=reverse)
 
     def add_price(self, card: ShopCard):
@@ -49,14 +55,11 @@ class EBook():
 
         for i, self_price in enumerate(self.prices):
             if self_price.store == card.store and self_price.article == card.article:
-                if self_price.price > card.price:
-                    # print("замена цены на меньшую")
-                    self.prices[i] = card
-                if card.type_search == "isbn" and card.type_search != self_price.type_search:
-                    # print("замена цены на цену с isbn")
-                    # print(f"{self_price.to_dict()} > {card.to_dict()}")
+                is_new_isbn = card.type_search == "isbn" and self_price.type_search == "text" and self_price.price >= card.price
+                if (self_price.price > card.price) or is_new_isbn:
                     self.prices[i] = card
                 return
+
         self.prices.append(card)
 
     def add_prices(self, data: list[ShopCard]):
@@ -66,6 +69,25 @@ class EBook():
     def to_dict(self):
         return asdict(self)
     
+    def clean_prices(self):
+        """Оставляет только карточки с type_search == "isbn", 
+        имеющие минимальную цену в рамках одного магазина (store). 
+        Все остальные карточки сохраняются без изменений."""
+        temp_price = list()
+        isbn_by_store = defaultdict(list)
+        for p in self.prices: 
+            if p.type_search == "isbn":
+                isbn_by_store[p.store].append(p)
+            else:
+                temp_price.append(p)
+
+        for cards in isbn_by_store.values():
+            if cards:
+                min_price = min(cards).price
+                temp_price.extend([card for card in cards if card.price == min_price])
+        self.prices = temp_price
+
+
     @staticmethod
     def _str_from_comparison(text: str) -> str:
         """Удаляет всё, кроме букв, цифр и пробелов, нормализует регистр"""
