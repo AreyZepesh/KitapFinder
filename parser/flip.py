@@ -53,7 +53,7 @@ async def flip(context, book: EBook) ->  list[ShopCard]:
 
         except Exception as ex:
             with open(f"./logs/_error.txt", 'a', encoding="utf8") as file:
-                file.write(url+"\n")
+                file.write(url[0]+"\n")
             print(ex)
             # raise ex
 

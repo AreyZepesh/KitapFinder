@@ -65,6 +65,7 @@ async def ozon(context, book: EBook) ->  list[ShopCard]:
             # Католог прогружен, получаем все элементы и обходим по одному,
             # что по названию не подходит - пропускаем
             cat = await cat.all()
+            await page.wait_for_load_state("networkidle")
             for card in cat:
                 card_title = await card.locator("xpath=.//a[@href]//span[contains(@class, 'tsBody500Medium')]").first.inner_text()
                 if book.is_TITLE_in_STR(card_title):
@@ -79,7 +80,7 @@ async def ozon(context, book: EBook) ->  list[ShopCard]:
 
         except Exception as ex:
             with open(f"./logs/_error.txt", 'a', encoding="utf8") as file:
-                file.write(url+"\n")
+                file.write(url[0]+"\n")
             print(ex)
 
     await page.close()

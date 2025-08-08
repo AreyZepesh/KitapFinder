@@ -66,7 +66,7 @@ async def async_work(books: list[EBook], headless = False):
                 book.add_prices(res)
 
         page = await context.new_page()
-
+        
         await browser.close()
 
 def main():
@@ -82,11 +82,12 @@ def main():
     #     EBook("Ключ из желтого металла", "Фрай"),
     #     ]
     # books = [
+        # EBook(**{'title': 'Наука Плоского мира', 'author': 'Пратчетт', 'isbns': ['978-5-699-82739-8'], 'only_isbn': False}),
     #     EBook(**{'title': 'Кровь заката', 'author': 'Камша', 'isbns': [], 'only_isbn': False}),
     #     EBook(**{'title': 'Довод королей', 'author': 'Камша', 'isbns': [], 'only_isbn': False}),
     #     EBook(**{'title': 'Башня ярости. Чёрные маки', 'author': 'Камша', 'isbns': [], 'only_isbn': False}),
     #     EBook(**{'title': 'Башня ярости. Всходы ветра', 'author': 'Камша', 'isbns': [], 'only_isbn': False}),
-    #     ]
+        # ]
     # books = [
     #     EBook(**{'title': 'Мечи дня и ночи', 'author': 'Дэвид Геммел', 'isbns': ['5-9578-3095-X']}),
     #     EBook(**{'title': 'Виртуальный свет. Идору. Все вечеринки завтрашнего дня', 'author': 'Гибсон', 'isbns': ['978-5-389-22043-0']}),
@@ -94,7 +95,7 @@ def main():
     #     EBook(**{'title': 'Машина различий', 'author': 'Гибсон Стерлинг', 'isbns': ['978-5-389-08318-9', '978-5-389-23683-7']}),
     #     # EBook(**),
     #     ]
-    headless = False
+    headless = True
     asyncio.run(async_work(books=books, headless = headless))
     # x = input("send anything") 
     for b in books:
