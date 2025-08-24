@@ -44,7 +44,9 @@ def get_search_urls(base_url, book: EBook) -> list[str]:
         if book.only_isbn:
              search_urls = []
         search_urls.extend( [(base_url+isbn, "isbn") for isbn in book.isbns] )
+
+    # Затычка сохраняющая ссылки
     for url in search_urls:
         with open(f"./logs/_urls.txt", 'a', encoding="utf8") as file:
-            file.write(url[0]+"\n")
+            file.write(book.title + " " + url[0] + "\n")
     return search_urls

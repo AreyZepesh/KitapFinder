@@ -46,6 +46,12 @@ async def wb(context, book: EBook) ->  list[ShopCard]:
     # options += "xsubject=381;3455;3456;5322&" #только ру книги 
     base_url = f"https://global.wildberries.ru/catalog/0/search.aspx?{options}search=книга "
     search_urls = get_search_urls(base_url, book)
+
+    # TODO проверку на предложение других результатов и тогда поиск с nocorrection=1&
+    # затычка для поиска результатов без коррекции запроса, например понадовилось на 
+    # https://global.wildberries.ru/catalog/0/search.aspx?search=книга Держи марку! Пратчетт
+    base_url = f"https://global.wildberries.ru/catalog/0/search.aspx?nocorrection=1&{options}search=книга "
+    search_urls.extend( get_search_urls(base_url, book) )
     
     page = await context.new_page()
 
