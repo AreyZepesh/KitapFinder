@@ -62,7 +62,7 @@ async def ozon(context, book: EBook) ->  list[ShopCard]:
             # Ищем последний элемент на странице, 
             await scroll_to_last(cat, ozon_mode=True)
  
-            # Католог прогружен, получаем все элементы и обходим по одному,
+            # Каталог прогружен, получаем все элементы и обходим по одному,
             # что по названию не подходит - пропускаем
             cat = await cat.all()
             await page.wait_for_load_state("networkidle")

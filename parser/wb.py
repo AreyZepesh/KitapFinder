@@ -58,7 +58,11 @@ async def wb(context, book: EBook) ->  list[ShopCard]:
     for url in search_urls:
         try:
             await page.goto(url[0])
-            await page.wait_for_load_state("networkidle")
+            try:
+                await page.wait_for_load_state()
+                # await page.wait_for_load_state("networkidle", timeout = 60000)
+            except Exception as ex:
+                print(f"!!! {ex}")
 
             noresults = await page.locator("div.not-found-result").count()
             if noresults > 0:
@@ -73,7 +77,7 @@ async def wb(context, book: EBook) ->  list[ShopCard]:
             # Ищем последний элемент на странице, 
             await scroll_to_last(cat)
 
-            # Католог прогружен, получаем все элементы и обходим по одному,
+            # Каталог прогружен, получаем все элементы и обходим по одному,
             # что по названию не подходит - пропускаем
             cat = await cat.all()
             for card in cat:
@@ -92,6 +96,9 @@ async def wb(context, book: EBook) ->  list[ShopCard]:
             with open(f"./logs/_error.txt", 'a', encoding="utf8") as file:
                 file.write(url[0]+"\n")
             print(ex)
+
+    # TODO del
+    # x = input("send anything") 
 
     await page.close()
     return all_items

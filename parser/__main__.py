@@ -15,6 +15,7 @@ from parser.common import (
 from parser.wb import wb
 from parser.ozon import ozon
 from parser.flip import flip
+from parser.kaspi import kaspi
 
 async def async_work(books: list[EBook], headless = False):
     async with async_playwright() as p:
@@ -34,7 +35,7 @@ async def async_work(books: list[EBook], headless = False):
         # Например разрешение 1600*900 отлично подходит для wb, а для других? TODO
         context = await browser.new_context(
                     viewport={"width": 1600, "height": 900},
-                    # viewport={"width": 1920, "height": 1080},
+                    # viewport={"width": 900, "height": 1600},
                     no_viewport=True,
                     user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
                     locale="ru-RU",
@@ -51,9 +52,10 @@ async def async_work(books: list[EBook], headless = False):
             print(book.title)
 
             results = await asyncio.gather(
-                wb(context = context, book = book),
-                ozon(context = context, book = book),
-                flip(context = context, book = book),
+                # wb(context = context, book = book),
+                # ozon(context = context, book = book),
+                # flip(context = context, book = book),
+                kaspi(context = context, book = book),
                                         )
             # wblist = results[0]
             # Последовательный запуск
@@ -77,10 +79,6 @@ def main():
     books = []
     for book in all_book:
         books.append(EBook(**book))
-    # books = [
-    #     EBook("Преступление и наказание", "Достоевский"), 
-    #     EBook("Ключ из желтого металла", "Фрай"),
-    #     ]
     books.extend( [
         EBook(**{'title': 'Элантрис', 'author': 'Сандерсон', 'isbns': ['978-5-389-20277-1'], 'only_isbn': False},),
         EBook(**{'title': 'Космер. Тайная история', 'author': 'Сандерсон', 'isbns': ['978-5-389-23731-5'], 'only_isbn': False},),
@@ -110,7 +108,13 @@ def main():
         # EBook(**{'title': 'Увечный бог', 'author': 'Эриксон', 'isbns': [], 'only_isbn': False},),
         ] )
 
-    headless = True
+    # books = [
+    #     # EBook("HHhH"),
+    #     EBook("Преступление и наказание", "Достоевский"), 
+    #     EBook("Ключ из желтого металла", "Фрай"),
+    #     ]
+
+    headless = False # True
     asyncio.run(async_work(books=books, headless = headless))
     # x = input("send anything") 
     for b in books:
