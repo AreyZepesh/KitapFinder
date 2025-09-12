@@ -39,9 +39,9 @@ async def kaspi(context, book: EBook) ->  list[ShopCard]:
         book_k = copy.deepcopy(book)
         book_k.only_isbn = False
         search_urls = get_search_urls(base_url, book_k) 
-        print(book_k.only_isbn, "было:", book.only_isbn)
     else:
         search_urls = get_search_urls(base_url, book)
+    # search_urls = get_search_urls(base_url, book)
 
     page = await context.new_page()
 
@@ -50,21 +50,23 @@ async def kaspi(context, book: EBook) ->  list[ShopCard]:
             await page.goto(url[0])
             try:
                 await page.wait_for_load_state()
+                await page.wait_for_timeout(500)
+
                 # await page.wait_for_load_state("networkidle", timeout = 60000)
             except Exception as ex:
                 print(f"!!! {ex}")
 
             await _kaspi_city(page)
 
-            noresults = await page.locator("h1#search-result__title-notfound").count()
+            noresults = await page.locator("h1.search-result__title-notfound").count()
             if noresults > 0:
-                print("Нет результата")
+                # print("Нет результата")
                 continue
 
 
             # Парсим карточки товаров, сперва получаем "каталог"
             cat = page.locator('xpath=//div[@data-product-id]')
-            await page.wait_for_timeout(1000)
+            await page.wait_for_timeout(500)
 
             # Ищем последний элемент на странице, 
             await scroll_to_last(cat)

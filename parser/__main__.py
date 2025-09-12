@@ -37,7 +37,8 @@ async def async_work(books: list[EBook], headless = False):
                     viewport={"width": 1600, "height": 900},
                     # viewport={"width": 900, "height": 1600},
                     no_viewport=True,
-                    user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
+                    # user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
+                    user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
                     locale="ru-RU",
                     timezone_id="Asia/Almaty",
                     # java_script_enabled=True,
@@ -52,10 +53,10 @@ async def async_work(books: list[EBook], headless = False):
             print(book.title)
 
             results = await asyncio.gather(
-                # wb(context = context, book = book),
-                # ozon(context = context, book = book),
-                # flip(context = context, book = book),
+                ozon(context = context, book = book),
+                flip(context = context, book = book),
                 kaspi(context = context, book = book),
+                wb(context = context, book = book),
                                         )
             # wblist = results[0]
             # Последовательный запуск
@@ -73,7 +74,8 @@ async def async_work(books: list[EBook], headless = False):
 
 def main():
     from test_books import all_book
-
+    if os.path.exists("./logs/_urls.txt"):
+        os.remove("./logs/_urls.txt")
     time_start = dt.now().strftime("%Y-%m-%d %H-%M")
 
     books = []
@@ -86,35 +88,39 @@ def main():
         EBook(**{'title': 'Локон с Изумрудного моря', 'author': 'Сандерсон', 'isbns': ['978-5-389-22923-5'], 'only_isbn': False},),
         EBook(**{'title': 'Юми и укротитель кошмаров', 'author': 'Сандерсон', 'isbns': ['978-5-389-24688-1'], 'only_isbn': False},),
         EBook(**{'title': 'Озаренный Солнцем', 'author': 'Сандерсон', 'isbns': ['978-5-389-25650-7'], 'only_isbn': False},),
+        EBook(**{'title': 'Вы чародей', 'author': 'Сандерсон', 'isbns': ['978-5-389-22922-8'], 'only_isbn': False},),
         EBook(**{'title': 'Легион', 'author': 'Сандерсон', 'isbns': ['978-5-389-16903-6'], 'only_isbn': False},),
-        # EBook(**{'title': 'Рифматист', 'author': 'Сандерсон', 'isbns': ['978-5-389-23684-4'], 'only_isbn': False},),
         EBook(**{'title': 'Тираны и мстители', 'author': 'Сандерсон', 'isbns': ['978-5-389-23257-0'], 'only_isbn': False},),
         EBook(**{'title': 'Устремленная в небо', 'author': 'Сандерсон', 'isbns': ['978-5-389-16425-3'], 'only_isbn': False},),
         EBook(**{'title': 'Видящая звезды', 'author': 'Сандерсон', 'isbns': ['978-5-389-18074-1'], 'only_isbn': False},),
         EBook(**{'title': 'Цитоник', 'author': 'Сандерсон', 'isbns': ['978-5-389-23598-4'], 'only_isbn': False},),
         EBook(**{'title': 'Звездная Эскадрилья', 'author': 'Сандерсон', 'isbns': ['978-5-389-26184-6'], 'only_isbn': False},),
-    #     EBook(**{'title': 'Сады Луны', 'author': 'Эриксон', 'isbns': [], 'only_isbn': False},),
-    #     EBook(**{'title': 'Врата Мёртвого Дома', 'author': 'Эриксон', 'isbns': [], 'only_isbn': False},),
-    #     EBook(**{'title': 'Врата смерти', 'author': 'Эриксон', 'isbns': [], 'only_isbn': False},),
-    #     EBook(**{'title': 'Память льда', 'author': 'Эриксон', 'isbns': [], 'only_isbn': False},),
-    #     EBook(**{'title': 'Дом Цепей', 'author': 'Эриксон', 'isbns': [], 'only_isbn': False},),
-    #     EBook(**{'title': 'Полночный прилив', 'author': 'Эриксон', 'isbns': [], 'only_isbn': False},),
-    #     EBook(**{'title': 'Полуночный Прилив', 'author': 'Эриксон', 'isbns': [], 'only_isbn': False},),
-    #     EBook(**{'title': 'Охотники за костями', 'author': 'Эриксон', 'isbns': [], 'only_isbn': False},),
-    #     EBook(**{'title': 'Буря Жнеца', 'author': 'Эриксон', 'isbns': [], 'only_isbn': False},),
-    #     EBook(**{'title': 'Дань псам', 'author': 'Эриксон', 'isbns': [], 'only_isbn': False},),
-    #     EBook(**{'title': 'Пыль грёз', 'author': 'Эриксон', 'isbns': [], 'only_isbn': False},),
-    #     EBook(**{'title': 'Пыль Снов', 'author': 'Эриксон', 'isbns': [], 'only_isbn': False},),
+
+        # EBook(**{'title': 'Сады Луны', 'author': 'Эриксон', 'isbns': [], 'only_isbn': False},),
+        # EBook(**{'title': 'Врата Мёртвого Дома', 'author': 'Эриксон', 'isbns': [], 'only_isbn': False},),
+        # EBook(**{'title': 'Врата смерти', 'author': 'Эриксон', 'isbns': [], 'only_isbn': False},),
+        # EBook(**{'title': 'Память льда', 'author': 'Эриксон', 'isbns': [], 'only_isbn': False},),
+        # EBook(**{'title': 'Дом Цепей', 'author': 'Эриксон', 'isbns': [], 'only_isbn': False},),
+        # EBook(**{'title': 'Полночный прилив', 'author': 'Эриксон', 'isbns': [], 'only_isbn': False},),
+        # EBook(**{'title': 'Полуночный Прилив', 'author': 'Эриксон', 'isbns': [], 'only_isbn': False},),
+        # EBook(**{'title': 'Охотники за костями', 'author': 'Эриксон', 'isbns': [], 'only_isbn': False},),
+        # EBook(**{'title': 'Буря Жнеца', 'author': 'Эриксон', 'isbns': [], 'only_isbn': False},),
+        # EBook(**{'title': 'Дань псам', 'author': 'Эриксон', 'isbns': [], 'only_isbn': False},),
+        # EBook(**{'title': 'Пыль грёз', 'author': 'Эриксон', 'isbns': [], 'only_isbn': False},),
+        # EBook(**{'title': 'Пыль Снов', 'author': 'Эриксон', 'isbns': [], 'only_isbn': False},),
         # EBook(**{'title': 'Увечный бог', 'author': 'Эриксон', 'isbns': [], 'only_isbn': False},),
+
+        EBook("Новый Дозор", "Лукьяненко", ['978-5-271-41900-3', '978-5-17-118480-3']),
+        EBook("Шестой Дозор", "Лукьяненко", ['978-5-17-088817-7', '978-5-17-118536-7']),
         ] )
 
     # books = [
-    #     # EBook("HHhH"),
     #     EBook("Преступление и наказание", "Достоевский"), 
     #     EBook("Ключ из желтого металла", "Фрай"),
+    #     EBook(**{'title': 'Вы чародей', 'author': 'Сандерсон', 'isbns': ['978-5-389-22922-8'], 'only_isbn': False},),
     #     ]
 
-    headless = False # True
+    headless = False
     asyncio.run(async_work(books=books, headless = headless))
     # x = input("send anything") 
     for b in books:

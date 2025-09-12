@@ -47,6 +47,8 @@ async def ozon(context, book: EBook) ->  list[ShopCard]:
         try:
             await page.goto(url[0])
             await page.wait_for_load_state("networkidle")
+            await page.wait_for_timeout(500)
+
             
             noresults = await page.get_by_text("По вашему запросу товаров сейчас нет").count() 
             if "category/knigi-16500" not in page.url or noresults > 0:
@@ -70,7 +72,7 @@ async def ozon(context, book: EBook) ->  list[ShopCard]:
                 card_title = await card.locator("xpath=.//a[@href]//span[contains(@class, 'tsBody500Medium')]").first.inner_text()
                 if book.is_TITLE_in_STR(card_title):
                     price = utils.normalizePrice(
-                        ( await card.locator("xpath=.//span[contains(@class, 'tsHeadline')]" ).first.inner_text() ).split("₸")[0]
+                        ( await card.locator("xpath=.//span[contains(@class, 'tsHeadline') and not( contains(., '×') or contains(., 'мес') )]" ).first.inner_text() ).split("₸")[0]
                                                         )
                     article = (await card.get_by_role("link").first.get_attribute("href")).split('/?')[0].split('-')[-1]
                     screen_file = f"./tmp/SCREEN-{dt.now().strftime("%Y-%m-%d")}/{book.title.replace(":","")}/{store}_{price}_{article}.png"
@@ -82,6 +84,9 @@ async def ozon(context, book: EBook) ->  list[ShopCard]:
             with open(f"./logs/_error.txt", 'a', encoding="utf8") as file:
                 file.write(url[0]+"\n")
             print(ex)
+
+    # TODO del
+    # x = input("send anything") 
 
     await page.close()
     return all_items

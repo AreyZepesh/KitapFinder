@@ -23,6 +23,7 @@ async def flip(context, book: EBook) ->  list[ShopCard]:
             await page.goto(url[0])
             try:
                 await page.wait_for_load_state()
+                await page.wait_for_timeout(500)
                 # await page.wait_for_load_state("networkidle", timeout = 60000)
             except Exception as ex:
                 print(f"!!! {ex}")
