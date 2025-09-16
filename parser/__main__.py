@@ -76,6 +76,9 @@ def main():
     from test_books import all_book
     if os.path.exists("./logs/_urls.txt"):
         os.remove("./logs/_urls.txt")
+    if os.path.exists(f"./tmp/SCREEN-{dt.now().strftime("%Y-%m-%d")}"):
+        from shutil import rmtree
+        rmtree(f"./tmp/SCREEN-{dt.now().strftime("%Y-%m-%d")}")
     time_start = dt.now().strftime("%Y-%m-%d %H-%M")
 
     books = []
@@ -85,12 +88,12 @@ def main():
         EBook(**{'title': 'Элантрис', 'author': 'Сандерсон', 'isbns': ['978-5-389-20277-1'], 'only_isbn': False},),
         EBook(**{'title': 'Космер. Тайная история', 'author': 'Сандерсон', 'isbns': ['978-5-389-23731-5'], 'only_isbn': False},),
         EBook(**{'title': 'Убийца войн', 'author': 'Сандерсон', 'isbns': ['978-5-389-20180-4'], 'only_isbn': False},),
-        EBook(**{'title': 'Локон с Изумрудного моря', 'author': 'Сандерсон', 'isbns': ['978-5-389-22923-5'], 'only_isbn': False},),
-        EBook(**{'title': 'Юми и укротитель кошмаров', 'author': 'Сандерсон', 'isbns': ['978-5-389-24688-1'], 'only_isbn': False},),
-        EBook(**{'title': 'Озаренный Солнцем', 'author': 'Сандерсон', 'isbns': ['978-5-389-25650-7'], 'only_isbn': False},),
-        EBook(**{'title': 'Вы чародей', 'author': 'Сандерсон', 'isbns': ['978-5-389-22922-8'], 'only_isbn': False},),
+        # EBook(**{'title': 'Локон с Изумрудного моря', 'author': 'Сандерсон', 'isbns': ['978-5-389-22923-5'], 'only_isbn': False},),
+        # EBook(**{'title': 'Юми и укротитель кошмаров', 'author': 'Сандерсон', 'isbns': ['978-5-389-24688-1'], 'only_isbn': False},),
+        # EBook(**{'title': 'Озаренный Солнцем', 'author': 'Сандерсон', 'isbns': ['978-5-389-25650-7'], 'only_isbn': False},),
+        # EBook(**{'title': 'Вы чародей', 'author': 'Сандерсон', 'isbns': ['978-5-389-22922-8'], 'only_isbn': False},),
         EBook(**{'title': 'Легион', 'author': 'Сандерсон', 'isbns': ['978-5-389-16903-6'], 'only_isbn': False},),
-        EBook(**{'title': 'Тираны и мстители', 'author': 'Сандерсон', 'isbns': ['978-5-389-23257-0'], 'only_isbn': False},),
+        # EBook(**{'title': 'Тираны и мстители', 'author': 'Сандерсон', 'isbns': ['978-5-389-23257-0'], 'only_isbn': False},),
         EBook(**{'title': 'Устремленная в небо', 'author': 'Сандерсон', 'isbns': ['978-5-389-16425-3'], 'only_isbn': False},),
         EBook(**{'title': 'Видящая звезды', 'author': 'Сандерсон', 'isbns': ['978-5-389-18074-1'], 'only_isbn': False},),
         EBook(**{'title': 'Цитоник', 'author': 'Сандерсон', 'isbns': ['978-5-389-23598-4'], 'only_isbn': False},),
@@ -112,15 +115,22 @@ def main():
 
         EBook("Новый Дозор", "Лукьяненко", ['978-5-271-41900-3', '978-5-17-118480-3']),
         EBook("Шестой Дозор", "Лукьяненко", ['978-5-17-088817-7', '978-5-17-118536-7']),
+        EBook(**{'title': 'Колдун и кристалл+', 'author': 'Кинг', 'isbns': ['978-5-17-122057-0'], 'only_isbn': False}),
+        EBook(**{'title': 'Волки Кальи+', 'author': 'Кинг', 'isbns': ['978-5-17-133881-7'], 'only_isbn': False}),
+        EBook(**{'title': 'Песнь Сюзанны+', 'author': 'Кинг', 'isbns': ['978-5-17-133029-3'], 'only_isbn': False}),
         ] )
 
-    # books = [
+    books = [
     #     EBook("Преступление и наказание", "Достоевский"), 
     #     EBook("Ключ из желтого металла", "Фрай"),
-    #     EBook(**{'title': 'Вы чародей', 'author': 'Сандерсон', 'isbns': ['978-5-389-22922-8'], 'only_isbn': False},),
-    #     ]
+        # EBook(**{'title': 'Колдун и кристалл+', 'author': 'Кинг', 'isbns': ['978-5-17-122057-0'], 'only_isbn': False}),
+        # EBook(**{'title': 'Волки Кальи+', 'author': 'Кинг', 'isbns': ['978-5-17-133881-7'], 'only_isbn': False}),
+        # EBook(**{'title': 'Песнь Сюзанны+', 'author': 'Кинг', 'isbns': ['978-5-17-133029-3'], 'only_isbn': False}),
+        # EBook(**{'title': 'Темная Башня', 'author': 'Кинг', 'isbns': ['978-5-17-136099-3'], 'only_isbn': False}),
+        # EBook(**{'title': 'Ветер сквозь замочную скважину', 'author': 'Кинг', 'isbns': ['978-5-17-135933-1'], 'only_isbn': False}),
+        ]
 
-    headless = False
+    headless = True
     asyncio.run(async_work(books=books, headless = headless))
     # x = input("send anything") 
     for b in books:

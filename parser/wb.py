@@ -18,7 +18,7 @@ async def _wb_currency(page):
             # print(f"Меняю валюту: |{await country.inner_text()}|")
             await country.click()
             kzt = page.locator('//input[@value="KZT"]/parent::label').first
-            await expect(kzt).to_be_attached()
+            await expect(kzt).to_be_attached(timeout=20000)
             await kzt.click()
             await page.wait_for_timeout(500)
         else:

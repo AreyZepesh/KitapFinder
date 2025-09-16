@@ -46,7 +46,8 @@ async def flip(context, book: EBook) ->  list[ShopCard]:
                     price = utils.normalizePrice(
                         ( await card.locator("div.price" ).first.inner_text() ).split("₸")[0]
                                                         )
-                    article = (await card.get_by_role("link").first.get_attribute("href")).split('=')[-1]
+                    # article = (await card.get_by_role("link").first.get_attribute("href")).split('=')[-1]
+                    article = (await card.locator("a.product[data-event-item-id]").first.get_attribute("data-event-item-id"))
                     screen_file = f"./tmp/SCREEN-{dt.now().strftime("%Y-%m-%d")}/{book.title.replace(":","")}/{store}_{price}_{article}.png"
                     all_items.append(ShopCard(price=price, store=store, article=article, screen_file=screen_file, type_search=url[-1]))
                     # # TODO Убрать коммент скриншота
