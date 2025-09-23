@@ -4,31 +4,34 @@ from .common import (
     utils,
     EBook, ShopCard,
     scroll_to_last,
-    get_search_urls,
+    get_search_urls, 
+    tqdm,
     )
 import copy
 
-async def _kaspi_city(page):
+async def _kaspi_city(page, error_prefix):
     """Переключаем город или закрываем"""
     try:
         dialog = page.locator('div.current-location__dialog').first
         # await expect(dialog).to_be_attached()
         await page.wait_for_timeout(100)
         if await dialog.count() != 0:
-            # print(f"Выбор города")
+            # tqdm.write(f"Выбор города")
             city = await dialog.locator("a").get_by_text("Павлодар").first.click()
             await page.wait_for_timeout(100)
             await page.locator("html.js").first.click()
         else:
-            # print("! Город уже норм")
+            # tqdm.write("! Город уже норм")
             pass
     except Exception as ex:
-        # print("!!! Ошибка при переключении города:")
-        print(ex)
+        tqdm.write(error_prefix)
+        tqdm.write("Ошибка при переключении города:")
+        tqdm.write(f"{ex}")
 
 async def kaspi(context, book: EBook) ->  list[ShopCard]:
     """Парсер ozon, принимает контекст и объект книги, возвращает список объектов с 'карточками'"""
     store = 'kaspi'
+    error_prefix=f"\n{book.title} {store}:"
     all_items = []
     base_url = f"https://kaspi.kz/shop/search/?q=:availableInZone:551010000:category:Books&text="
     ""
@@ -51,16 +54,17 @@ async def kaspi(context, book: EBook) ->  list[ShopCard]:
             try:
                 await page.wait_for_load_state()
                 await page.wait_for_timeout(500)
-
                 # await page.wait_for_load_state("networkidle", timeout = 60000)
             except Exception as ex:
-                print(f"!!! {ex}")
+                tqdm.write(error_prefix)
+                tqdm.write("wait load page:")
+                tqdm.write(f"{ex}")
 
-            await _kaspi_city(page)
+            await _kaspi_city(page, error_prefix)
 
             noresults = await page.locator("h1.search-result__title-notfound").count()
             if noresults > 0:
-                # print("Нет результата")
+                # tqdm.write("Нет результата")
                 continue
 
 
@@ -79,7 +83,8 @@ async def kaspi(context, book: EBook) ->  list[ShopCard]:
                 card_title = await card.locator("a.item-card__name-link").first.inner_text()
                 if book.is_TITLE_in_STR(card_title):
                     price = utils.normalizePrice(
-                        ( await card.locator("div.item-card__debet " ).first.inner_text() )
+                        # ( await card.locator("div.item-card__debet " ).first.inner_text() )
+                        ( await card.locator("span.item-card__prices-price" ).first.inner_text() )
                                                         )
                     article = await card.get_attribute("data-product-id")
                     screen_file = f"./tmp/SCREEN-{dt.now().strftime("%Y-%m-%d")}/{book.title.replace(":","")}/{store}_{price}_{article}.png"
@@ -90,7 +95,11 @@ async def kaspi(context, book: EBook) ->  list[ShopCard]:
         except Exception as ex:
             with open(f"./logs/_error.txt", 'a', encoding="utf8") as file:
                 file.write(url[0]+"\n")
-            print(ex)
+                file.write(f"{ex}\n\n")
+            tqdm.write(error_prefix)
+            tqdm.write(f"{ex}")
+            # input("\n!!! ЖДУ TЫК !!!")
+
             # raise ex
 
     # x = input("send anything") 

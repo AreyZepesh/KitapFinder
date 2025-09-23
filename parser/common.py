@@ -5,6 +5,7 @@
 from playwright.async_api import async_playwright, expect
 import asyncio
 from datetime import datetime
+from tqdm.asyncio import tqdm
 
 import utils
 from models import EBook, ShopCard
@@ -17,6 +18,7 @@ async def scroll_to_last(elem_locator, ozon_mode = False):
         max_retries = 5
         ozon_cat_size = 0
         while retries < max_retries:
+
             count = await elem_locator.count()
             # print("!", len( await elem_locator.evaluate_all("els => els.map(el => el.innerText)") ))
             # print(f"Загружено карточек: {count}") # TODO log
@@ -30,7 +32,7 @@ async def scroll_to_last(elem_locator, ozon_mode = False):
                 if not ozon_cat_size:
                     ozon_cat_size = count
                 elif count >= ozon_cat_size*3:
-                     break
+                    break
             
             await elem_locator.nth(count - 1).scroll_into_view_if_needed()
             await asyncio.sleep(0.5)

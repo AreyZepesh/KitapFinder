@@ -4,12 +4,14 @@ from .common import (
     utils,
     EBook, ShopCard,
     scroll_to_last,
-    get_search_urls,
+    get_search_urls, 
+    tqdm,
     )
 
 async def flip(context, book: EBook) ->  list[ShopCard]:
     """Парсер ozon, принимает контекст и объект книги, возвращает список объектов с 'карточками'"""
     store = 'flip'
+    error_prefix=f"\n{book.title} {store}:"
     all_items = []
     options = ""
     # options += "filter-a5059=2&" # твердая обложка
@@ -21,12 +23,37 @@ async def flip(context, book: EBook) ->  list[ShopCard]:
     for url in search_urls:
         try:
             await page.goto(url[0])
+            # # один день была ошибка, с типо страница не загрузилась, тестируем обход:
+            # try:
+            #     await page.goto(url[0])
+            # except Exception as ex1:
+            #     tqdm.write(error_prefix)
+            #     tqdm.write(f"{ex1}")
+            #     tqdm.write("Ошибка при попытке загрузить страницу, пытаемся, ожидая domcontentloaded")
+            #     try:
+            #         await page.goto(url[0], wait_until="domcontentloaded")
+            #     except Exception as ex2:
+            #         tqdm.write(f"{ex2}")
+            #         tqdm.write("Ошибка при попытке загрузить страницу, пытаемся, ожидая commit")
+            #         try:
+            #             await page.goto(url[0], wait_until="commit")
+            #         except Exception as ex3:
+            #             tqdm.write(f"{ex3}")
+            #             tqdm.write(f"Ваще пипец, вырубаем)")
+            #             raise ex3
+
+            #     finally:
+            #         tqdm.write(f"{'='*50}")
+
+                
             try:
                 await page.wait_for_load_state()
                 await page.wait_for_timeout(500)
                 # await page.wait_for_load_state("networkidle", timeout = 60000)
             except Exception as ex:
-                print(f"!!! {ex}")
+                tqdm.write(error_prefix)
+                tqdm.write("wait load page:")
+                tqdm.write(f"{ex}")
 
             noresults = await page.locator("h2#search-not-result").count()
             if noresults > 0:
@@ -56,7 +83,11 @@ async def flip(context, book: EBook) ->  list[ShopCard]:
         except Exception as ex:
             with open(f"./logs/_error.txt", 'a', encoding="utf8") as file:
                 file.write(url[0]+"\n")
-            print(ex)
+                file.write(f"{ex}\n\n")
+            tqdm.write(error_prefix)
+            tqdm.write(f"{ex}")
+            # input("\n!!! ЖДУ TЫК !!!")
+
             # raise ex
 
     # x = input("send anything") 

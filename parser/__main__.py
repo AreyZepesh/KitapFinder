@@ -10,6 +10,7 @@ from parser.common import (
     utils,
     EBook, ShopCard,
     scroll_to_last, 
+    tqdm,
     )
 
 from parser.wb import wb
@@ -34,29 +35,39 @@ async def async_work(books: list[EBook], headless = False):
         # Контекст задается для все сессии. После некоторые вещи сменить не выйдет. 
         # Например разрешение 1600*900 отлично подходит для wb, а для других? TODO
         context = await browser.new_context(
-                    viewport={"width": 1600, "height": 900},
-                    # viewport={"width": 900, "height": 1600},
+                    # viewport={"width": 1600, "height": 900},
+                    viewport={"width": 1920, "height": 1080},
                     no_viewport=True,
                     # user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
                     user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+                    permissions=["geolocation"],  # разрешаем
+                    # # geolocation={"latitude": 43.238949, "longitude": 76.889709},  # Алматы :)
+                    geolocation={"latitude": 52.265415, "longitude": 76.977453},  # Павлодар, Ломова 154
                     locale="ru-RU",
                     timezone_id="Asia/Almaty",
                     # java_script_enabled=True,
                     # device_scale_factor=1,
-                    # is_mobile=False,
+                    is_mobile=False,
                                             )
         context.my_data = {}
         zero_page = await context.new_page()
 
         # Паралельный запуск
-        for book in books:
-            print(book.title)
+        pbar = tqdm(books, ncols=80, desc="Парсим книжки")
+        for book in pbar:
+        # for book in books:
+            # print(book.title)
+            # pbar.set_description(book.title)
 
-            results = await asyncio.gather(
-                ozon(context = context, book = book),
+            # results = await asyncio.gather(
+            results = await tqdm.gather(
+                wb(context = context, book = book),
                 flip(context = context, book = book),
                 kaspi(context = context, book = book),
-                wb(context = context, book = book),
+                ozon(context = context, book = book),
+                                    desc=book.title, #tqdm options
+                                    ncols=80, 
+                                    leave=False,
                                         )
             # wblist = results[0]
             # Последовательный запуск
@@ -74,11 +85,14 @@ async def async_work(books: list[EBook], headless = False):
 
 def main():
     from test_books import all_book
+    
+    from shutil import rmtree
     if os.path.exists("./logs/_urls.txt"):
         os.remove("./logs/_urls.txt")
     if os.path.exists(f"./tmp/SCREEN-{dt.now().strftime("%Y-%m-%d")}"):
-        from shutil import rmtree
         rmtree(f"./tmp/SCREEN-{dt.now().strftime("%Y-%m-%d")}")
+    if os.path.exists(f"./logs/_nores"):
+        rmtree(f"./logs/_nores")
     time_start = dt.now().strftime("%Y-%m-%d %H-%M")
 
     books = []
@@ -88,10 +102,6 @@ def main():
         EBook(**{'title': 'Элантрис', 'author': 'Сандерсон', 'isbns': ['978-5-389-20277-1'], 'only_isbn': False},),
         EBook(**{'title': 'Космер. Тайная история', 'author': 'Сандерсон', 'isbns': ['978-5-389-23731-5'], 'only_isbn': False},),
         EBook(**{'title': 'Убийца войн', 'author': 'Сандерсон', 'isbns': ['978-5-389-20180-4'], 'only_isbn': False},),
-        # EBook(**{'title': 'Локон с Изумрудного моря', 'author': 'Сандерсон', 'isbns': ['978-5-389-22923-5'], 'only_isbn': False},),
-        # EBook(**{'title': 'Юми и укротитель кошмаров', 'author': 'Сандерсон', 'isbns': ['978-5-389-24688-1'], 'only_isbn': False},),
-        # EBook(**{'title': 'Озаренный Солнцем', 'author': 'Сандерсон', 'isbns': ['978-5-389-25650-7'], 'only_isbn': False},),
-        # EBook(**{'title': 'Вы чародей', 'author': 'Сандерсон', 'isbns': ['978-5-389-22922-8'], 'only_isbn': False},),
         EBook(**{'title': 'Легион', 'author': 'Сандерсон', 'isbns': ['978-5-389-16903-6'], 'only_isbn': False},),
         # EBook(**{'title': 'Тираны и мстители', 'author': 'Сандерсон', 'isbns': ['978-5-389-23257-0'], 'only_isbn': False},),
         EBook(**{'title': 'Устремленная в небо', 'author': 'Сандерсон', 'isbns': ['978-5-389-16425-3'], 'only_isbn': False},),
@@ -120,15 +130,14 @@ def main():
         EBook(**{'title': 'Песнь Сюзанны+', 'author': 'Кинг', 'isbns': ['978-5-17-133029-3'], 'only_isbn': False}),
         ] )
 
-    books = [
-    #     EBook("Преступление и наказание", "Достоевский"), 
-    #     EBook("Ключ из желтого металла", "Фрай"),
-        # EBook(**{'title': 'Колдун и кристалл+', 'author': 'Кинг', 'isbns': ['978-5-17-122057-0'], 'only_isbn': False}),
-        # EBook(**{'title': 'Волки Кальи+', 'author': 'Кинг', 'isbns': ['978-5-17-133881-7'], 'only_isbn': False}),
-        # EBook(**{'title': 'Песнь Сюзанны+', 'author': 'Кинг', 'isbns': ['978-5-17-133029-3'], 'only_isbn': False}),
-        # EBook(**{'title': 'Темная Башня', 'author': 'Кинг', 'isbns': ['978-5-17-136099-3'], 'only_isbn': False}),
-        # EBook(**{'title': 'Ветер сквозь замочную скважину', 'author': 'Кинг', 'isbns': ['978-5-17-135933-1'], 'only_isbn': False}),
-        ]
+    # books = [
+    #     # EBook("Преступление и наказание", "Достоевский"), 
+    #     # EBook("Ключ из желтого металла", "Фрай"),
+    #     EBook(**{'title': 'Колдун и кристалл+', 'author': 'Кинг', 'isbns': ['978-5-17-122057-0'], 'only_isbn': False}),
+    #     EBook(**{'title': 'Волки Кальи+', 'author': 'Кинг', 'isbns': ['978-5-17-133881-7'], 'only_isbn': False}),
+    #     EBook(**{'title': 'Песнь Сюзанны+', 'author': 'Кинг', 'isbns': ['978-5-17-133029-3'], 'only_isbn': False}),
+    #     # EBook(**{'title': 'Ветер сквозь замочную скважину', 'author': 'Кинг', 'isbns': ['978-5-17-135933-1'], 'only_isbn': False}),
+        # ]
 
     headless = True
     asyncio.run(async_work(books=books, headless = headless))

@@ -4,10 +4,11 @@ from .common import (
     utils,
     EBook, ShopCard,
     scroll_to_last, 
-    get_search_urls,
+    get_search_urls, 
+    tqdm,
     )
 
-async def _wb_currency(page):
+async def _wb_currency(page, error_prefix):
     """Переключаем валюту"""
     # TODO: потестить с единичным исполнением и сохранением статус в контексте
     try:
@@ -15,32 +16,23 @@ async def _wb_currency(page):
         await expect(country).to_be_attached()
         await page.wait_for_timeout(100)
         if await country.inner_text() != "KZT":
-            # print(f"Меняю валюту: |{await country.inner_text()}|")
+            # tqdm.write(f"Меняю валюту: |{await country.inner_text()}|")
             await country.click()
             kzt = page.locator('//input[@value="KZT"]/parent::label').first
-            await expect(kzt).to_be_attached(timeout=20000)
+            await expect(kzt).to_be_attached()#timeout=20000)
             await kzt.click()
             await page.wait_for_timeout(500)
         else:
-            # print("! Валюта уже норм")
+            # tqdm.write("! Валюта уже норм")
             pass
     except Exception as ex:
-        print("!!! Ошибка при переключении валюты:")
-        print(ex)
-
-async def _create_search_context(page, url):
-    """Попытка создать контекст поиска, низкая эффективность"""
-    await page.goto(url+"книги")
-    await page.wait_for_load_state("networkidle")
-    await page.wait_for_timeout(1000)
-    await page.goto(url+"преступление и наказание")
-    await page.wait_for_load_state("networkidle")
-    await page.wait_for_timeout(1000)
-    # page.context.my_data = {"wb" : True}
+        tqdm.write(f"{error_prefix} Ошибка при переключении валюты:")
+        tqdm.write(f"{ex}")
 
 async def wb(context, book: EBook) ->  list[ShopCard]:
     """Парсер wildberries, принимает контекст и объект книги, возвращает список объектов с 'карточками'"""
     store = 'WB'
+    error_prefix=f"\n{book.title} {store}:"
     all_items = []
     options = ""
     # options += "xsubject=381;3455;3456;5322&" #только ру книги 
@@ -60,23 +52,33 @@ async def wb(context, book: EBook) ->  list[ShopCard]:
             await page.goto(url[0])
             try:
                 await page.wait_for_load_state()
-                await page.wait_for_timeout(500)
-                # await page.wait_for_load_state("networkidle", timeout = 60000)
+                await page.wait_for_timeout(1000)
+                # await page.wait_for_load_state("networkidle", 
+                #                             #    timeout = 60000
+                #                                )
             except Exception as ex:
-                print(f"!!! {ex}")
+                tqdm.write(error_prefix)
+                tqdm.write("wait load page:")
+                tqdm.write(f"{ex}")
 
-            noresults = await page.locator("div.not-found-result").count()
+            await page.wait_for_timeout(500)
+            noresults = await page.locator("div.not-found-search").count()
             if noresults > 0:
-                # print("!пропуск итерации - нет результатов")
+                # tqdm.write("!пропуск итерации - нет результатов")
                 continue
 
             # проверяем и переключаем валюту
-            await _wb_currency(page)
+            await _wb_currency(page, error_prefix)
 
             # Парсим карточки товаров, сперва получаем "каталог"
             cat = page.locator('//div[@class="product-card-list"]').get_by_role('article')
             # Ищем последний элемент на странице, 
             await scroll_to_last(cat)
+            
+            # TODO del
+            # tqdm.write(f"{error_prefix}{await cat.count()}")
+            
+            # print(f"{error_prefix}{await cat.count()}")
 
             # Каталог прогружен, получаем все элементы и обходим по одному,
             # что по названию не подходит - пропускаем
@@ -96,7 +98,11 @@ async def wb(context, book: EBook) ->  list[ShopCard]:
         except Exception as ex:
             with open(f"./logs/_error.txt", 'a', encoding="utf8") as file:
                 file.write(url[0]+"\n")
-            print(ex)
+                file.write(f"{ex}\n\n")
+            tqdm.write(error_prefix)
+            tqdm.write(f"{ex}")
+            # input("\n!!! ЖДУ TЫК !!!")
+
 
     # TODO del
     # x = input("send anything") 
