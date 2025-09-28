@@ -1,8 +1,9 @@
-import os, sys
-os.chdir( os.path.abspath( os.path.dirname( os.path.dirname(__file__) ) ) )
-sys.path.append( os.getcwd() )
-
-# print(os.getcwd())
+if __name__  == '__main__':
+    # TODO для отладки
+    import os, sys
+    os.chdir( os.path.abspath( os.path.dirname( os.path.dirname(__file__) ) ) )
+    sys.path.append( os.getcwd() )
+    # print(os.getcwd())
 
 from parser.common import (
     async_playwright, expect,
@@ -18,7 +19,7 @@ from parser.ozon import ozon
 from parser.flip import flip
 from parser.kaspi import kaspi
 
-async def async_work(books: list[EBook], headless = False):
+async def __run__(fn, books: EBook|list[EBook], headless = True):
     async with async_playwright() as p:
         browser = await p.chromium.launch(
                     headless = headless,
@@ -50,8 +51,29 @@ async def async_work(books: list[EBook], headless = False):
                     is_mobile=False,
                                             )
         context.my_data = {}
-        zero_page = await context.new_page()
+        context.my_data["zero_page"] = await context.new_page()
+        
+        await fn(context, books)
 
+        await browser.close()
+
+
+async def one_book(context, book: EBook):
+        # results = await asyncio.gather(
+        results = await tqdm.gather(
+            wb(context = context, book = book),
+            flip(context = context, book = book),
+            kaspi(context = context, book = book),
+            ozon(context = context, book = book),
+                                desc=book.title, #tqdm options
+                                ncols=80, 
+                                leave=False,
+                                    )
+        for res in results:
+            book.add_prices(res)
+        
+
+async def list_books(context, books: list[EBook]):
         # Паралельный запуск
         pbar = tqdm(books, ncols=80, desc="Парсим книжки")
         for book in pbar:
@@ -59,89 +81,33 @@ async def async_work(books: list[EBook], headless = False):
             # print(book.title)
             # pbar.set_description(book.title)
 
-            # results = await asyncio.gather(
-            results = await tqdm.gather(
-                wb(context = context, book = book),
-                flip(context = context, book = book),
-                kaspi(context = context, book = book),
-                ozon(context = context, book = book),
-                                    desc=book.title, #tqdm options
-                                    ncols=80, 
-                                    leave=False,
-                                        )
-            # wblist = results[0]
-            # Последовательный запуск
-            # wblist = await wb(context=context, hardCover=True)
+            await one_book(context, book)
 
-
-            # x = input("send anything") 
-
-            for res in results:
-                book.add_prices(res)
-
-        page = await context.new_page()
-        
-        await browser.close()
+def run(books: EBook|list[EBook], headless = True):
+    if isinstance(books, list):
+         fn = list_books
+    if isinstance(books, EBook):
+         fn = one_book
+    asyncio.run(__run__(
+         fn = fn,
+         books = books,
+         headless = headless
+           ))
 
 def main():
-    from test_books import all_book
+    # TODO для отладки
+    books = EBook("Преступление и наказание", "Достоевский")
+    books = [
+    EBook("Преступление и наказание", "Достоевский"), 
+    EBook("Ключ из желтого металла", "Фрай"),
+    ]
+    asyncio.run(__run__(
+        #  fn = one_book,
+         fn = list_books,
+         books = books,
+        #  headless = False
+           ))
     
-    from shutil import rmtree
-    if os.path.exists("./logs/_urls.txt"):
-        os.remove("./logs/_urls.txt")
-    if os.path.exists(f"./tmp/SCREEN-{dt.now().strftime("%Y-%m-%d")}"):
-        rmtree(f"./tmp/SCREEN-{dt.now().strftime("%Y-%m-%d")}")
-    if os.path.exists(f"./logs/_nores"):
-        rmtree(f"./logs/_nores")
-    time_start = dt.now().strftime("%Y-%m-%d %H-%M")
-
-    books = []
-    for book in all_book:
-        books.append(EBook(**book))
-    books.extend( [
-        EBook(**{'title': 'Элантрис', 'author': 'Сандерсон', 'isbns': ['978-5-389-20277-1'], 'only_isbn': False},),
-        EBook(**{'title': 'Космер. Тайная история', 'author': 'Сандерсон', 'isbns': ['978-5-389-23731-5'], 'only_isbn': False},),
-        EBook(**{'title': 'Убийца войн', 'author': 'Сандерсон', 'isbns': ['978-5-389-20180-4'], 'only_isbn': False},),
-        EBook(**{'title': 'Легион', 'author': 'Сандерсон', 'isbns': ['978-5-389-16903-6'], 'only_isbn': False},),
-        # EBook(**{'title': 'Тираны и мстители', 'author': 'Сандерсон', 'isbns': ['978-5-389-23257-0'], 'only_isbn': False},),
-        EBook(**{'title': 'Устремленная в небо', 'author': 'Сандерсон', 'isbns': ['978-5-389-16425-3'], 'only_isbn': False},),
-        EBook(**{'title': 'Видящая звезды', 'author': 'Сандерсон', 'isbns': ['978-5-389-18074-1'], 'only_isbn': False},),
-        EBook(**{'title': 'Цитоник', 'author': 'Сандерсон', 'isbns': ['978-5-389-23598-4'], 'only_isbn': False},),
-        EBook(**{'title': 'Звездная Эскадрилья', 'author': 'Сандерсон', 'isbns': ['978-5-389-26184-6'], 'only_isbn': False},),
-
-        # EBook(**{'title': 'Сады Луны', 'author': 'Эриксон', 'isbns': [], 'only_isbn': False},),
-        # EBook(**{'title': 'Врата Мёртвого Дома', 'author': 'Эриксон', 'isbns': [], 'only_isbn': False},),
-        # EBook(**{'title': 'Врата смерти', 'author': 'Эриксон', 'isbns': [], 'only_isbn': False},),
-        # EBook(**{'title': 'Память льда', 'author': 'Эриксон', 'isbns': [], 'only_isbn': False},),
-        # EBook(**{'title': 'Дом Цепей', 'author': 'Эриксон', 'isbns': [], 'only_isbn': False},),
-        # EBook(**{'title': 'Полночный прилив', 'author': 'Эриксон', 'isbns': [], 'only_isbn': False},),
-        # EBook(**{'title': 'Полуночный Прилив', 'author': 'Эриксон', 'isbns': [], 'only_isbn': False},),
-        # EBook(**{'title': 'Охотники за костями', 'author': 'Эриксон', 'isbns': [], 'only_isbn': False},),
-        # EBook(**{'title': 'Буря Жнеца', 'author': 'Эриксон', 'isbns': [], 'only_isbn': False},),
-        # EBook(**{'title': 'Дань псам', 'author': 'Эриксон', 'isbns': [], 'only_isbn': False},),
-        # EBook(**{'title': 'Пыль грёз', 'author': 'Эриксон', 'isbns': [], 'only_isbn': False},),
-        # EBook(**{'title': 'Пыль Снов', 'author': 'Эриксон', 'isbns': [], 'only_isbn': False},),
-        # EBook(**{'title': 'Увечный бог', 'author': 'Эриксон', 'isbns': [], 'only_isbn': False},),
-
-        EBook("Новый Дозор", "Лукьяненко", ['978-5-271-41900-3', '978-5-17-118480-3']),
-        EBook("Шестой Дозор", "Лукьяненко", ['978-5-17-088817-7', '978-5-17-118536-7']),
-        EBook(**{'title': 'Колдун и кристалл+', 'author': 'Кинг', 'isbns': ['978-5-17-122057-0'], 'only_isbn': False}),
-        EBook(**{'title': 'Волки Кальи+', 'author': 'Кинг', 'isbns': ['978-5-17-133881-7'], 'only_isbn': False}),
-        EBook(**{'title': 'Песнь Сюзанны+', 'author': 'Кинг', 'isbns': ['978-5-17-133029-3'], 'only_isbn': False}),
-        ] )
-
-    # books = [
-    #     # EBook("Преступление и наказание", "Достоевский"), 
-    #     # EBook("Ключ из желтого металла", "Фрай"),
-    #     EBook(**{'title': 'Колдун и кристалл+', 'author': 'Кинг', 'isbns': ['978-5-17-122057-0'], 'only_isbn': False}),
-    #     EBook(**{'title': 'Волки Кальи+', 'author': 'Кинг', 'isbns': ['978-5-17-133881-7'], 'only_isbn': False}),
-    #     EBook(**{'title': 'Песнь Сюзанны+', 'author': 'Кинг', 'isbns': ['978-5-17-133029-3'], 'only_isbn': False}),
-    #     # EBook(**{'title': 'Ветер сквозь замочную скважину', 'author': 'Кинг', 'isbns': ['978-5-17-135933-1'], 'only_isbn': False}),
-        # ]
-
-    headless = True
-    asyncio.run(async_work(books=books, headless = headless))
-    # x = input("send anything") 
     for b in books:
         b.sort_by_price()
         text = f"{b.title}: {len(b.prices)}\n"
@@ -153,10 +119,7 @@ def main():
                 # print(p.get_url())
                 file.write(f"{p.price}: {p.get_url()} ({p.type_search})\n")
             file.write(f"\n")
-
-
-    print(time_start)
-    print(dt.now().strftime("%Y-%m-%d %H-%M"))
+    pass
 
 if __name__  == '__main__':
     main()
