@@ -6,20 +6,17 @@ if __name__  == '__main__':
     # print(os.getcwd())
 
 from parser.common import (
-    async_playwright, expect,
-    asyncio, datetime as dt,
-    utils,
-    EBook, ShopCard,
-    scroll_to_last, 
+    async_playwright,
+    asyncio, dt,
+    EBook,
     tqdm,
     )
 
-from parser.wb import wb
-from parser.ozon import ozon
-from parser.flip import flip
-from parser.kaspi import kaspi
+from parser.wb import main as wb
+from parser.ozon import main as ozon
+from parser.flip import main as flip
+from parser.kaspi import main as kaspi
 
-from parser.test_ozon import ozon as t_ozon
 
 async def __run__(fn, books: EBook|list[EBook], headless = True):
     async with async_playwright() as p:
@@ -80,7 +77,6 @@ async def one_book(context, book: EBook):
             kaspi(context = context, book = book),
             ozon(context = context, book = book),
 
-            # t_ozon(context = context, book = book),
                                 desc=book.title, #tqdm options
                                 ncols=80, 
                                 leave=False,

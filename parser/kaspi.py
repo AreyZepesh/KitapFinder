@@ -1,15 +1,16 @@
 from .common import (
-    async_playwright, expect,
-    asyncio, datetime as dt,
-    utils,
-    EBook, ShopCard,
-    scroll_to_last,
-    get_search_urls, 
+    expect,
+    EBook, ShopCard, ParserConfig,
+    run_parser,
     tqdm,
     )
-import copy
 
-async def _kaspi_city(page, error_prefix):
+async def _noresults(page):
+    noresults = await page.locator("h1.search-result__title-notfound").count()
+    if noresults > 0:
+        return True
+
+async def _city(page, error_prefix):
     """Переключаем город или закрываем"""
     try:
         dialog = page.locator('div.current-location__dialog').first
@@ -27,81 +28,39 @@ async def _kaspi_city(page, error_prefix):
         tqdm.write(error_prefix)
         tqdm.write("Ошибка при переключении города:")
         tqdm.write(f"{ex}")
+    
+async def _card_title(card):
+    return await card.locator("a.item-card__name-link").first.inner_text()
 
-async def kaspi(context, book: EBook) ->  list[ShopCard]:
-    """Парсер ozon, принимает контекст и объект книги, возвращает список объектов с 'карточками'"""
-    store = 'kaspi'
-    error_prefix=f"\n{book.title} {store}:"
-    all_items = []
-    base_url = f"https://kaspi.kz/shop/search/?q=:availableInZone:551010000:category:Books&text="
-    ""
+async def _card_price(card):
+    return ( await card.locator("span.item-card__prices-price" ).first.inner_text() )
 
-    # TODO затычка, так как на каспи очень мало иcбн,
-    # до этого было только то, что в else
+async def _card_article(card):
+    return await card.get_attribute("data-product-id")
+
+async def main(context, book: EBook) ->  list[ShopCard]:
+    parser_config = ParserConfig(
+        store = "kaspi",
+        base_url = f"https://kaspi.kz/shop/search/?q=:availableInZone:551010000:category:Books&text=",
+
+        fn_noresults = _noresults, 
+        fn_city = _city,
+
+        get_cat_locator = lambda page: page.locator('xpath=//div[@data-product-id]'),
+
+        get_card_title = _card_title, 
+        get_card_price = _card_price,
+        get_card_article = _card_article,
+        )
+    return await run_parser(context, book, parser_config)
+
+def _no_only_isbn_urls(base_url, book):
+    import copy
+    from .common import get_search_urls
     if book.only_isbn:
         book_k = copy.deepcopy(book)
         book_k.only_isbn = False
         search_urls = get_search_urls(base_url, book_k) 
     else:
         search_urls = get_search_urls(base_url, book)
-    # search_urls = get_search_urls(base_url, book)
-
-    page = await context.new_page()
-
-    for url in search_urls:
-        try:
-            await page.goto(url[0])
-            try:
-                await page.wait_for_load_state()
-                await page.wait_for_timeout(500)
-                # await page.wait_for_load_state("networkidle", timeout = 60000)
-            except Exception as ex:
-                tqdm.write(error_prefix)
-                tqdm.write("wait load page:")
-                tqdm.write(f"{ex}")
-
-            await _kaspi_city(page, error_prefix)
-
-            noresults = await page.locator("h1.search-result__title-notfound").count()
-            if noresults > 0:
-                # tqdm.write("Нет результата")
-                continue
-
-
-            # Парсим карточки товаров, сперва получаем "каталог"
-            cat = page.locator('xpath=//div[@data-product-id]')
-            await page.wait_for_timeout(500)
-
-            # Ищем последний элемент на странице, 
-            await scroll_to_last(cat)
- 
-            # Каталог прогружен, получаем все элементы и обходим по одному,
-            # что по названию не подходит - пропускаем
-            cat = await cat.all()
-            for card in cat:
-                await card.focus()
-                card_title = await card.locator("a.item-card__name-link").first.inner_text()
-                if book.is_TITLE_in_STR(card_title):
-                    price = utils.normalizePrice(
-                        # ( await card.locator("div.item-card__debet " ).first.inner_text() )
-                        ( await card.locator("span.item-card__prices-price" ).first.inner_text() )
-                                                        )
-                    article = await card.get_attribute("data-product-id")
-                    screen_file = f"./tmp/SCREEN-{dt.now().strftime("%Y-%m-%d")}/{book.title.replace(":","")}/{store}_{price}_{article}.png"
-                    all_items.append(ShopCard(price=price, store=store, article=article, screen_file=screen_file, type_search=url[-1]))
-                    # # TODO Убрать коммент скриншота
-                    await card.screenshot(path=screen_file)
-
-        except Exception as ex:
-            with open(f"./logs/_error.txt", 'a', encoding="utf8") as file:
-                file.write(url[0]+"\n")
-                file.write(f"{ex}\n\n")
-            tqdm.write(error_prefix)
-            tqdm.write(f"{ex}")
-            # input("\n!!! ЖДУ TЫК !!!")
-
-            # raise ex
-
-    # x = input("send anything") 
-    await page.close()
-    return all_items
+    return search_urls

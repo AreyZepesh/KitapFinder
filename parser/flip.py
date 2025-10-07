@@ -1,95 +1,34 @@
 from .common import (
-    async_playwright, expect,
-    asyncio, datetime as dt,
-    utils,
-    EBook, ShopCard,
-    scroll_to_last,
-    get_search_urls, 
+    expect,
+    EBook, ShopCard, ParserConfig,
+    run_parser,
     tqdm,
     )
 
-async def flip(context, book: EBook) ->  list[ShopCard]:
-    """Парсер ozon, принимает контекст и объект книги, возвращает список объектов с 'карточками'"""
-    store = 'flip'
-    error_prefix=f"\n{book.title} {store}:"
-    all_items = []
-    options = ""
-    # options += "filter-a5059=2&" # твердая обложка
-    base_url = f"https://www.flip.kz/search?subsection=1&filter-i101=1&order=price.up&{options}search="
-    search_urls = get_search_urls(base_url, book)
+async def _noresults(page):
+    noresults = await page.locator("h2#search-not-result").count()
+    if noresults > 0:
+        return True
+    
+async def _card_title(card):
+    return await card.locator("div.title").first.inner_text()
 
-    page = await context.new_page()
+async def _card_price(card):
+    return ( await card.locator("div.price" ).first.inner_text() ).split("₸")[0]
 
-    for url in search_urls:
-        try:
-            await page.goto(url[0])
-            # # один день была ошибка, с типо страница не загрузилась, тестируем обход:
-            # try:
-            #     await page.goto(url[0])
-            # except Exception as ex1:
-            #     tqdm.write(error_prefix)
-            #     tqdm.write(f"{ex1}")
-            #     tqdm.write("Ошибка при попытке загрузить страницу, пытаемся, ожидая domcontentloaded")
-            #     try:
-            #         await page.goto(url[0], wait_until="domcontentloaded")
-            #     except Exception as ex2:
-            #         tqdm.write(f"{ex2}")
-            #         tqdm.write("Ошибка при попытке загрузить страницу, пытаемся, ожидая commit")
-            #         try:
-            #             await page.goto(url[0], wait_until="commit")
-            #         except Exception as ex3:
-            #             tqdm.write(f"{ex3}")
-            #             tqdm.write(f"Ваще пипец, вырубаем)")
-            #             raise ex3
+async def _card_article(card):
+    return (await card.locator("a.product[data-event-item-id]").first.get_attribute("data-event-item-id"))
 
-            #     finally:
-            #         tqdm.write(f"{'='*50}")
+async def main(context, book: EBook) ->  list[ShopCard]:
+    parser_config = ParserConfig(
+        store = "flip",
+        base_url = "https://www.flip.kz/search?subsection=1&filter-i101=1&order=price.up&search=",
+        fn_noresults = _noresults, 
 
-                
-            try:
-                await page.wait_for_load_state()
-                await page.wait_for_timeout(500)
-                # await page.wait_for_load_state("networkidle", timeout = 60000)
-            except Exception as ex:
-                tqdm.write(error_prefix)
-                tqdm.write("wait load page:")
-                tqdm.write(f"{ex}")
+        get_cat_locator = lambda page: page.locator('div.new-product'),
 
-            noresults = await page.locator("h2#search-not-result").count()
-            if noresults > 0:
-                continue
-
-            # # Парсим карточки товаров, сперва получаем "каталог"
-            cat = page.locator('div.new-product')
-            # # Ищем последний элемент на странице, 
-            await scroll_to_last(cat)
- 
-            # Каталог прогружен, получаем все элементы и обходим по одному,
-            # что по названию не подходит - пропускаем
-            cat = await cat.all()
-            for card in cat:
-                card_title = await card.locator("div.title").first.inner_text()
-                if book.is_TITLE_in_STR(card_title):
-                    price = utils.normalizePrice(
-                        ( await card.locator("div.price" ).first.inner_text() ).split("₸")[0]
-                                                        )
-                    # article = (await card.get_by_role("link").first.get_attribute("href")).split('=')[-1]
-                    article = (await card.locator("a.product[data-event-item-id]").first.get_attribute("data-event-item-id"))
-                    screen_file = f"./tmp/SCREEN-{dt.now().strftime("%Y-%m-%d")}/{book.title.replace(":","")}/{store}_{price}_{article}.png"
-                    all_items.append(ShopCard(price=price, store=store, article=article, screen_file=screen_file, type_search=url[-1]))
-                    # # TODO Убрать коммент скриншота
-                    await card.screenshot(path=screen_file)
-
-        except Exception as ex:
-            with open(f"./logs/_error.txt", 'a', encoding="utf8") as file:
-                file.write(url[0]+"\n")
-                file.write(f"{ex}\n\n")
-            tqdm.write(error_prefix)
-            tqdm.write(f"{ex}")
-            # input("\n!!! ЖДУ TЫК !!!")
-
-            # raise ex
-
-    # x = input("send anything") 
-    await page.close()
-    return all_items
+        get_card_title = _card_title, 
+        get_card_price = _card_price,
+        get_card_article = _card_article,
+        )
+    return await run_parser(context, book, parser_config)

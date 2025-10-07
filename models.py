@@ -1,4 +1,5 @@
 from dataclasses import dataclass, field, asdict
+from typing import Callable, Any
 from collections import defaultdict
 
 STORE_URLS= {
@@ -15,6 +16,7 @@ class ShopCard():
     article: str = field(compare=False)
     screen_file: str = field(compare=False)
     type_search: str = field(default=None, compare=False)
+    # x: Any = field(default=None) # TODO тестовое поле
 
     def to_dict(self):
         return asdict(self)
@@ -120,4 +122,31 @@ class EBook():
             return True
         return False
 
-#
+
+@dataclass
+class ParserConfig():
+    def get(self, key, default = None):
+        return getattr(self, key, default)
+
+    @staticmethod
+    async def _noop(*args, **kwargs):
+        """Пустая функция по умолчанию (ничего не делает, no operation)."""
+        pass
+
+    store: str = field(default="")
+    base_url: str = field(default="")
+    wait_for_load_stat: str = field(default=None)
+    wait_for_load_time: int = field(default=500)
+
+
+    fn_extra_goto: Callable[[Any], None] = field(default=_noop) # для дополнения или замены урл
+    fn_noresults: Callable[[Any], bool] = field(default=_noop)
+    fn_currency: Callable[[Any], None] = field(default=_noop)
+    fn_city: Callable[[Any], None] = field(default=_noop)
+
+    get_cat_locator: Callable[[Any], Any] = field(default=_noop)
+
+    get_card_title: Callable[[Any], str] = field(default=_noop)
+    get_card_price: Callable[[Any], str] = field(default=_noop)
+    get_card_article: Callable[[Any], str] = field(default=_noop)
+    
