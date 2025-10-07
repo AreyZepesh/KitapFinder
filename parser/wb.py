@@ -75,10 +75,6 @@ async def wb(context, book: EBook) ->  list[ShopCard]:
             # Ищем последний элемент на странице, 
             await scroll_to_last(cat)
             
-            # TODO del
-            # tqdm.write(f"{error_prefix}{await cat.count()}")
-            
-            # print(f"{error_prefix}{await cat.count()}")
 
             # Каталог прогружен, получаем все элементы и обходим по одному,
             # что по названию не подходит - пропускаем

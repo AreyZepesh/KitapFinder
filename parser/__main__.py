@@ -1,6 +1,6 @@
+import os, sys
 if __name__  == '__main__':
     # TODO для отладки
-    import os, sys
     os.chdir( os.path.abspath( os.path.dirname( os.path.dirname(__file__) ) ) )
     sys.path.append( os.getcwd() )
     # print(os.getcwd())
@@ -19,6 +19,8 @@ from parser.ozon import ozon
 from parser.flip import flip
 from parser.kaspi import kaspi
 
+from parser.test_ozon import ozon as t_ozon
+
 async def __run__(fn, books: EBook|list[EBook], headless = True):
     async with async_playwright() as p:
         browser = await p.chromium.launch(
@@ -33,6 +35,11 @@ async def __run__(fn, books: EBook|list[EBook], headless = True):
                             ]
                                             )
         
+        # загружаем состояние контекста
+        storage_state = None
+        if os.path.exists("./parser/state.json"):
+            storage_state = "./parser/state.json"
+
         # Контекст задается для все сессии. После некоторые вещи сменить не выйдет. 
         # Например разрешение 1600*900 отлично подходит для wb, а для других? TODO
         context = await browser.new_context(
@@ -49,11 +56,18 @@ async def __run__(fn, books: EBook|list[EBook], headless = True):
                     # java_script_enabled=True,
                     # device_scale_factor=1,
                     is_mobile=False,
+                    storage_state = storage_state,
                                             )
+
+
+
         context.my_data = {}
         context.my_data["zero_page"] = await context.new_page()
         
         await fn(context, books)
+
+        # сохраняем состояние контекста
+        await context.storage_state(path="./parser/state.json")
 
         await browser.close()
 
@@ -65,6 +79,8 @@ async def one_book(context, book: EBook):
             flip(context = context, book = book),
             kaspi(context = context, book = book),
             ozon(context = context, book = book),
+
+            # t_ozon(context = context, book = book),
                                 desc=book.title, #tqdm options
                                 ncols=80, 
                                 leave=False,
@@ -101,12 +117,10 @@ def main():
     EBook("Преступление и наказание", "Достоевский"), 
     EBook("Ключ из желтого металла", "Фрай"),
     ]
-    asyncio.run(__run__(
-        #  fn = one_book,
-         fn = list_books,
-         books = books,
-        #  headless = False
-           ))
+    run(
+        books = books,
+        headless = False
+        )
     
     for b in books:
         b.sort_by_price()

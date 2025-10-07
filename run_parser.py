@@ -1,10 +1,11 @@
 from models import EBook, ShopCard
 from test_books import all_book
+from utils import save_objects
 
 from shutil import rmtree
 import os
 from datetime import datetime as dt
-from parser import run, one_book, list_books
+from parser import run
 
 def main():
     if os.path.exists("./logs/_urls.txt"):
@@ -50,14 +51,14 @@ def main():
         EBook(**{'title': 'Песнь Сюзанны+', 'author': 'Кинг', 'isbns': ['978-5-17-133029-3'], 'only_isbn': False}),
         ] )
 
-    books = [
-        EBook("Преступление и наказание", "Достоевский"), 
-        EBook("Ключ из желтого металла", "Фрай"),
-        # EBook(**{'title': 'Колдун и кристалл+', 'author': 'Кинг', 'isbns': ['978-5-17-122057-0'], 'only_isbn': False}),
-        # EBook(**{'title': 'Волки Кальи+', 'author': 'Кинг', 'isbns': ['978-5-17-133881-7'], 'only_isbn': False}),
-        # EBook(**{'title': 'Песнь Сюзанны+', 'author': 'Кинг', 'isbns': ['978-5-17-133029-3'], 'only_isbn': False}),
-        # EBook(**{'title': 'Ветер сквозь замочную скважину', 'author': 'Кинг', 'isbns': ['978-5-17-135933-1'], 'only_isbn': False}),
-        ]
+    # books = [
+    #     EBook("Преступление и наказание", "Достоевский"), 
+    #     EBook("Ключ из желтого металла", "Фрай"),
+    #     # EBook(**{'title': 'Колдун и кристалл+', 'author': 'Кинг', 'isbns': ['978-5-17-122057-0'], 'only_isbn': False}),
+    #     # EBook(**{'title': 'Волки Кальи+', 'author': 'Кинг', 'isbns': ['978-5-17-133881-7'], 'only_isbn': False}),
+    #     # EBook(**{'title': 'Песнь Сюзанны+', 'author': 'Кинг', 'isbns': ['978-5-17-133029-3'], 'only_isbn': False}),
+    #     # EBook(**{'title': 'Ветер сквозь замочную скважину', 'author': 'Кинг', 'isbns': ['978-5-17-135933-1'], 'only_isbn': False}),
+    #     ]
 
     # books = EBook("Преступление и наказание", "Достоевский")
 
@@ -80,6 +81,8 @@ def main():
 
     print(time_start)
     print(dt.now().strftime("%Y-%m-%d %H-%M"))
+
+    save_objects("./tmp/data.pkl", books)
 
 
 if __name__  == '__main__':
