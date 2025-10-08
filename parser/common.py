@@ -11,7 +11,7 @@ import utils
 from models import EBook, ShopCard, ParserConfig
 
 
-async def scroll_to_last(elem_locator, ozon_mode = False):
+async def scroll_to_last(elem_locator, strore = None):
         """Крутим к последнему элементу, если 5 раз колво не изменилось - далее\n
         ozon_mode ограничевает прокрутку тремя первыми блоками"""
         prev_count = 0
@@ -29,7 +29,7 @@ async def scroll_to_last(elem_locator, ozon_mode = False):
                 retries = 0
             prev_count = count
 
-            if ozon_mode:
+            if strore == "ozon":
                 if not ozon_cat_size:
                     ozon_cat_size = count
                 elif count >= ozon_cat_size*3:
@@ -113,12 +113,12 @@ async def run_parser(context, book: EBook, parser_config: ParserConfig) ->  list
             # Парсим карточки товаров, сперва получаем "каталог"
             cat = parser_config.get_cat_locator(page)
             # Ищем последний элемент на странице, 
-            await scroll_to_last(cat, ozon_mode=True)
+            await scroll_to_last(cat, strore=parser_config.store)
  
             # Каталог прогружен, получаем все элементы и обходим по одному,
             # что по названию не подходит - пропускаем
             cat = await cat.all()
-            await page.wait_for_load_state("networkidle")
+            await parser_config.fn_extra_wait_cat(page)
 
             for card in cat:
                 try:
@@ -136,12 +136,18 @@ async def run_parser(context, book: EBook, parser_config: ParserConfig) ->  list
                     tqdm.write(f"{ex}")
 
         except Exception as ex:
+            import traceback
+            error_text = traceback.format_exc()
             with open(f"./logs/_error.txt", 'a', encoding="utf8") as file:
                 file.write(url[0]+"\n")
+                file.write(f"{error_text}\n")
                 file.write(f"{ex}\n\n")
             tqdm.write(error_prefix)
+            # tqdm.write(f"{error_text}")
             tqdm.write(f"{ex}")
-            # input("\n!!! ЖДУ TЫК !!!")
+            # tqdm.write(f"{parser_config}")
+            # raise ex
+            # input("!!!!!!!!!!!!!!!!!!!!!")
 
     # TODO del
     # x = input("send anything") 

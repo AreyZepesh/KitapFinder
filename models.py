@@ -146,6 +146,8 @@ class ParserConfig():
 
     get_cat_locator: Callable[[Any], Any] = field(default=_noop)
 
+    fn_extra_wait_cat: Callable[[Any], None] = field(default=_noop) # для доп ожидания
+
     get_card_title: Callable[[Any], str] = field(default=_noop)
     get_card_price: Callable[[Any], str] = field(default=_noop)
     get_card_article: Callable[[Any], str] = field(default=_noop)

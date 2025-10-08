@@ -80,6 +80,9 @@ async def _city(page, error_prefix):
             continue
     await page.wait_for_timeout(1000)
 
+async def _extra_wait_cat(page):
+    await page.wait_for_load_state("networkidle")
+
 async def _card_title(card):
     return await card.locator("xpath=.//a[@href]//span[contains(@class, 'tsBody500Medium')]").first.inner_text(timeout = 3000)
 
@@ -101,6 +104,7 @@ async def main(context, book: EBook) ->  list[ShopCard]:
         fn_currency = _currency,
         fn_city = _city,
         get_cat_locator = lambda page: page.locator('xpath=//div[@data-index and @class]'),
+        fn_extra_wait_cat = _extra_wait_cat,
 
         get_card_title = _card_title, 
         get_card_price = _card_price,
