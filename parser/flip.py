@@ -19,10 +19,18 @@ async def _card_price(card):
 async def _card_article(card):
     return (await card.locator("a.product[data-event-item-id]").first.get_attribute("data-event-item-id"))
 
+ #TODO photo
+async def _card_photo(card, page):
+    img_url = await card.locator("img.image").first.get_attribute("src")
+    img_url = img_url.replace("//", "http://")
+    response = await page.request.get(img_url)
+    return await response.body()
+
 async def main(context, book: EBook) ->  list[ShopCard]:
     parser_config = ParserConfig(
         store = "flip",
-        base_url = "https://www.flip.kz/search?subsection=1&filter-i101=1&order=price.up&search=",
+        # base_url = "https://www.flip.kz/search?subsection=1&filter-i101=1&order=price.up&search=", # без листания результаты могут уехать, например Достоевский
+        base_url = "https://www.flip.kz/search?subsection=1&filter-i101=1&search=",
         fn_noresults = _noresults, 
 
         get_cat_locator = lambda page: page.locator('div.new-product'),
@@ -30,5 +38,6 @@ async def main(context, book: EBook) ->  list[ShopCard]:
         get_card_title = _card_title, 
         get_card_price = _card_price,
         get_card_article = _card_article,
+        get_card_photo = _card_photo, #TODO photo
         )
     return await run_parser(context, book, parser_config)

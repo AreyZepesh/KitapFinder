@@ -127,13 +127,26 @@ async def run_parser(context, book: EBook, parser_config: ParserConfig) ->  list
                         price = utils.normalizePrice( await parser_config.get_card_price(card) )
                         article = await parser_config.get_card_article(card)
                         screen_file = f"./tmp/SCREEN-{dt.now().strftime("%Y-%m-%d")}/{book.title.replace(":","")}/{parser_config.store}_{price}_{article}.png"
-                        all_items.append(ShopCard(price=price, store=parser_config.store, article=article, screen_file=screen_file, type_search=url[-1]))
-                        await card.screenshot(path=screen_file)
+                        photo_b = await parser_config.get_card_photo(card, page) #TODO photo
+                        all_items.append(ShopCard(
+                            price=price, 
+                            store=parser_config.store, 
+                            article=article, 
+                            screen_file=screen_file, 
+                            type_search=url[-1],
+                            photo_bytes = photo_b #TODO photo
+                            ))
+                        # await card.screenshot(path=screen_file)
                         # TODO Убрать коммент скриншота
                 except Exception as ex:
+                    import traceback
+                    error_text = traceback.format_exc()
                     tqdm.write(error_prefix)
                     tqdm.write("Ошибка при обработке одной карточки:")
                     tqdm.write(f"{ex}")
+                    tqdm.write(f"{error_text}")
+                    input()
+
 
         except Exception as ex:
             import traceback

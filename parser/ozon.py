@@ -92,6 +92,12 @@ async def _card_price(card):
 async def _card_article(card):
     return (await card.get_by_role("link").first.get_attribute("href")).split('/?')[0].split('-')[-1]
 
+ #TODO photo
+async def _card_photo(card, page):
+    img_url = await card.locator("img").first.get_attribute("src")
+    # input(f"\n\n{img_url}")
+    response = await page.request.get(img_url)
+    return await response.body()
 
 async def main(context, book: EBook) ->  list[ShopCard]:
     parser_config = ParserConfig(
@@ -109,5 +115,7 @@ async def main(context, book: EBook) ->  list[ShopCard]:
         get_card_title = _card_title, 
         get_card_price = _card_price,
         get_card_article = _card_article,
+        get_card_photo = _card_photo, #TODO photo
+
         )
     return await run_parser(context, book, parser_config)

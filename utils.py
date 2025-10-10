@@ -14,3 +14,13 @@ def load_objects(path: str) -> list:
     with open(path, "rb") as file:
         data = pickle.load(file)
     return data
+
+def save_image_from_bytes(image_bytes, path):
+    from PIL import Image
+    from io import BytesIO
+
+    # Загружаем байты в объект Image
+    img = Image.open(BytesIO(image_bytes))
+
+    # Сохраняем как PNG
+    img.save(f"{path}.png", format="PNG")

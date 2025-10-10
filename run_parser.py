@@ -1,6 +1,6 @@
 from models import EBook, ShopCard
 from test_books import all_book
-from utils import save_objects
+from utils import save_objects, save_image_from_bytes
 
 from shutil import rmtree
 import os
@@ -76,6 +76,11 @@ def main():
                 # print(p.to_dict())
                 # print(p.get_url())
                 file.write(f"{p.price}: {p.get_url()} ({p.type_search})\n")
+                
+                #TODO photo
+                from pathlib import Path
+                Path(p.screen_file).parent.mkdir(parents=True, exist_ok=True)
+                save_image_from_bytes(p.photo_bytes, p.screen_file) 
             file.write(f"\n")
 
 

@@ -63,6 +63,9 @@ async def __run__(fn, books: EBook|list[EBook], headless = True):
         
         await fn(context, books)
 
+        # TODO 
+        # input("Ручные изменения!")
+
         # сохраняем состояние контекста
         await context.storage_state(path="./parser/state.json")
 
