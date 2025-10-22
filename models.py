@@ -1,6 +1,7 @@
 from dataclasses import dataclass, field, asdict
 from typing import Callable, Any
 from collections import defaultdict
+from itertools import combinations
 
 STORE_URLS= {
     "wb": "https://global.wildberries.ru/catalog/{article}/detail.aspx",
@@ -16,8 +17,15 @@ class ShopCard():
     article: str = field(compare=False)
     screen_file: str = field(compare=False)
     type_search: str = field(default=None, compare=False)
-    photo_bytes: bytes = field(default_factory=bytes, compare=False) #TODO photo
+    # photo_bytes: bytes = field(default_factory=bytes, compare=False) #TODO photo
+    cover_bytes: bytes = field(default_factory=bytes, compare=False) #TODO photo
     # x: Any = field(default=None) # TODO тестовое поле
+
+    # def __str__(self):
+    #     return f"\nprice: {self.price}, store: {self.store}, article: {self.article}, url: {self.get_url()}"
+    
+    # def __repr__(self):
+    #     return self.__str__()
 
     def to_dict(self):
         return asdict(self)
@@ -91,6 +99,10 @@ class EBook():
                 temp_price.extend([card for card in cards if card.price == min_price])
         self.prices = temp_price
 
+    def optimize_stores_by_cover(self):
+        from services.ebook_services import optimize_stores_by_cover
+        self.prices = optimize_stores_by_cover(self.prices)
+        self.sort_by_price() 
 
     @staticmethod
     def _str_from_comparison(text: str) -> str:

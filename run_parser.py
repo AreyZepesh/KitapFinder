@@ -46,7 +46,7 @@ def main():
 
         EBook("Новый Дозор", "Лукьяненко", ['978-5-271-41900-3', '978-5-17-118480-3']),
         EBook("Шестой Дозор", "Лукьяненко", ['978-5-17-088817-7', '978-5-17-118536-7']),
-        EBook(**{'title': 'Колдун и кристалл+', 'author': 'Кинг', 'isbns': ['978-5-17-122057-0'], 'only_isbn': False}),
+        # EBook(**{'title': 'Колдун и кристалл+', 'author': 'Кинг', 'isbns': ['978-5-17-122057-0'], 'only_isbn': False}),
         EBook(**{'title': 'Волки Кальи+', 'author': 'Кинг', 'isbns': ['978-5-17-133881-7'], 'only_isbn': False}),
         EBook(**{'title': 'Песнь Сюзанны+', 'author': 'Кинг', 'isbns': ['978-5-17-133029-3'], 'only_isbn': False}),
         ] )
@@ -76,12 +76,13 @@ def main():
                 # print(p.to_dict())
                 # print(p.get_url())
                 file.write(f"{p.price}: {p.get_url()} ({p.type_search})\n")
-                
-                #TODO photo
-                from pathlib import Path
-                Path(p.screen_file).parent.mkdir(parents=True, exist_ok=True)
-                save_image_from_bytes(p.photo_bytes, p.screen_file) 
             file.write(f"\n")
+
+        # for p in b.prices:
+        #     #TODO photo
+        #     from pathlib import Path
+        #     Path(p.screen_file).parent.mkdir(parents=True, exist_ok=True)
+        #     save_image_from_bytes(p.cover_bytes, p.screen_file) 
 
 
     print(time_start)
