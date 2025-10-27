@@ -54,6 +54,18 @@ def get_search_urls(base_url, book: EBook) -> list[str]:
             file.write(book.title + " " + url[0] + "\n")
     return search_urls
 
+async def image_from_response(response):
+    content_type = response.headers.get("content-type", "").lower()
+
+    if not content_type.startswith("image/"):
+        # Можно логировать или сохранять ошибку
+        return None
+
+    # Проверяем статус
+    if not response.ok:
+        return None
+    
+    return await response.body()
 
 async def run_parser(context, book: EBook, parser_config: ParserConfig) ->  list[ShopCard]:
     """Парсер, принимает контекст и объект книги, возвращает список объектов с 'карточками'"""
@@ -121,20 +133,21 @@ async def run_parser(context, book: EBook, parser_config: ParserConfig) ->  list
             await parser_config.fn_extra_wait_cat(page)
 
             for card in cat:
+                # TODO ретраить при ошибке?
                 try:
                     card_title = await parser_config.get_card_title(card)
                     if book.is_TITLE_in_STR(card_title):
                         price = utils.normalizePrice( await parser_config.get_card_price(card) )
                         article = await parser_config.get_card_article(card)
                         screen_file = f"./tmp/SCREEN-{dt.now().strftime("%Y-%m-%d")}/{book.title.replace(":","")}/{parser_config.store}_{price}_{article}.png"
-                        # photo_b = await parser_config.get_card_photo(card, page) #TODO photo
+                        photo_b = await image_from_response( await parser_config.get_card_photo(card, page) ) #TODO photo
                         all_items.append(ShopCard(
                             price=price, 
                             store=parser_config.store, 
                             article=article, 
                             screen_file=screen_file, 
                             type_search=url[-1],
-                            # cover_bytes = photo_b #TODO photo
+                            cover_bytes = photo_b #TODO photo
                             ))
                         await card.screenshot(path=screen_file)
                         # TODO Убрать коммент скриншота

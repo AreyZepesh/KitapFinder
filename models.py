@@ -104,6 +104,11 @@ class EBook():
         self.prices = optimize_stores_by_cover(self.prices)
         self.sort_by_price() 
 
+    def save_covers(self):
+        from utils import save_image_from_bytes
+        for card in self.prices:
+            save_image_from_bytes(card.cover_bytes, f"{card.screen_file}-cover")
+
     @staticmethod
     def _str_from_comparison(text: str) -> str:
         """Удаляет всё, кроме букв, цифр и пробелов, нормализует регистр"""

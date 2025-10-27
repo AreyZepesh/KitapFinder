@@ -102,7 +102,9 @@ def _connected_indices(items, func, **kwargs):
         # if j in detected:
         #     continue
 
-        # if func(items[i].photo_bytes, items[j].photo_bytes, **kwargs):
+        if items[i].cover_bytes is None or items[j].cover_bytes is None:
+            continue
+        
         if func(items[i].cover_bytes, items[j].cover_bytes, **kwargs):
             connections[i].add(j)
             connections[j].add(i)
