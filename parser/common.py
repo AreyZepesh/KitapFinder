@@ -10,6 +10,32 @@ from tqdm.asyncio import tqdm
 import utils
 from models import EBook, ShopCard, ParserConfig
 
+def try_and_log_decor(header: str, repeats: int = 1):
+    def decorator(fn):
+        from functools import wraps
+        @wraps(fn)
+        def wrapper(*args, **kwargs):
+            for trys in range(repeats):
+                try:
+                    return fn(*args, **kwargs)
+                except Exception as ex:
+                    import traceback
+                    with open(f"./logs/_error.txt", 'a', encoding="utf8") as error_file:
+                        tqdm.write(f"{dt.now().strftime("%Y-%m-%d-%H-%M")}", file = error_file)
+                        tqdm.write(f"{kwargs.get("error_prefix", "Ошибка:")}", file = error_file)
+                        tqdm.write(f"{header} ({trys+1}/{repeats})", file = error_file)
+
+                        url = kwargs.get("url", [None])[0] 
+                        #TODO переделать если будет другая передача урл
+                        if url:
+                            error_file.write(url+"\n")
+                        error_file.write(f"{traceback.format_exc()}\n")
+                        # tqdm.write(f"{traceback.format_exc()}")          
+                        tqdm.write(f"{ex}", file = error_file)
+                        error_file.write("\n")
+
+        return wrapper
+    return decorator
 
 async def scroll_to_last(elem_locator, strore = None):
         """Крутим к последнему элементу, если 5 раз колво не изменилось - далее\n
@@ -140,19 +166,25 @@ async def run_parser(context, book: EBook, parser_config: ParserConfig) ->  list
                         price = utils.normalizePrice( await parser_config.get_card_price(card) )
                         article = await parser_config.get_card_article(card)
                         screen_file = f"./tmp/SCREEN-{dt.now().strftime("%Y-%m-%d")}/{book.title.replace(":","")}/{parser_config.store}_{price}_{article}.png"
-                        photo_b = await image_from_response( await parser_config.get_card_photo(card, page) ) #TODO photo
+                        # screen_bytes =  #TODO screen
+                        cover_bytes = await image_from_response( await parser_config.get_card_cover(card, page) )
+                        card_info = await parser_config.get_card_screen(card)
+                        screen_bytes = await card_info.screenshot(
+                            # path=screen_file.replace(".png", "_card.png")
+                            )
                         all_items.append(ShopCard(
-                            price=price, 
-                            store=parser_config.store, 
-                            article=article, 
-                            screen_file=screen_file, 
-                            type_search=url[-1],
-                            cover_bytes = photo_b #TODO photo
+                            price = price, 
+                            store = parser_config.store, 
+                            article = article, 
+                            screen_file = screen_file, 
+                            type_search = url[-1],
+                            cover_bytes = cover_bytes,
+                            screen_bytes = screen_bytes #TODO photo
                             ))
                         await card.screenshot(path=screen_file)
                         # TODO Убрать коммент скриншота
                 except Exception as ex:
-                    # import traceback
+                    import traceback
                     # error_text = traceback.format_exc()
                     tqdm.write(error_prefix)
                     tqdm.write("Ошибка при обработке одной карточки:")

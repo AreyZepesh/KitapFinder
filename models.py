@@ -17,8 +17,8 @@ class ShopCard():
     article: str = field(compare=False)
     screen_file: str = field(compare=False)
     type_search: str = field(default=None, compare=False)
-    # photo_bytes: bytes = field(default_factory=bytes, compare=False) #TODO photo
-    cover_bytes: bytes = field(default_factory=bytes, compare=False) #TODO photo
+    cover_bytes: bytes = field(default_factory=bytes, compare=False)
+    screen_bytes: bytes = field(default_factory=bytes, compare=False) #TODO screen
     # x: Any = field(default=None) # TODO тестовое поле
 
     # def __str__(self):
@@ -169,5 +169,6 @@ class ParserConfig():
     get_card_title: Callable[[Any], str] = field(default=_noop)
     get_card_price: Callable[[Any], str] = field(default=_noop)
     get_card_article: Callable[[Any], str] = field(default=_noop)
-    get_card_photo: Callable[[Any], str] = field(default=_noop) #TODO photo
+    get_card_cover: Callable[[Any], str] = field(default=_noop)
+    get_card_screen: Callable[[Any], str] = field(default=_noop) #TODO screen
     

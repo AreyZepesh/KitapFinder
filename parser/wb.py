@@ -19,7 +19,6 @@ async def _noresults(page):
     
 async def _currency(page, error_prefix):
     """Переключаем валюту"""
-    # TODO: потестить с единичным исполнением и сохранением статус в контексте
     try:
         country = page.locator('//span[@data-wba-header-name="Country"]').first
         await expect(country).to_be_attached()
@@ -38,6 +37,18 @@ async def _currency(page, error_prefix):
         tqdm.write(f"{error_prefix} Ошибка при переключении валюты:")
         tqdm.write(f"{ex}")
 
+async def _extra_wait_cat(page):
+    try:
+        cookie = page.locator("div.fixed-block__cookies:has(button)")
+        if await cookie.count() > 0:
+            await cookie.get_by_role("button", name = "Окей").click()
+            # cookie.locator("button.cookies__btn btn-minor-md")
+
+
+    except Exception as ex:
+        tqdm.write(f"Ошибка при запросе куки:")
+        tqdm.write(f"{ex}")
+
 async def _card_title(card):
     return await card.locator('span.product-card__name').first.inner_text()
 
@@ -48,25 +59,13 @@ async def _card_article(card):
     return (await card.get_attribute("id")).replace("c",'')
 
  #TODO photo
-async def _card_photo(card, page):
+async def _card_cover(card, page):
     img_url = await card.locator("img.j-thumbnail").first.get_attribute("src")
     # input(f"\n\n{img_url}")
-    response = await page.request.get(img_url)
-    return response
-    content_type = response.headers.get("content-type", "").lower()
-
-    if not content_type.startswith("image/"):
-        # Можно логировать или сохранять ошибку
-        tqdm.write(f"[WARN] Некорректный контент: {content_type} — {img_url}")
-        return None
-
-    # Проверяем статус
-    if not response.ok:
-        tqdm.write(f"[WARN] Ошибка загрузки: {response.status} — {img_url}")
-        return None
+    return await page.request.get(img_url)
     
-    return await response.body()
-
+async def _card_info(card):
+    return card.locator("div.product-card__middle-wrap").first
 
 async def main(context, book: EBook) ->  list[ShopCard]:
     parser_config = ParserConfig(
@@ -79,10 +78,12 @@ async def main(context, book: EBook) ->  list[ShopCard]:
         fn_currency = _currency,
 
         get_cat_locator = lambda page: page.locator('//div[@class="product-card-list"]').get_by_role('article'),
+        fn_extra_wait_cat = _extra_wait_cat,
 
         get_card_title = _card_title, 
         get_card_price = _card_price,
         get_card_article = _card_article,
-        get_card_photo = _card_photo, #TODO photo
+        get_card_cover = _card_cover, #TODO photo
+        get_card_screen = _card_info, #TODO screen
         )
     return await run_parser(context, book, parser_config)

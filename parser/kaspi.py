@@ -38,25 +38,12 @@ async def _card_price(card):
 async def _card_article(card):
     return await card.get_attribute("data-product-id")
 
- #TODO photo
-async def _card_photo(card, page):
+async def _card_cover(card, page):
     img_url = await card.locator("img.item-card__image").first.get_attribute("src")
-    # input(f"\n\n{img_url}")
-    response = await page.request.get(img_url)
-    return response
-    content_type = response.headers.get("content-type", "").lower()
+    return await page.request.get(img_url)
 
-    if not content_type.startswith("image/"):
-        # Можно логировать или сохранять ошибку
-        tqdm.write(f"[WARN] Некорректный контент: {content_type} — {img_url}")
-        return None
-
-    # Проверяем статус
-    if not response.ok:
-        tqdm.write(f"[WARN] Ошибка загрузки: {response.status} — {img_url}")
-        return None
-    
-    return await response.body()
+async def _card_info(card):
+    return card.locator("div.item-card__info").first
 
 async def main(context, book: EBook) ->  list[ShopCard]:
     parser_config = ParserConfig(
@@ -71,7 +58,8 @@ async def main(context, book: EBook) ->  list[ShopCard]:
         get_card_title = _card_title, 
         get_card_price = _card_price,
         get_card_article = _card_article,
-        get_card_photo = _card_photo, #TODO photo
+        get_card_cover = _card_cover, 
+        get_card_screen = _card_info, #TODO screen
         )
     return await run_parser(context, book, parser_config)
 
