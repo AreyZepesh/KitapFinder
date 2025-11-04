@@ -6,32 +6,38 @@ from playwright.async_api import async_playwright, expect
 import asyncio
 from datetime import datetime as dt
 from tqdm.asyncio import tqdm
+from functools import wraps
+import traceback
+import contextvars
 
 import utils
 from models import EBook, ShopCard, ParserConfig
 
+ERROR_PREFIX = contextvars.ContextVar("Ошибка")
+LOG_URL = contextvars.ContextVar("")
+
 def try_and_log_decor(header: str, repeats: int = 1):
+    """Асинхронный декоратор с повтором и логированием ошибок."""
     def decorator(fn):
-        from functools import wraps
         @wraps(fn)
-        def wrapper(*args, **kwargs):
+        async def wrapper(*args, **kwargs):
             for trys in range(repeats):
                 try:
-                    return fn(*args, **kwargs)
+                   return await fn(*args, **kwargs)
                 except Exception as ex:
-                    import traceback
+                    base_out = "\n".join([
+                            f"{dt.now().strftime("%Y-%m-%d %H-%M-%S")}",
+                            ERROR_PREFIX.get(),
+                            f"{header} ({trys+1}/{repeats})"
+                            ])
+                    tqdm.write(f"{base_out}")
+                    tqdm.write(f"{ex}")
                     with open(f"./logs/_error.txt", 'a', encoding="utf8") as error_file:
-                        tqdm.write(f"{dt.now().strftime("%Y-%m-%d-%H-%M")}", file = error_file)
-                        tqdm.write(f"{kwargs.get("error_prefix", "Ошибка:")}", file = error_file)
-                        tqdm.write(f"{header} ({trys+1}/{repeats})", file = error_file)
-
-                        url = kwargs.get("url", [None])[0] 
-                        #TODO переделать если будет другая передача урл
-                        if url:
-                            error_file.write(url+"\n")
+                        error_file.write(base_out+"\n")
+                        error_file.write(LOG_URL.get() + "\n")
+                        error_file.write(f"{fn.__name__}\n")
                         error_file.write(f"{traceback.format_exc()}\n")
-                        # tqdm.write(f"{traceback.format_exc()}")          
-                        tqdm.write(f"{ex}", file = error_file)
+                        error_file.write(f"{ex}\n")
                         error_file.write("\n")
 
         return wrapper
@@ -93,122 +99,102 @@ async def image_from_response(response):
     
     return await response.body()
 
+@try_and_log_decor("Переход на страницу")
+async def goto_url(page, url):
+    # # один день была ошибка, с flip типо страница не загрузилась, тестируем обход:
+    # try:
+    #     await page.goto(url[0])
+    # except Exception as ex1:
+    #     tqdm.write(ERROR_PREFIX.get())
+    #     tqdm.write(f"{ex1}")
+    #     tqdm.write("Ошибка при попытке загрузить страницу, пытаемся, ожидая domcontentloaded")
+    #     try:
+    #         await page.goto(url[0], wait_until="domcontentloaded")
+    #     except Exception as ex2:
+    #         tqdm.write(f"{ex2}")
+    #         tqdm.write("Ошибка при попытке загрузить страницу, пытаемся, ожидая commit")
+    #         try:
+    #             await page.goto(url[0], wait_until="commit")
+    #         except Exception as ex3:
+    #             tqdm.write(f"{ex3}")
+    #             tqdm.write(f"Ваще пипец, вырубаем)")
+    #             raise ex3
+
+    #     finally:
+    #         tqdm.write(f"{'='*50}")
+    await page.goto(url)
+
+@try_and_log_decor("Обработка одной карточки")
+async def wait_page(page, parser_config):
+    await page.wait_for_load_state(parser_config.wait_for_load_stat)
+    await page.wait_for_timeout(parser_config.wait_for_load_time)
+
+@try_and_log_decor("Обработка одной карточки", repeats=3)
+async def parse_card(page, card, book, parser_config):
+    card_title = await parser_config.get_card_title(card)
+    if book.is_TITLE_in_STR(card_title):
+        price = utils.normalizePrice( await parser_config.get_card_price(card) )
+        article = await parser_config.get_card_article(card)
+        screen_file = f"./tmp/SCREEN-{dt.now().strftime("%Y-%m-%d")}/{book.title.replace(":","")}/{parser_config.store}_{price}_{article}.png"
+        cover_bytes = await image_from_response( await parser_config.get_card_cover(card, page) )
+        card_info = await parser_config.get_card_screen(card)
+        screen_bytes = await card_info.screenshot(
+            # path=screen_file.replace(".png", "_card.png")
+            ) #TODO screen
+        await card.screenshot(path=screen_file)
+        return ShopCard(
+            price = price, 
+            store = parser_config.store, 
+            article = article, 
+            screen_file = screen_file, 
+            cover_bytes = cover_bytes,
+            screen_bytes = screen_bytes #TODO photo
+            )
+    pass
+
+@try_and_log_decor("Парсим данные: основная функция")
 async def run_parser(context, book: EBook, parser_config: ParserConfig) ->  list[ShopCard]:
     """Парсер, принимает контекст и объект книги, возвращает список объектов с 'карточками'"""
-    error_prefix = f"\n{book.title} {parser_config.store}:"
+    page = await context.new_page()
     all_items = []
     search_urls = get_search_urls(parser_config.base_url, book)
-
-    page = await context.new_page()
-
+    ERROR_PREFIX.set(f"{book.title}: {parser_config.store}")
     for url in search_urls:
-        try:
-            # # один день была ошибка, с flip типо страница не загрузилась, тестируем обход:
-            # try:
-            #     await page.goto(url[0])
-            # except Exception as ex1:
-            #     tqdm.write(error_prefix)
-            #     tqdm.write(f"{ex1}")
-            #     tqdm.write("Ошибка при попытке загрузить страницу, пытаемся, ожидая domcontentloaded")
-            #     try:
-            #         await page.goto(url[0], wait_until="domcontentloaded")
-            #     except Exception as ex2:
-            #         tqdm.write(f"{ex2}")
-            #         tqdm.write("Ошибка при попытке загрузить страницу, пытаемся, ожидая commit")
-            #         try:
-            #             await page.goto(url[0], wait_until="commit")
-            #         except Exception as ex3:
-            #             tqdm.write(f"{ex3}")
-            #             tqdm.write(f"Ваще пипец, вырубаем)")
-            #             raise ex3
+        LOG_URL.set(url[0])
+        await goto_url(page, url[0])
 
-            #     finally:
-            #         tqdm.write(f"{'='*50}")
-            await page.goto(url[0])
-            try:
-                await page.wait_for_load_state(parser_config.wait_for_load_stat)
-                await page.wait_for_timeout(parser_config.wait_for_load_time)
-            except Exception as ex:
-                tqdm.write(error_prefix)
-                tqdm.write("wait load page:")
-                tqdm.write(f"{ex}")
-            
-            await parser_config.fn_extra_goto(page)
+        await wait_page(page, parser_config)
+        
+        await parser_config.fn_extra_goto(page)
 
-            if await parser_config.fn_noresults(page):
-                # tqdm.write("!пропуск итерации - нет результатов")
-                await page.screenshot(path=f"./logs/_nores/{dt.now().strftime("%Y-%m-%d-%H-%M")}__{book.title.replace(":","")}__{parser_config.store}.png")
-                # nores screen - адрес формировать заранее и передовать в функцию?
-                continue
+        if await parser_config.fn_noresults(page):
+            # tqdm.write("!пропуск итерации - нет результатов")
+            # await page.screenshot(path=f"./logs/_nores/{dt.now().strftime("%Y-%m-%d-%H-%M")}__{book.title.replace(":","")}__{parser_config.store}.png")
+            # nores screen - адрес формировать заранее и передовать в функцию?
+            continue
 
-            # проверяем и переключаем валюту
-            fn_currency = parser_config.fn_currency
-            await fn_currency(page, error_prefix)
+        # проверяем и переключаем валюту
+        fn_currency = parser_config.fn_currency
+        await fn_currency(page)
 
-            # указываем адрес
-            await parser_config.fn_city(page, error_prefix)
+        # указываем адрес
+        await parser_config.fn_city(page)
 
-            # Парсим карточки товаров, сперва получаем "каталог"
-            cat = parser_config.get_cat_locator(page)
-            # Ищем последний элемент на странице, 
-            await scroll_to_last(cat, strore=parser_config.store)
- 
-            # Каталог прогружен, получаем все элементы и обходим по одному,
-            # что по названию не подходит - пропускаем
-            cat = await cat.all()
-            await parser_config.fn_extra_wait_cat(page)
+        # Парсим карточки товаров, сперва получаем "каталог"
+        cat = parser_config.get_cat_locator(page)
+        # Ищем последний элемент на странице, 
+        await scroll_to_last(cat, strore=parser_config.store)
 
-            for card in cat:
-                # TODO ретраить при ошибке?
-                try:
-                    card_title = await parser_config.get_card_title(card)
-                    if book.is_TITLE_in_STR(card_title):
-                        price = utils.normalizePrice( await parser_config.get_card_price(card) )
-                        article = await parser_config.get_card_article(card)
-                        screen_file = f"./tmp/SCREEN-{dt.now().strftime("%Y-%m-%d")}/{book.title.replace(":","")}/{parser_config.store}_{price}_{article}.png"
-                        # screen_bytes =  #TODO screen
-                        cover_bytes = await image_from_response( await parser_config.get_card_cover(card, page) )
-                        card_info = await parser_config.get_card_screen(card)
-                        screen_bytes = await card_info.screenshot(
-                            # path=screen_file.replace(".png", "_card.png")
-                            )
-                        all_items.append(ShopCard(
-                            price = price, 
-                            store = parser_config.store, 
-                            article = article, 
-                            screen_file = screen_file, 
-                            type_search = url[-1],
-                            cover_bytes = cover_bytes,
-                            screen_bytes = screen_bytes #TODO photo
-                            ))
-                        await card.screenshot(path=screen_file)
-                        # TODO Убрать коммент скриншота
-                except Exception as ex:
-                    import traceback
-                    # error_text = traceback.format_exc()
-                    tqdm.write(error_prefix)
-                    tqdm.write("Ошибка при обработке одной карточки:")
-                    tqdm.write(f"{ex}")
-                    # tqdm.write(f"{error_text}")
-                    # input()
+        # Каталог прогружен, получаем все элементы и обходим по одному,
+        # что по названию не подходит - пропускаем
+        cat = await cat.all()
+        await parser_config.fn_extra_wait_cat(page)
 
-
-        except Exception as ex:
-            import traceback
-            error_text = traceback.format_exc()
-            with open(f"./logs/_error.txt", 'a', encoding="utf8") as file:
-                file.write(url[0]+"\n")
-                file.write(f"{error_text}\n")
-                file.write(f"{ex}\n\n")
-            tqdm.write(error_prefix)
-            # tqdm.write(f"{error_text}")
-            tqdm.write(f"{ex}")
-            # tqdm.write(f"{parser_config}")
-            # raise ex
-            # input("!!!!!!!!!!!!!!!!!!!!!")
-
-    # TODO del
-    # x = input("send anything") 
+        for card in cat:
+            result = await parse_card(page, card, book, parser_config)
+            if result:
+                result.type_search = url[-1]
+                all_items.append(result)
 
     await page.close()
     return all_items

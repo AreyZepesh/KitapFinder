@@ -1,7 +1,7 @@
 from .common import (
     expect,
     EBook, ShopCard, ParserConfig,
-    run_parser,
+    run_parser, try_and_log_decor,
     tqdm,
     )
 
@@ -10,74 +10,72 @@ async def _noresults(page):
     if "category/knigi-16500" not in page.url or noresults > 0:
         return True
 
-async def _currency(page, error_prefix):
-    for x in range(3):
-        try:
-            if await page.locator(":has-text('₸')").count() > 0:
-                continue
-            await page.wait_for_timeout(1000)
-            button = page.locator("xpath=//button[contains(@data-widget, 'selectedCurrencyLanguage')]").first
-            await expect(button).to_be_attached()
-            text = await button.inner_text()
+@try_and_log_decor("Переключение валюты", repeats = 3)
+async def _currency(page):
+    # for x in range(3):
+    try:
+        if await page.locator(":has-text('₸')").count() > 0:
+            # continue
+            return
+        await page.wait_for_timeout(1000)
+        button = page.locator("xpath=//button[contains(@data-widget, 'selectedCurrencyLanguage')]").first
+        await expect(button).to_be_attached()
+        text = await button.inner_text()
 
-            if "KZT" not in text:
-                await button.click()
+        if "KZT" not in text:
+            await button.click()
 
-                widget = page.locator("xpath=//div[contains(@data-widget, 'currencyLanguageSelector')]") #
-                await expect(widget).to_be_attached()
-                cur_input = widget.get_by_role("combobox").last
-                await cur_input.fill("KZT")
-                await cur_input.press("Enter")
-                await widget.get_by_role("button").click()
-            break
-        except Exception as ex:
-            await page.reload()
-            await page.wait_for_load_state("networkidle")
-            tqdm.write(error_prefix)
-            tqdm.write(f"Ждем выбор валюты ({x+1}/3):")
-            tqdm.write(f"{ex}")
-            continue
+            widget = page.locator("xpath=//div[contains(@data-widget, 'currencyLanguageSelector')]") #
+            await expect(widget).to_be_attached()
+            cur_input = widget.get_by_role("combobox").last
+            await cur_input.fill("KZT")
+            await cur_input.press("Enter")
+            await widget.get_by_role("button").click()
+        # break
+    except Exception as ex:
+        await page.reload()
+        await page.wait_for_load_state("networkidle")
+        raise ex
+        # continue
     await page.wait_for_timeout(1000)
     
-
-async def _city(page, error_prefix):
+@try_and_log_decor("Переключение города", repeats = 3)
+async def _city(page):
     """Переключаем адрес на озон"""
-    for x in range(3):
-        try:
-            # Ищем виджет адреса с текстом, запращивающим адрес
-            address_bar = page.locator("xpath=//div[contains(@data-widget, 'addressBookBarWeb')]") #
-            await expect(address_bar).to_be_attached()
-            if await address_bar.locator(":has-text('Укажите адрес')").count() > 0 or await address_bar.locator(":has-text('Уточнить адрес')").count():
-                # Кликаем по кнопкам до ввода адреса
-                await address_bar.click()
-                widget = page.locator("xpath=//div[contains(@data-widget, 'commonAddressBook')]") #
-                await expect(widget).to_be_attached()
-                await widget.get_by_role("button").click()
+    # for x in range(3):
+    try:
+        # Ищем виджет адреса с текстом, запращивающим адрес
+        address_bar = page.locator("xpath=//div[contains(@data-widget, 'addressBookBarWeb')]") #
+        await expect(address_bar).to_be_attached()
+        if await address_bar.locator(":has-text('Укажите адрес')").count() > 0 or await address_bar.locator(":has-text('Уточнить адрес')").count():
+            # Кликаем по кнопкам до ввода адреса
+            await address_bar.click()
+            widget = page.locator("xpath=//div[contains(@data-widget, 'commonAddressBook')]") #
+            await expect(widget).to_be_attached()
+            await widget.get_by_role("button").click()
 
-                # Переключаемся на виджет ввода. Если по локации определило ближайщий пункт - клик, иначе - ищем
-                widget = page.locator("xpath=//div[contains(@data-widget, 'addressEditLayoutWrapper')]") #
-                await expect(widget).to_be_attached()
-                await page.wait_for_timeout(2000) 
-                loc_button = widget.locator("span:has-text('Павлодар, улица Ломова, 154')")
-                if await loc_button.count() > 0:
-                    await loc_button.click()
-                else:
-                    del loc_button
-                    real_adress = "улица Ломова, 154, Павлодар"
-                    textarea = widget.get_by_role("textbox")
-                    await textarea.fill(real_adress)
-                    await page.wait_for_timeout(100)
-                    await page.locator(f"span:has-text('{real_adress}')").click()
+            # Переключаемся на виджет ввода. Если по локации определило ближайщий пункт - клик, иначе - ищем
+            widget = page.locator("xpath=//div[contains(@data-widget, 'addressEditLayoutWrapper')]") #
+            await expect(widget).to_be_attached()
+            await page.wait_for_timeout(2000) 
+            loc_button = widget.locator("span:has-text('Павлодар, улица Ломова, 154')")
+            if await loc_button.count() > 0:
+                await loc_button.click()
+            else:
+                del loc_button
+                real_adress = "улица Ломова, 154, Павлодар"
+                textarea = widget.get_by_role("textbox")
+                await textarea.fill(real_adress)
                 await page.wait_for_timeout(100)
-                await widget.get_by_role("button", name = 'Заберу отсюда').click()
-            break
-        except Exception as ex:
-            await page.reload()
-            await page.wait_for_load_state("networkidle")
-            tqdm.write(error_prefix)
-            tqdm.write(f"Ждем выбор адреса ({x+1}/3):")
-            tqdm.write(f"{ex}")
-            continue
+                await page.locator(f"span:has-text('{real_adress}')").click()
+            await page.wait_for_timeout(100)
+            await widget.get_by_role("button", name = 'Заберу отсюда').click()
+        # break
+    except Exception as ex:
+        await page.reload()
+        await page.wait_for_load_state("networkidle")
+        raise ex
+        # continue
     await page.wait_for_timeout(1000)
 
 async def _extra_wait_cat(page):

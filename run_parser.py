@@ -10,6 +10,8 @@ from parser import run
 def main():
     if os.path.exists("./logs/_urls.txt"):
         os.remove("./logs/_urls.txt")
+    if os.path.exists("./logs/_error.txt"):
+        os.remove("./logs/_error.txt")
     if os.path.exists(f"./tmp/SCREEN-{dt.now().strftime("%Y-%m-%d")}"):
         rmtree(f"./tmp/SCREEN-{dt.now().strftime("%Y-%m-%d")}")
     if os.path.exists(f"./logs/_nores"):
@@ -28,6 +30,9 @@ def main():
         EBook(**{'title': 'Видящая звезды', 'author': 'Сандерсон', 'isbns': ['978-5-389-18074-1'], 'only_isbn': False},),
         EBook(**{'title': 'Цитоник', 'author': 'Сандерсон', 'isbns': ['978-5-389-23598-4'], 'only_isbn': False},),
         EBook(**{'title': 'Звездная Эскадрилья', 'author': 'Сандерсон', 'isbns': ['978-5-389-26184-6'], 'only_isbn': False},),
+        EBook(**{'title': 'Талант под прикрытием', 'author': 'Сандерсон', 'isbns': ['978-5-389-27681-9'], 'only_isbn': False},),
+        EBook(**{'title': 'Киборги Нотариуса', 'author': 'Сандерсон', 'isbns': ['978-5-389-27682-6'], 'only_isbn': False},),
+        EBook(**{'title': 'Рыцари Кристаллии', 'author': 'Сандерсон', 'isbns': ['978-5-389-27683-3'], 'only_isbn': False},),
 
         # EBook(**{'title': 'Сады Луны', 'author': 'Эриксон', 'isbns': [], 'only_isbn': False},),
         # EBook(**{'title': 'Врата Мёртвого Дома', 'author': 'Эриксон', 'isbns': [], 'only_isbn': False},),
@@ -54,8 +59,8 @@ def main():
     # books = [
     #     EBook("Преступление и наказание", "Достоевский"), 
     #     EBook("Ключ из желтого металла", "Фрай"),
-    #     EBook(**{'title': 'Волки Кальи+', 'author': 'Кинг', 'isbns': ['978-5-17-133881-7'], 'only_isbn': False}),
-    #     EBook(**{'title': 'Песнь Сюзанны+', 'author': 'Кинг', 'isbns': ['978-5-17-133029-3'], 'only_isbn': False}),
+    #     # EBook(**{'title': 'Волки Кальи+', 'author': 'Кинг', 'isbns': ['978-5-17-133881-7'], 'only_isbn': False}),
+    #     # EBook(**{'title': 'Песнь Сюзанны+', 'author': 'Кинг', 'isbns': ['978-5-17-133029-3'], 'only_isbn': False}),
     #     ]
 
     # books = EBook("Преступление и наказание", "Достоевский")

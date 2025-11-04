@@ -1,7 +1,7 @@
 from .common import (
     expect,
     EBook, ShopCard, ParserConfig,
-    run_parser,
+    run_parser, try_and_log_decor,
     tqdm,
     )
 

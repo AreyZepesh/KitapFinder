@@ -1,7 +1,7 @@
 from .common import (
     expect,
     EBook, ShopCard, ParserConfig,
-    run_parser,
+    run_parser, try_and_log_decor,
     tqdm,
     )
 
@@ -10,24 +10,21 @@ async def _noresults(page):
     if noresults > 0:
         return True
 
-async def _city(page, error_prefix):
+@try_and_log_decor("Переключение города")
+async def _city(page):
     """Переключаем город или закрываем"""
-    try:
-        dialog = page.locator('div.current-location__dialog').first
-        # await expect(dialog).to_be_attached()
+    dialog = page.locator('div.current-location__dialog').first
+    # await expect(dialog).to_be_attached()
+    await page.wait_for_timeout(100)
+    if await dialog.count() != 0:
+        # tqdm.write(f"Выбор города")
+        city = await dialog.locator("a").get_by_text("Павлодар").first.click()
         await page.wait_for_timeout(100)
-        if await dialog.count() != 0:
-            # tqdm.write(f"Выбор города")
-            city = await dialog.locator("a").get_by_text("Павлодар").first.click()
-            await page.wait_for_timeout(100)
-            await page.locator("html.js").first.click()
-        else:
-            # tqdm.write("! Город уже норм")
-            pass
-    except Exception as ex:
-        tqdm.write(error_prefix)
-        tqdm.write("Ошибка при переключении города:")
-        tqdm.write(f"{ex}")
+        await page.locator("html.js").first.click()
+    else:
+        # tqdm.write("! Город уже норм")
+        pass
+
     
 async def _card_title(card):
     return await card.locator("a.item-card__name-link").first.inner_text()

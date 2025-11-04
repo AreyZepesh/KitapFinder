@@ -1,7 +1,7 @@
 from .common import (
     expect,
     EBook, ShopCard, ParserConfig,
-    run_parser,
+    run_parser, try_and_log_decor,
     tqdm,
     )
 
@@ -17,37 +17,30 @@ async def _noresults(page):
     if noresults > 0:
         return True
     
-async def _currency(page, error_prefix):
+@try_and_log_decor("Переключение валюты")
+async def _currency(page):
     """Переключаем валюту"""
-    try:
-        country = page.locator('//span[@data-wba-header-name="Country"]').first
-        await expect(country).to_be_attached()
-        await page.wait_for_timeout(100)
-        if await country.inner_text() != "KZT":
-            # tqdm.write(f"Меняю валюту: |{await country.inner_text()}|")
-            await country.click()
-            kzt = page.locator('//input[@value="KZT"]/parent::label').first
-            await expect(kzt).to_be_attached()#timeout=20000)
-            await kzt.click()
-            await page.wait_for_timeout(500)
-        else:
-            # tqdm.write("! Валюта уже норм")
-            pass
-    except Exception as ex:
-        tqdm.write(f"{error_prefix} Ошибка при переключении валюты:")
-        tqdm.write(f"{ex}")
+    country = page.locator('//span[@data-wba-header-name="Country"]').first
+    await expect(country).to_be_attached()
+    await page.wait_for_timeout(100)
+    if await country.inner_text() != "KZT":
+        # tqdm.write(f"Меняю валюту: |{await country.inner_text()}|")
+        await country.click()
+        kzt = page.locator('//input[@value="KZT"]/parent::label').first
+        await expect(kzt).to_be_attached()#timeout=20000)
+        await kzt.click()
+        await page.wait_for_timeout(500)
+    else:
+        # tqdm.write("! Валюта уже норм")
+        pass
 
+@try_and_log_decor("Дополнительное ожидание страницы")
 async def _extra_wait_cat(page):
-    try:
-        cookie = page.locator("div.fixed-block__cookies:has(button)")
-        if await cookie.count() > 0:
-            await cookie.get_by_role("button", name = "Окей").click()
-            # cookie.locator("button.cookies__btn btn-minor-md")
-
-
-    except Exception as ex:
-        tqdm.write(f"Ошибка при запросе куки:")
-        tqdm.write(f"{ex}")
+    """Нажимаем кнопку окей, на информации о куках"""
+    cookie = page.locator("div.fixed-block__cookies:has(button)")
+    if await cookie.count() > 0:
+        await cookie.get_by_role("button", name = "Окей").click()
+        # cookie.locator("button.cookies__btn btn-minor-md")
 
 async def _card_title(card):
     return await card.locator('span.product-card__name').first.inner_text()
