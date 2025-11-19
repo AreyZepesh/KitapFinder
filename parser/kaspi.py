@@ -1,17 +1,21 @@
 from .common import (
-    expect,
+    expect, Page,
+    BrowserContext, Locator, APIResponse,
     EBook, ShopCard, ParserConfig,
-    run_parser, try_and_log_decor,
-    tqdm,
+    run_parser, try_and_log_decor, 
+    run_parser_test, 
+    nextpage_gen_cards,
+    tqdm, re,
     )
 
-async def _noresults(page):
+@try_and_log_decor("Проверка на noresult")
+async def _noresults(page: Page):
     noresults = await page.locator("h1.search-result__title-notfound").count()
     if noresults > 0:
         return True
 
 @try_and_log_decor("Переключение города")
-async def _city(page):
+async def _city(page: Page):
     """Переключаем город или закрываем"""
     dialog = page.locator('div.current-location__dialog').first
     # await expect(dialog).to_be_attached()
@@ -24,40 +28,75 @@ async def _city(page):
     else:
         # tqdm.write("! Город уже норм")
         pass
-
     
-async def _card_title(card):
+@try_and_log_decor("Переключение автора", repeats = 3)
+async def _click_author(page: Page, author: str = None):
+    if author:
+        author_block = page.locator('div.filters__filter:has(span:has-text("автор"))')
+        see_all = author_block.get_by_text( re.compile("Показать еще", re.IGNORECASE) )
+        if await see_all.count() > 0:
+            await see_all.click()
+            await page.wait_for_timeout(200)
+        authors_boxes = author_block.locator("div.filters__filter-row  ").filter( has_text=(re.compile(author, re.IGNORECASE)) )
+        if await authors_boxes.count() > 0:
+            old_url = page.url
+            for box in await authors_boxes.all():
+                await expect(box).to_be_attached()
+                await box.click()
+                await page.wait_for_timeout(50)
+            await page.wait_for_function(f"() => window.location.href !== '{old_url}'" )
+        # await page.wait_for_timeout(500)
+        # await page.evaluate("window.scrollTo(0, 0)")
+        return True
+    
+# @try_and_log_decor("Получение тайтла")
+async def _card_title(card: Locator):
     return await card.locator("a.item-card__name-link").first.inner_text()
 
-async def _card_price(card):
+# @try_and_log_decor("Получение цены")
+async def _card_price(card: Locator):
     return ( await card.locator("span.item-card__prices-price" ).first.inner_text() )
 
-async def _card_article(card):
+# @try_and_log_decor("Получение артикля")
+async def _card_article(card: Locator):
     return await card.get_attribute("data-product-id")
 
-async def _card_cover(card, page):
+# @try_and_log_decor("Получение обложки")
+async def _card_cover(card: Locator, page: Page) -> APIResponse:
+    # input()
     img_url = await card.locator("img.item-card__image").first.get_attribute("src")
+    try:
+        req = await page.request.get(img_url)
+        return req
+    except Exception as ex:
+        tqdm.write(f"{img_url}")
+        raise ex
     return await page.request.get(img_url)
 
-async def _card_info(card):
-    return card.locator("div.item-card__info").first
+# async def _card_info(card: Locator):
+#     return card.locator("div.item-card__info").first
 
-async def main(context, book: EBook) ->  list[ShopCard]:
+async def main(context: BrowserContext, book: EBook, test = False) ->  list[ShopCard]:
     parser_config = ParserConfig(
         store = "kaspi",
         base_url = f"https://kaspi.kz/shop/search/?q=:availableInZone:551010000:category:Books&text=",
 
         fn_noresults = _noresults, 
         fn_city = _city,
+        # fn_click_author = _click_author,
 
-        get_cat_locator = lambda page: page.locator('xpath=//div[@data-product-id]'),
+        get_card_locator = lambda page: page.locator('xpath=//div[@data-product-id]'),
+        get_nextpage_locator = lambda page: page.locator("li.pagination__el:has-text('Следующая'):not(._disabled)"),
+        element_limit = 50, # У каспи 12 элементов на страницу, капец медленно станицы грузятся, поэтому ограничиваем количество элементов
+        generator_cards = nextpage_gen_cards,
 
         get_card_title = _card_title, 
         get_card_price = _card_price,
         get_card_article = _card_article,
         get_card_cover = _card_cover, 
-        get_card_screen = _card_info, #TODO screen
         )
+    if test:
+        return await run_parser_test(context, book, parser_config)
     return await run_parser(context, book, parser_config)
 
 def _no_only_isbn_urls(base_url, book):

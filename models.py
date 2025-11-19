@@ -15,10 +15,11 @@ class ShopCard():
     price: int
     store: str
     article: str = field(compare=False)
-    screen_file: str = field(compare=False)
     type_search: str = field(default=None, compare=False)
+    cover_path: str = field(default=None, compare=False)
     cover_bytes: bytes = field(default_factory=bytes, compare=False)
-    screen_bytes: bytes = field(default_factory=bytes, compare=False) #TODO screen
+    # screen_bytes: bytes = field(default_factory=bytes, compare=False) #TODO screen
+    # screen_file: Any = field(default=None) # TODO тестовое поле
     # x: Any = field(default=None) # TODO тестовое поле
 
     # def __str__(self):
@@ -35,6 +36,15 @@ class ShopCard():
         if pattern:
             return pattern.format(article=self.article)
         return
+    
+    def save_cover(self, alt_path: bool = False):
+        from utils import save_image_from_bytes
+
+        path = f"{self.cover_path}-cover"
+        if alt_path:
+            path = path.replace("SCREEN-", "SCREEN-ALT-")
+            # TODO так то это для отладки
+        save_image_from_bytes(self.cover_bytes, path)
     
 @dataclass
 class EBook():
@@ -104,10 +114,9 @@ class EBook():
         self.prices = optimize_stores_by_cover(self.prices)
         self.sort_by_price() 
 
-    def save_covers(self):
-        from utils import save_image_from_bytes
+    def save_covers(self, alt_path: bool = False):
         for card in self.prices:
-            save_image_from_bytes(card.cover_bytes, f"{card.screen_file}-cover")
+            card.save_cover(alt_path)
 
     @staticmethod
     def _str_from_comparison(text: str) -> str:
@@ -145,6 +154,9 @@ class EBook():
 class ParserConfig():
     def get(self, key, default = None):
         return getattr(self, key, default)
+    
+    def get_max_depth(self, item_in_block):
+        return int(-(-(self.element_limit/item_in_block) // 1))
 
     @staticmethod
     async def _noop(*args, **kwargs):
@@ -153,22 +165,27 @@ class ParserConfig():
 
     store: str = field(default="")
     base_url: str = field(default="")
+
     wait_for_load_stat: str = field(default=None)
     wait_for_load_time: int = field(default=500)
 
-
     fn_extra_goto: Callable[[Any], None] = field(default=_noop) # для дополнения или замены урл
-    fn_noresults: Callable[[Any], bool] = field(default=_noop)
-    fn_currency: Callable[[Any], None] = field(default=_noop)
-    fn_city: Callable[[Any], None] = field(default=_noop)
+    # fn_click_author: Callable[[Any], None] = field(default=_noop) # выбор автора ВНИМАНИЕ! в проге должно запускаться ДО fn_noresults
+    fn_noresults: Callable[[Any], bool] = field(default=_noop) # True если страница уведомляет о отсутвии результатов
+    fn_currency: Callable[[Any], None] = field(default=_noop) # переключение валюты
+    fn_city: Callable[[Any], None] = field(default=_noop) # выбор города
 
-    get_cat_locator: Callable[[Any], Any] = field(default=_noop)
+    # fn_extra_wait_cat: Callable[[Any], None] = field(default=_noop) # для доп ожидания
 
-    fn_extra_wait_cat: Callable[[Any], None] = field(default=_noop) # для доп ожидания
+    get_card_locator: Callable[[Any], Any] = field(default=_noop)
+    get_nextpage_locator: Callable[[Any], Any] = field(default=_noop)
+    element_limit: int = field(default=500)
+    # get_max_depth: Callable[[Any], int] = field(default=_get_max_depth)
+    generator_cards: Callable[[Any], Any] = field(default=_noop)
 
     get_card_title: Callable[[Any], str] = field(default=_noop)
     get_card_price: Callable[[Any], str] = field(default=_noop)
     get_card_article: Callable[[Any], str] = field(default=_noop)
     get_card_cover: Callable[[Any], str] = field(default=_noop)
-    get_card_screen: Callable[[Any], str] = field(default=_noop) #TODO screen
+    # get_card_screen: Callable[[Any], str] = field(default=_noop) #TODO screen
     

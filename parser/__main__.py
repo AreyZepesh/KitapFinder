@@ -40,10 +40,8 @@ async def __run__(fn, books: EBook|list[EBook], headless = True):
         # Контекст задается для все сессии. После некоторые вещи сменить не выйдет. 
         # Например разрешение 1600*900 отлично подходит для wb, а для других? TODO
         context = await browser.new_context(
-                    # viewport={"width": 1600, "height": 900},
                     viewport={"width": 1920, "height": 1080},
                     no_viewport=True,
-                    # user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
                     user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
                     permissions=["geolocation"],  # разрешаем
                     # # geolocation={"latitude": 43.238949, "longitude": 76.889709},  # Алматы :)
@@ -80,12 +78,18 @@ async def one_book(context, book: EBook):
             kaspi(context = context, book = book),
             ozon(context = context, book = book),
 
+            # ozon(context = context, book = book, test = True),
+            # wb(context = context, book = book, test = True),
+            # flip(context = context, book = book, test = True),
+            # kaspi(context = context, book = book, test = True),
+
                                 desc=book.title, #tqdm options
                                 ncols=80, 
                                 leave=False,
                                     )
         for res in results:
-            book.add_prices(res)
+            if res:
+                book.add_prices(res)
         
 
 async def list_books(context, books: list[EBook]):

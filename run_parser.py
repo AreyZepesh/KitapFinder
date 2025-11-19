@@ -14,6 +14,8 @@ def main():
         os.remove("./logs/_error.txt")
     if os.path.exists(f"./tmp/SCREEN-{dt.now().strftime("%Y-%m-%d")}"):
         rmtree(f"./tmp/SCREEN-{dt.now().strftime("%Y-%m-%d")}")
+    if os.path.exists(f"./tmp/SCREEN-ALT-{dt.now().strftime("%Y-%m-%d")}"):
+        rmtree(f"./tmp/SCREEN-ALT-{dt.now().strftime("%Y-%m-%d")}")
     if os.path.exists(f"./logs/_nores"):
         rmtree(f"./logs/_nores")
     time_start = dt.now().strftime("%Y-%m-%d %H-%M")
@@ -22,7 +24,6 @@ def main():
     for book in all_book:
         books.append(EBook(**book))
     books.extend( [
-        EBook(**{'title': 'Элантрис', 'author': 'Сандерсон', 'isbns': ['978-5-389-20277-1'], 'only_isbn': False},),
         EBook(**{'title': 'Космер. Тайная история', 'author': 'Сандерсон', 'isbns': ['978-5-389-23731-5'], 'only_isbn': False},),
         EBook(**{'title': 'Убийца войн', 'author': 'Сандерсон', 'isbns': ['978-5-389-20180-4'], 'only_isbn': False},),
         EBook(**{'title': 'Легион', 'author': 'Сандерсон', 'isbns': ['978-5-389-16903-6'], 'only_isbn': False},),
@@ -34,13 +35,13 @@ def main():
         EBook(**{'title': 'Киборги Нотариуса', 'author': 'Сандерсон', 'isbns': ['978-5-389-27682-6'], 'only_isbn': False},),
         EBook(**{'title': 'Рыцари Кристаллии', 'author': 'Сандерсон', 'isbns': ['978-5-389-27683-3'], 'only_isbn': False},),
 
-        # EBook(**{'title': 'Сады Луны', 'author': 'Эриксон', 'isbns': [], 'only_isbn': False},),
-        # EBook(**{'title': 'Врата Мёртвого Дома', 'author': 'Эриксон', 'isbns': [], 'only_isbn': False},),
+        EBook(**{'title': 'Сады Луны', 'author': 'Эриксон', 'isbns': ['978-5-389-20717-2'], 'only_isbn': False},),
+        EBook(**{'title': 'Врата Мёртвого Дома', 'author': 'Эриксон', 'isbns': ['978-5-389-21003-5'], 'only_isbn': False},),
         # # EBook(**{'title': 'Врата смерти', 'author': 'Эриксон', 'isbns': [], 'only_isbn': False},),
-        # EBook(**{'title': 'Память льда', 'author': 'Эриксон', 'isbns': [], 'only_isbn': False},),
-        # EBook(**{'title': 'Дом Цепей', 'author': 'Эриксон', 'isbns': [], 'only_isbn': False},),
+        EBook(**{'title': 'Память льда', 'author': 'Эриксон', 'isbns': ['978-5-389-21278-7'], 'only_isbn': False},),
+        EBook(**{'title': 'Дом Цепей', 'author': 'Эриксон', 'isbns': ['978-5-389-23239-6'], 'only_isbn': False},),
         # # EBook(**{'title': 'Полночный прилив', 'author': 'Эриксон', 'isbns': [], 'only_isbn': False},),
-        # EBook(**{'title': 'Полуночный Прилив', 'author': 'Эриксон', 'isbns': [], 'only_isbn': False},),
+        EBook(**{'title': 'Полуночный Прилив', 'author': 'Эриксон', 'isbns': ['978-5-389-23761-2'], 'only_isbn': False},),
         # # EBook(**{'title': 'Охотники за костями', 'author': 'Эриксон', 'isbns': [], 'only_isbn': False},),
         # # EBook(**{'title': 'Буря Жнеца', 'author': 'Эриксон', 'isbns': [], 'only_isbn': False},),
         # # EBook(**{'title': 'Дань псам', 'author': 'Эриксон', 'isbns': [], 'only_isbn': False},),
@@ -49,44 +50,62 @@ def main():
         # # EBook(**{'title': 'Увечный бог', 'author': 'Эриксон', 'isbns': [], 'only_isbn': False},),
         # EBook(**{'title': 'След крови', 'author': 'Эриксон', 'isbns': [], 'only_isbn': False},),
 
+        EBook(**{'title': 'Пробуждение Левиафана', 'author': 'Кори', 'isbns': ['978-5-389-26449-6'], 'only_isbn': False},),
+        EBook(**{'title': 'Война Калибана', 'author': 'Кори', 'isbns': ['978-5-389-26911-8'], 'only_isbn': False},),
+        EBook(**{'title': 'Врата Абаддона', 'author': 'Кори', 'isbns': ['978-5-389-26910-1'], 'only_isbn': False},),
+        EBook(**{'title': 'Пожар Сиболы', 'author': 'Кори', 'isbns': ['978-5-389-27730-4'], 'only_isbn': False},),
+        EBook(**{'title': 'Игры Немезиды', 'author': 'Кори', 'isbns': ['978-5-389-27731-1'], 'only_isbn': False},),
+        EBook(**{'title': 'Пепел Вавилона', 'author': 'Кори', 'isbns': ['978-5-389-27732-8'], 'only_isbn': False},),
+
+        EBook(**{'title': 'Короли Жути', 'author': 'Имс', 'isbns': ['978-5-389-13190-3'], 'only_isbn': False},),
+        EBook(**{'title': 'Кровавая Роза', 'author': 'Имс', 'isbns': ['978-5-389-16829-9'], 'only_isbn': False},),
+
+        EBook(**{'title': 'Титус Гроан', 'author': 'Пик', 'isbns': [], 'only_isbn': False},),
+        EBook(**{'title': 'Горменгаст', 'author': 'Пик', 'isbns': [], 'only_isbn': False},),
+        EBook(**{'title': 'Титус один', 'author': 'Пик', 'isbns': [], 'only_isbn': False},),
+
+        EBook(**{'title': 'Гроза из преисподней. Луна светит безумцам. Могила в подарок', 'author': 'Батчер', 'isbns': ['978-5-389-19143-3'], 'only_isbn': False},),
+        EBook(**{'title': 'Летний рыцарь. Лики смерти', 'author': 'Батчер', 'isbns': ['978-5-389-19146-4'], 'only_isbn': False},),
+        EBook(**{'title': 'Кровавые ритуалы. Барабаны зомби', 'author': 'Батчер', 'isbns': ['978-5-389-19149-5'], 'only_isbn': False},),
+        EBook(**{'title': 'Доказательства вины. Белая ночь', 'author': 'Батчер', 'isbns': ['978-5-389-20882-7'], 'only_isbn': False},),
+        EBook(**{'title': 'Маленькое одолжение. Продажная шкура', 'author': 'Батчер', 'isbns': ['978-5-389-21273-2'], 'only_isbn': False},),
+        EBook(**{'title': 'Перемены. Адская работенка', 'author': 'Батчер', 'isbns': ['978-5-389-22346-2'], 'only_isbn': False},),
+        EBook(**{'title': 'История призрака. Холодные дни', 'author': 'Батчер', 'isbns': ['978-5-389-22690-6'], 'only_isbn': False},),
+        EBook(**{'title': 'Грязная игра. Правила чародейства', 'author': 'Батчер', 'isbns': ['978-5-389-23608-0'], 'only_isbn': False},),
+        EBook(**{'title': 'Ведьмин час', 'author': 'Батчер', 'isbns': ['978-5-389-23643-1'], 'only_isbn': False},),
+        EBook(**{'title': 'Поле боя', 'author': 'Батчер', 'isbns': ['978-5-389-24260-9'], 'only_isbn': False},),
+
+        EBook(**{'title': 'Украденный трон. Призыв. Маска призрака', 'author': 'Гейдер', 'isbns': ['978-5-389-19770-1'], 'only_isbn': False},),
+
         EBook("Новый Дозор", "Лукьяненко", ['978-5-271-41900-3', '978-5-17-118480-3']),
         EBook("Шестой Дозор", "Лукьяненко", ['978-5-17-088817-7', '978-5-17-118536-7']),
 
         EBook(**{'title': 'Волки Кальи+', 'author': 'Кинг', 'isbns': ['978-5-17-133881-7'], 'only_isbn': False}),
         EBook(**{'title': 'Песнь Сюзанны+', 'author': 'Кинг', 'isbns': ['978-5-17-133029-3'], 'only_isbn': False}),
+        EBook(**{'title': 'Нужные вещи+', 'author': 'Кинг', 'isbns': ['978-5-17-133029-3'], 'only_isbn': False}),
+        # EBook(**{'title': '', 'author': '', 'isbns': [], 'only_isbn': False},),
         ] )
 
     # books = [
-    #     EBook("Преступление и наказание", "Достоевский"), 
     #     EBook("Ключ из желтого металла", "Фрай"),
+    #     # EBook("Преступление и наказание", "Достоевский"), 
     #     # EBook(**{'title': 'Волки Кальи+', 'author': 'Кинг', 'isbns': ['978-5-17-133881-7'], 'only_isbn': False}),
     #     # EBook(**{'title': 'Песнь Сюзанны+', 'author': 'Кинг', 'isbns': ['978-5-17-133029-3'], 'only_isbn': False}),
     #     ]
 
-    # books = EBook("Преступление и наказание", "Достоевский")
+    # books = [EBook("Преступление и наказание", "Достоевский")]
+    # books = [EBook("Достоевский", "Достоевский")]
 
-    # TODO asyncio.run(async_work(books=books, headless = headless))
     run(books=books, headless = True)
     
-    # x = input("send anything") 
     for b in books:
         b.sort_by_price()
-        text = f"{b.title}: {len(b.prices)}\n"
+        text = f"{b.get_search_text()}: {len(b.prices)}\n"
         with open(f"./logs/resutls_{time_start}.txt", 'a', encoding="utf8") as file:
-            # print(text)
             file.write(text)
             for p in b.prices:
-                # print(p.to_dict())
-                # print(p.get_url())
                 file.write(f"{p.price}: {p.get_url()} ({p.type_search})\n")
             file.write(f"\n")
-
-        # for p in b.prices:
-        #     #TODO photo
-        #     from pathlib import Path
-        #     Path(p.screen_file).parent.mkdir(parents=True, exist_ok=True)
-        #     save_image_from_bytes(p.cover_bytes, p.screen_file) 
-
 
     print(time_start)
     print(dt.now().strftime("%Y-%m-%d %H-%M"))
@@ -95,7 +114,7 @@ def main():
 
     for b in books:
         b.optimize_stores_by_cover()
-        b.save_covers()
+        b.save_covers(alt_path = True)
     print(dt.now().strftime("%Y-%m-%d %H-%M"))
 
 if __name__  == '__main__':

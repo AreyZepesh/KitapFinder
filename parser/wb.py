@@ -1,24 +1,31 @@
 from .common import (
-    expect,
+    expect, Page,
+    BrowserContext, Locator, APIResponse,
     EBook, ShopCard, ParserConfig,
-    run_parser, try_and_log_decor,
-    tqdm,
+    run_parser, try_and_log_decor, 
+    run_parser_test, 
+    nextpage_gen_cards,
+    tqdm, re, dt,
     )
 
-async def _extra_urls(page):
+@try_and_log_decor("Смена url")
+async def _extra_urls(page: Page):
     # await page.wait_for_timeout(500)
     replaced = await page.locator("a.searching-results__query-replaced").first.is_visible()
     if replaced:
         await page.goto(page.url+"&nocorrection=1")
+        return True
 
-async def _noresults(page):
-    await page.wait_for_timeout(500)
+@try_and_log_decor("Проверка на noresult")
+async def _noresults(page: Page):
+    # await page.wait_for_timeout(500)
     noresults = await page.locator("div.not-found-search").count()
-    if noresults > 0:
+    noresults_alt = await page.locator("div.not-found-result").count()
+    if noresults > 0 or noresults_alt > 0:
         return True
     
 @try_and_log_decor("Переключение валюты")
-async def _currency(page):
+async def _currency(page: Page):
     """Переключаем валюту"""
     country = page.locator('//span[@data-wba-header-name="Country"]').first
     await expect(country).to_be_attached()
@@ -34,33 +41,95 @@ async def _currency(page):
         # tqdm.write("! Валюта уже норм")
         pass
 
+@try_and_log_decor("Переключение автора", repeats = 3)
+async def _click_author(page: Page, author: str = None):
+    async def _see_all_and_fill_text(page: Page, loc: Locator, fill: str):
+        see_all = loc.get_by_text( re.compile("Показать все", re.IGNORECASE) )
+        if await see_all.count() > 0:
+            await see_all.click()
+            input_fild = loc.get_by_role("textbox")
+            if await input_fild.count() > 0:
+                await input_fild.fill(fill)
+            # await loc.get_by_role("textbox").fill(fill)
+            await page.wait_for_timeout(500)
+
+    async def _click_checkbok_with_text(page: Page, loc: Locator, text: str):
+        boxes = loc.locator("div.checkbox-with-text").filter( has_text=(re.compile(text, re.IGNORECASE)) )
+        for box in await boxes.all():
+            await box.click()
+            await page.wait_for_timeout(150)
+        else:
+            await page.wait_for_timeout(500)
+
+    if author:
+        widget = page.locator("div.filters-desktop")
+        if await widget.count() == 0:
+            all_filter = page.locator('div[data-testid="filters-all"]')
+            await expect(all_filter).to_be_attached()
+            await all_filter.click()
+            await page.wait_for_timeout(100)
+
+        await expect(widget).to_be_attached()
+
+        author_block = widget.locator('div.filters-desktop__item:has(div:has-text("автор"))')
+        if await author_block.count() == 0:
+            cat_block = widget.locator('div.filters-desktop__item:has(div:has-text("Категория"))')
+            await _see_all_and_fill_text(page, cat_block, "книга")
+            await _click_checkbok_with_text(page, cat_block, "книга")
+
+            if await author_block.count() == 0:
+                # tqdm.write(f"Таки нету автора")
+                # input()
+                await widget.locator("button.filters-desktop__close").click()
+                return
+        
+        await _see_all_and_fill_text(page, author_block, author)
+        await _click_checkbok_with_text(page, author_block, author)
+
+        # Эту часть интегрировал в _noresults, 
+        # чтобы если не было результатов заканчивало работу со страницей
+        ok = widget.locator('button.filters-desktop__btn-main:not([disabled="disabled"])').filter(has_text=re.compile("Показать", re.IGNORECASE))
+        not_ok = widget.get_by_text("Товары не найдены")
+        if await ok.count() > 0 or await not_ok.count() == 0:
+            await ok.click()
+            return True
+        else:
+            await widget.locator("button.filters-desktop__close").click()
+            return "noresults"
+            # как то возвращать noresult?
+    
+
+
 @try_and_log_decor("Дополнительное ожидание страницы")
-async def _extra_wait_cat(page):
+async def _extra_wait_cat(page: Page):
     """Нажимаем кнопку окей, на информации о куках"""
     cookie = page.locator("div.fixed-block__cookies:has(button)")
     if await cookie.count() > 0:
         await cookie.get_by_role("button", name = "Окей").click()
         # cookie.locator("button.cookies__btn btn-minor-md")
 
-async def _card_title(card):
+# @try_and_log_decor("Получение тайтла")
+async def _card_title(card: Locator):
     return await card.locator('span.product-card__name').first.inner_text()
 
-async def _card_price(card):
+# @try_and_log_decor("Получение цены")
+async def _card_price(card: Locator):
     return (await card.locator('xpath=.//span[@class="price__wrap"]').inner_text()).split("₸")[0]
 
-async def _card_article(card):
+# @try_and_log_decor("Получение артикля")
+async def _card_article(card: Locator):
     return (await card.get_attribute("id")).replace("c",'')
 
- #TODO photo
-async def _card_cover(card, page):
+# @try_and_log_decor("Получение обложки")
+async def _card_cover(card: Locator, page: Page) -> APIResponse:
     img_url = await card.locator("img.j-thumbnail").first.get_attribute("src")
     # input(f"\n\n{img_url}")
     return await page.request.get(img_url)
     
-async def _card_info(card):
-    return card.locator("div.product-card__middle-wrap").first
+# async def _card_info(card: Locator):
+#     return card.locator("div.product-card__middle-wrap").first
 
-async def main(context, book: EBook) ->  list[ShopCard]:
+async def main(context: BrowserContext, book: EBook, test = False) ->  list[ShopCard]:
     parser_config = ParserConfig(
         store = "WB",
         base_url = "https://global.wildberries.ru/catalog/0/search.aspx?search=книга ",
@@ -69,14 +138,20 @@ async def main(context, book: EBook) ->  list[ShopCard]:
         fn_extra_goto = _extra_urls,
         fn_noresults = _noresults, 
         fn_currency = _currency,
+        # fn_click_author = _click_author,
 
-        get_cat_locator = lambda page: page.locator('//div[@class="product-card-list"]').get_by_role('article'),
-        fn_extra_wait_cat = _extra_wait_cat,
+        # fn_extra_wait_cat = _extra_wait_cat,
+        
+        get_card_locator = lambda page: page.locator('//div[@class="product-card-list"]').get_by_role('article'),
+        get_nextpage_locator = lambda page: page.locator("a.pagination-next:has-text('Следующая страница')"),
+        generator_cards = nextpage_gen_cards,
 
         get_card_title = _card_title, 
         get_card_price = _card_price,
         get_card_article = _card_article,
         get_card_cover = _card_cover, #TODO photo
-        get_card_screen = _card_info, #TODO screen
+        # get_card_screen = _card_info, #TODO screen
         )
+    if test:
+        return await run_parser_test(context, book, parser_config)
     return await run_parser(context, book, parser_config)

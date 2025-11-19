@@ -6,20 +6,26 @@ import numpy as np
 from models import ShopCard
 
 def find_duplicate_via_hash(img_bytes1: bytes, img_bytes2: bytes, **kwargs) -> bool:
+    """Сравниваем хеш двух байтмассивов изображение, возвращает True если совпадают"""
     import hashlib
     return hashlib.md5(img_bytes1).hexdigest() == hashlib.md5(img_bytes2).hexdigest()
 
 def _image_from_bytes(img_bytes: bytes):
+    """Получаем изображение в формате для OpenCV из байтов"""
     return cv2.imdecode(np.frombuffer(img_bytes, np.uint8), cv2.IMREAD_COLOR )
 
 def find_dublicate_via_opencv(img_bytes1: bytes, img_bytes2: bytes, method = "akaze", reference_score = 0.5) -> bool:
-    """Порог (reference_score) можно подобрать экспериментально: \n
+    """Сравнение двух изображений, возвращает True если считает их похожими. \n
+    Порог (reference_score) можно подобрать экспериментально, для каждого метода эффективны разные: \n
     >0.3 — вероятно, то же изображение \n
     >0.6 — почти точно одно и то же, независимо от поворота или фона\n\n
     method: 'orb' | 'flann' | 'sift' | 'akaze' | 'brisk'\n"""
+    
+    # Получаем изображение из байтов
     img1 = _image_from_bytes(img_bytes1)
     img2 = _image_from_bytes(img_bytes2)
 
+    # В зависимости от выбранного медота выбираются параметры
     if method == "sift":
         detector = cv2.SIFT.create()
         norm_type = cv2.NORM_L2
@@ -33,6 +39,7 @@ def find_dublicate_via_opencv(img_bytes1: bytes, img_bytes2: bytes, method = "ak
         detector = cv2.ORB.create(nfeatures=1000)
         norm_type = cv2.NORM_HAMMING
 
+    # Отправляет изображения на первичную обработку детектором
     kp1, des1 = detector.detectAndCompute(img1, None)
     kp2, des2 = detector.detectAndCompute(img2, None)
 
@@ -40,7 +47,7 @@ def find_dublicate_via_opencv(img_bytes1: bytes, img_bytes2: bytes, method = "ak
         return False
 
     matches = []
-    # Выбор матчера
+    # Выбор матчера, для каждого метода свой подход
     if method == "flann":
         # FLANN для бинарных дескрипторов (LSH)
         FLANN_INDEX_LSH = 6
@@ -80,12 +87,17 @@ def find_dublicate_via_opencv(img_bytes1: bytes, img_bytes2: bytes, method = "ak
 
     # Нормализуем по количеству ключевых точек
     current_score  = len(matches) / max(len(kp1), len(kp2))
-    if current_score  >= reference_score:
+    # Сравниваем с референсным значением, если входит True
+    if current_score >= reference_score:
         return True
     else:
         return False
 
-def _connected_indices(items, func, **kwargs):
+def _connected_indices(items, func, **kwargs) -> list[list]:
+    """Функция-обертка, попарно отправляет объекты в функции сравнений. \n
+    Возвращает список списков индексов похожих изображений \n
+    TODO использовать и возвращать не индексы, а артикли из самих карточек?
+    """
     n = len(items)
     connections = {i: set() for i in range(n)}
     detected = set()  # сюда будем записывать все j, для которых уже найдено совпадение
@@ -130,6 +142,11 @@ def _connected_indices(items, func, **kwargs):
     return groups
 
 def get_cleaned_list(price_cards: list[ShopCard], duplicates: list[list]) -> list[ShopCard]:
+    """Очищаем карточкки цен (первый список) от дубликатов (список списков с индексом). \n
+    Возвращает сортированный по цене список \n
+    Между поиском дубликатов и этой функцией не должно быть сортировки списка карточек, 
+    иначе индексы не будут соответсвовать нужной карточке \n
+    TODO"""
     detected = []
     opt_cards = []
     
@@ -145,30 +162,38 @@ def get_cleaned_list(price_cards: list[ShopCard], duplicates: list[list]) -> lis
     return sorted(opt_cards, key=lambda b: b.price)
 
 def optimize_stores_by_cover(data: list[ShopCard]):
+    # Разбиваем цены по магазинам
     groups = defaultdict(list)
     for price_card in data:
         groups[price_card.store].append(price_card)
     
+    # Прогоняем данные по отдельным магизинам
     # for store, price_cards in groups.items():
     for store, price_cards in tqdm(groups.items(), 
                        ncols=80, 
                        desc=f"Оптимизация",
                        leave=False,
                        ):
-        price_cards = sorted(price_cards, key=lambda b: b.price)
+        # Сортируем по возрастанию цены,
+        price_cards = sorted(price_cards, key=lambda b: b.price) 
 
+        # Прогоняем сравнение по хэшу
         duplicates = _connected_indices(price_cards, find_duplicate_via_hash)
         if duplicates != []:
+            # заменяем исходный на очищенный от дубликатов список
             price_cards = get_cleaned_list(price_cards, duplicates)
 
+        # Прогоняем сравнение черещ OpenCV
         duplicates = _connected_indices(price_cards, find_dublicate_via_opencv, 
                                         # **{"method": "akaze", "reference_score": 0.5}
                                         )
         if duplicates != []:
+            # заменяем исходный на очищенный от дубликатов список
             price_cards = get_cleaned_list(price_cards, duplicates)
-        # dub_cards = [old for old in groups[store] if old not in price_cards]
+        # Заменяем список в основном словаре 
         groups[store] = price_cards
 
+    # Приводим карточки к исходному виду и возвращаем
     new_data = []
     for price_cards in groups.values():
         new_data.extend( price_cards)

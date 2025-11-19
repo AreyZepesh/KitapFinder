@@ -29,3 +29,12 @@ def save_image_from_bytes(image_bytes, path):
     finally:
         # Сохраняем как PNG
         img.save(f"{path}.png", format="PNG")
+
+def save_to_file(data, path):
+        with open(path, "w", encoding="utf8") as f:
+            f.write(data)
+
+def prettify_html(html_content):
+    from bs4 import BeautifulSoup
+    soup = BeautifulSoup(html_content, "html.parser")
+    return soup.prettify()
