@@ -10,8 +10,10 @@ from .common import (
 
 @try_and_log_decor("Проверка на noresult")
 async def _noresults(page: Page):
-    noresults = await page.get_by_text("По вашему запросу товаров сейчас нет").count() 
-    if "category/knigi-16500" not in page.url or noresults > 0:
+    noresults1 = await page.get_by_text("По вашему запросу товаров сейчас нет").count() 
+    noresults2 = await page.get_by_text("Ничего не нашлось").count() 
+    noresults = noresults1 + noresults2
+    if "category/knigi-16500" not in page.url or noresults > 0 :
         return True
 
 @try_and_log_decor("Переключение валюты", repeats = 3)
@@ -109,7 +111,7 @@ async def _gen_cards(page: Page, parser_config: ParserConfig): #TODO вынес�
     deep: глубина, количество блоков с которых будет собранны данные \n
     """
     @try_and_log_decor("Генератор списка карточек: скролл", repeats = 3)
-    async def _page_scroll_to(page, locator_element = None, mouse_wheel: bool = False):
+    async def _page_scroll_to(page: Page, locator_element: Locator = None, mouse_wheel: bool = False):
         if locator_element:
             await locator_element.scroll_into_view_if_needed()
         if mouse_wheel:
@@ -118,18 +120,22 @@ async def _gen_cards(page: Page, parser_config: ParserConfig): #TODO вынес�
             await page.mouse.wheel(0, scroll_to)
         await page.wait_for_timeout(500)
 
+    @try_and_log_decor("Генератор списка карточек: получаем артикль", repeats = 3)
+    async def _get_last_article(locator_element: Locator, parser_config: ParserConfig):
+        return await parser_config.get_card_article(locator_element.last)
+
     await _extra_wait_cat(page)
 
     # ищем блок с карточками, появляющийся при открытии страницы
     zero_part = page.locator('div[data-replace-layout-path]:has(div[data-widget="tileGridDesktop"])')
     block = parser_config.get_card_locator(zero_part)
     # last_article = await _card_article(block.last)
-    last_article = await parser_config.get_card_article(block.last)
+    last_article = await _get_last_article(block, parser_config)
     # запоминаем последний артикль блока ↑ и размер блока ↓
     item_in_block = await block.count()
     yield block
 
-    if last_article == await parser_config.get_card_article(block.last):
+    if last_article == await _get_last_article(block, parser_config):
         # Если последний артикль в блоке не изменился - листаем дальше 
         # Это атавизм, оставщийся со времени скриншотов, так как те прокучивали страницу
         await _page_scroll_to(page, locator_element = block.last)
@@ -152,10 +158,10 @@ async def _gen_cards(page: Page, parser_config: ParserConfig): #TODO вынес�
                 if current_index not in part_indexes:
                     part_indexes.append(current_index)
                     block = parser_config.get_card_locator(part)
-                    last_article = await parser_config.get_card_article(block.last)
+                    last_article = await _get_last_article(block, parser_config)
                     yield block
 
-                    if last_article == await parser_config.get_card_article(block.last):
+                    if last_article == await _get_last_article(block, parser_config):
                     # Если последний артикль в блоке не изменился - листаем дальше 
                     # Это атавизм, оставщийся со времени скриншотов, так как те прокучивали страницу
                         await _page_scroll_to(page, locator_element = block.last)
@@ -170,8 +176,8 @@ async def _gen_cards(page: Page, parser_config: ParserConfig): #TODO вынес�
             # Если результатов нет, пробуем прокрутиться страницу вниз
             await _page_scroll_to(page, mouse_wheel = True)
             retries +=1
-    else:
-        tqdm.write(f"{part_indexes}") # TODO для отладки
+    # else:
+    #     tqdm.write(f"{part_indexes}") # TODO для отладки
 
 @try_and_log_decor("Дополнительное ожидание страницы")
 async def _extra_wait_cat(page: Page):

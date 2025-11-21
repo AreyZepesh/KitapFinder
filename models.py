@@ -156,6 +156,8 @@ class ParserConfig():
         return getattr(self, key, default)
     
     def get_max_depth(self, item_in_block):
+        if item_in_block == 0:
+            return self.element_limit
         return int(-(-(self.element_limit/item_in_block) // 1))
 
     @staticmethod
