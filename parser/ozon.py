@@ -114,11 +114,12 @@ async def _gen_cards(page: Page, parser_config: ParserConfig): #TODO вынес�
     async def _page_scroll_to(page: Page, locator_element: Locator = None, mouse_wheel: bool = False):
         if locator_element:
             await locator_element.scroll_into_view_if_needed()
+
         if mouse_wheel:
             height = await page.evaluate("() => window.innerHeight")
             scroll_to = height * 3
             await page.mouse.wheel(0, scroll_to)
-        await page.wait_for_timeout(500)
+        await page.wait_for_timeout(1000)
 
     @try_and_log_decor("Генератор списка карточек: получаем артикль", repeats = 3)
     async def _get_last_article(locator_element: Locator, parser_config: ParserConfig):
@@ -130,15 +131,15 @@ async def _gen_cards(page: Page, parser_config: ParserConfig): #TODO вынес�
     zero_part = page.locator('div[data-replace-layout-path]:has(div[data-widget="tileGridDesktop"])')
     block = parser_config.get_card_locator(zero_part)
     # last_article = await _card_article(block.last)
-    last_article = await _get_last_article(block, parser_config)
+    # last_article = await _get_last_article(block, parser_config)
     # запоминаем последний артикль блока ↑ и размер блока ↓
     item_in_block = await block.count()
     yield block
 
-    if last_article == await _get_last_article(block, parser_config):
+    # if last_article == await _get_last_article(block, parser_config):
         # Если последний артикль в блоке не изменился - листаем дальше 
         # Это атавизм, оставщийся со времени скриншотов, так как те прокучивали страницу
-        await _page_scroll_to(page, locator_element = block.last)
+    await _page_scroll_to(page, locator_element = block.last)
 
     # инициализируем переменные: список пройденых индексов, чтобы не повторяться, 
     # количество повторений и максимальная глубина в блоках
@@ -158,13 +159,13 @@ async def _gen_cards(page: Page, parser_config: ParserConfig): #TODO вынес�
                 if current_index not in part_indexes:
                     part_indexes.append(current_index)
                     block = parser_config.get_card_locator(part)
-                    last_article = await _get_last_article(block, parser_config)
+                    # last_article = await _get_last_article(block, parser_config)
                     yield block
 
-                    if last_article == await _get_last_article(block, parser_config):
+                    # if last_article == await _get_last_article(block, parser_config):
                     # Если последний артикль в блоке не изменился - листаем дальше 
                     # Это атавизм, оставщийся со времени скриншотов, так как те прокучивали страницу
-                        await _page_scroll_to(page, locator_element = block.last)
+                    await _page_scroll_to(page, locator_element = block.last)
                     retries = 0
                     break
 
