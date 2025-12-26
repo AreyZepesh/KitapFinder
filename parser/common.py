@@ -280,7 +280,8 @@ async def run_parser(context: BrowserContext, book: EBook, parser_config: Parser
             if added == 0 and parser_config.store not in ["ozon"]:
                 # tqdm.write(f"{parser_config.store}")
                 break
-    # input("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+    # if parser_config.store == "ozon":
+    #     input("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
     await page.close()
     return all_items
 
