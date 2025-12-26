@@ -40,7 +40,7 @@ async def __run__(fn, books: EBook|list[EBook], headless = True):
         # Контекст задается для все сессии. После некоторые вещи сменить не выйдет. 
         viewport = {"width": 1920, "height": 1080}
         if sys.platform == "linux":
-            viewport = {"width": 1280, "height": 720}
+            viewport = {"width": 1600, "height": 900}
         
         context = await browser.new_context(
                     viewport=viewport,
