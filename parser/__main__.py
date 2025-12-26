@@ -38,9 +38,12 @@ async def __run__(fn, books: EBook|list[EBook], headless = True):
             storage_state = "./parser/state.json"
 
         # Контекст задается для все сессии. После некоторые вещи сменить не выйдет. 
-        # Например разрешение 1600*900 отлично подходит для wb, а для других? TODO
+        viewport = {"width": 1920, "height": 1080}
+        if sys.platform == "linux":
+            viewport = {"width": 1280, "height": 720}
+        
         context = await browser.new_context(
-                    viewport={"width": 1920, "height": 1080},
+                    viewport=viewport,
                     no_viewport=True,
                     user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
                     permissions=["geolocation"],  # разрешаем
@@ -72,13 +75,15 @@ async def __run__(fn, books: EBook|list[EBook], headless = True):
 
 async def one_book(context, book: EBook):
         # results = await asyncio.gather(
-        results = await tqdm.gather(
+        stores = [
             wb(context = context, book = book),
             flip(context = context, book = book),
             kaspi(context = context, book = book),
             ozon(context = context, book = book),
-            ozon(context = context, book = book, alter_search = True),
-
+             ]
+        if sys.platform != "linux":
+            stores.extend([ozon(context = context, book = book, alter_search = True)])
+        results = await tqdm.gather(*stores,
                                 desc=book.title, #tqdm options
                                 ncols=80, 
                                 leave=False,
