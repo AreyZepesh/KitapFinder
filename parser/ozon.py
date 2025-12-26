@@ -202,12 +202,12 @@ async def _extra_wait_cat(page: Page):
 
 # @try_and_log_decor("Получение тайтла")
 async def _card_title(card: Locator):
-    return await card.locator("xpath=.//a[@href]//span[contains(@class, 'tsBody500Medium')]").first.inner_text(timeout = 3000)
+    return await card.locator("xpath=.//a[@href]//span[contains(@class, 'tsBody500Medium')]").first.inner_text(timeout = 5000)
 
 # @try_and_log_decor("Получение цены")
 async def _card_price(card: Locator):
     if await card.get_by_text( re.compile("Нет в наличии", re.IGNORECASE) ).count() == 0:
-        return ( await card.locator("xpath=.//span[contains(@class, 'tsHeadline') and not( contains(., '×') or contains(., 'мес') )]" ).first.inner_text(timeout = 10000) ).split("₸")[0]
+        return ( await card.locator("xpath=.//span[contains(@class, 'tsHeadline') and not( contains(., '×') or contains(., 'мес') )]" ).first.inner_text(timeout = 5000) ).split("₸")[0]
 
 # @try_and_log_decor("Получение артикля")
 async def _card_article(card: Locator):
