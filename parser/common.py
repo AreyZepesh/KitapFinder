@@ -146,26 +146,17 @@ async def image_from_response(response: APIResponse):
 async def goto_url(page: Page, url: str):
     # # один день была ошибка, с flip типо страница не загрузилась, тестируем обход:
     # try:
-    #     await page.goto(url[0])
-    # except Exception as ex1:
-    #     tqdm.write(ERROR_PREFIX.get())
-    #     tqdm.write(f"{ex1}")
-    #     tqdm.write("Ошибка при попытке загрузить страницу, пытаемся, ожидая domcontentloaded")
+    #     await page.goto(url)
+    # except:
     #     try:
-    #         await page.goto(url[0], wait_until="domcontentloaded")
-    #     except Exception as ex2:
-    #         tqdm.write(f"{ex2}")
-    #         tqdm.write("Ошибка при попытке загрузить страницу, пытаемся, ожидая commit")
+    #         await page.goto(url, wait_until="domcontentloaded")
+    #     except:
     #         try:
-    #             await page.goto(url[0], wait_until="commit")
-    #         except Exception as ex3:
-    #             tqdm.write(f"{ex3}")
-    #             tqdm.write(f"Ваще пипец, вырубаем)")
-    #             raise ex3
+    #             await page.goto(url, wait_until="commit")
+    #         except:
+    #             raise
 
-    #     finally:
-    #         tqdm.write(f"{'='*50}")
-    await page.goto(url, timeout=10000)
+    await page.goto(url)
 
 @try_and_log_decor("Ожидание страницы", repeats=3)
 async def wait_page(page: Page, parser_config: ParserConfig):

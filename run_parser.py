@@ -4,7 +4,7 @@ from utils import save_objects, save_image_from_bytes
 from services.html_generator import render_html_page
 
 from shutil import rmtree
-import os
+import os, sys
 from datetime import datetime as dt
 from parser import run
 
@@ -135,11 +135,13 @@ def main():
 
     save_objects("./tmp/data.pkl", books)
 
-    # for b in books:
-    #     b.optimize_stores_by_cover()
-    #     # b.save_covers(alt_path = True)
-    # print(dt.now().strftime("%Y-%m-%d %H-%M"))
-    # save_objects("./tmp/data_opt.pkl", books)
+    if sys.platform == "win32":
+        for b in books:
+            b.optimize_stores_by_cover()
+            # b.save_covers(alt_path = True)
+        print(dt.now().strftime("%Y-%m-%d %H-%M"))
+        save_objects("./tmp/data_opt.pkl", books)
+
     render_html_page(books)
 
 if __name__  == '__main__':
