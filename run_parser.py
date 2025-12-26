@@ -107,13 +107,13 @@ def main():
         # EBook(**{'title': '', 'author': '', 'isbns': [], 'only_isbn': False},),
         ] )
 
-    books = [
-        # EBook("Ключ из желтого металла", "Фрай"),
-        # EBook("Преступление и наказание", "Достоевский"), 
-        # EBook(**{'title': 'Башня ярости. Всходы ветра', 'author': 'Камша', 'isbns': None, 'only_isbn': False}),
-        EBook(**{'title': 'Волки Кальи+', 'author': 'Кинг', 'isbns': ['978-5-17-133881-7'], 'only_isbn': False}),
-        # EBook(**),
-        ]
+    # books = [
+    #     # EBook("Ключ из желтого металла", "Фрай"),
+    #     # EBook("Преступление и наказание", "Достоевский"), 
+    #     # EBook(**{'title': 'Башня ярости. Всходы ветра', 'author': 'Камша', 'isbns': None, 'only_isbn': False}),
+    #     EBook(**{'title': 'Волки Кальи+', 'author': 'Кинг', 'isbns': ['978-5-17-133881-7'], 'only_isbn': False}),
+    #     # EBook(**),
+    #     ]
 
     # books = [EBook("Преступление и наказание", "Достоевский")]
     # books = [EBook(**{'title': 'Горменгаст', 'author': 'Пик', 'isbns': [], 'only_isbn': False})]
@@ -135,11 +135,11 @@ def main():
 
     save_objects("./tmp/data.pkl", books)
 
-    for b in books:
-        b.optimize_stores_by_cover()
-        # b.save_covers(alt_path = True)
-    print(dt.now().strftime("%Y-%m-%d %H-%M"))
-    save_objects("./tmp/data_opt.pkl", books)
+    # for b in books:
+    #     b.optimize_stores_by_cover()
+    #     # b.save_covers(alt_path = True)
+    # print(dt.now().strftime("%Y-%m-%d %H-%M"))
+    # save_objects("./tmp/data_opt.pkl", books)
     render_html_page(books)
 
 if __name__  == '__main__':
