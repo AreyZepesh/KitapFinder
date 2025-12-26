@@ -19,7 +19,7 @@ from models import EBook, ShopCard, ParserConfig
 
 ERROR_PREFIX = contextvars.ContextVar("Ошибка")
 LOG_URL = contextvars.ContextVar("")
-TMP_STR = contextvars.ContextVar("")
+TMP = contextvars.ContextVar("")
 
 def try_and_log_decor(header: str, repeats: int = 1):
     """Асинхронный декоратор с повтором и логированием ошибок."""
@@ -30,6 +30,10 @@ def try_and_log_decor(header: str, repeats: int = 1):
                 try:
                    return await fn(*args, **kwargs)
                 except Exception as ex:
+                    page: Page = TMP.get()
+                    await page.screenshot(path=f"./logs/err/{ERROR_PREFIX.get()}_{dt.now().strftime("%Y-%m-%d %H-%M-%S")}.png")
+                    with open(f"./logs/err/{ERROR_PREFIX.get()}_{dt.now().strftime("%Y-%m-%d %H-%M-%S")}.html", "w", encoding="utf-8-sig") as f:
+                        f.write(await page.content())
                     # if trys+1 == repeats: ?
                     base_out = "\n".join([
                             f"{dt.now().strftime("%Y-%m-%d %H-%M-%S")}",
@@ -239,6 +243,7 @@ async def check_card(page: Page, card: ShopCard, book: EBook, parser_config: Par
 async def run_parser(context: BrowserContext, book: EBook, parser_config: ParserConfig) ->  list[ShopCard]:
     """Парсер, принимает контекст и объект книги, возвращает список объектов с 'карточками'"""
     page = await context.new_page()
+    TMP.set(page)
     all_items = []
     search_urls = get_search_urls(parser_config.base_url, book)
     # if parser_config.base_url_alt:

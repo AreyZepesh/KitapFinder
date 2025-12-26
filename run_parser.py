@@ -107,12 +107,12 @@ def main():
         # EBook(**{'title': '', 'author': '', 'isbns': [], 'only_isbn': False},),
         ] )
 
-    # books = [
-    #     # EBook("Ключ из желтого металла", "Фрай"),
-    #     # EBook("Преступление и наказание", "Достоевский"), 
-    #     EBook(**{'title': 'Башня ярости. Всходы ветра', 'author': 'Камша', 'isbns': None, 'only_isbn': False}),
-    #     # EBook(**),
-    #     ]
+    books = [
+        # EBook("Ключ из желтого металла", "Фрай"),
+        EBook("Преступление и наказание", "Достоевский"), 
+        # EBook(**{'title': 'Башня ярости. Всходы ветра', 'author': 'Камша', 'isbns': None, 'only_isbn': False}),
+        # EBook(**),
+        ]
 
     # books = [EBook("Преступление и наказание", "Достоевский")]
     # books = [EBook(**{'title': 'Горменгаст', 'author': 'Пик', 'isbns': [], 'only_isbn': False})]

@@ -3,3 +3,4 @@ pytest_playwright
 Pillow
 opencv-contrib-python
 BeautifulSoup4
+tqdm
