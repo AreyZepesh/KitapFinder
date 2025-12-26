@@ -2,4 +2,4 @@ setuptools
 pytest_playwright
 Pillow
 opencv-contrib-python
-BeautifulSoup
+BeautifulSoup4
