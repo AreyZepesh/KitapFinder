@@ -135,11 +135,11 @@ def main():
 
     save_objects("./tmp/data.pkl", books)
 
-    for b in books:
-        b.optimize_stores_by_cover()
-        # b.save_covers(alt_path = True)
-    print(dt.now().strftime("%Y-%m-%d %H-%M"))
-    save_objects("./tmp/data_opt.pkl", books)
+    # for b in books:
+    #     b.optimize_stores_by_cover()
+    #     # b.save_covers(alt_path = True)
+    # print(dt.now().strftime("%Y-%m-%d %H-%M"))
+    # save_objects("./tmp/data_opt.pkl", books)
     render_html_page(books)
 
 if __name__  == '__main__':

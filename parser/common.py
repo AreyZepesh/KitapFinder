@@ -30,25 +30,24 @@ def try_and_log_decor(header: str, repeats: int = 1):
                 try:
                    return await fn(*args, **kwargs)
                 except Exception as ex:
-                    # page: Page = TMP.get()
-                    # await page.screenshot(path=f"./logs/err/{ERROR_PREFIX.get()}_{dt.now().strftime("%Y-%m-%d %H-%M-%S")}.png")
-                    # with open(f"./logs/err/{ERROR_PREFIX.get()}_{dt.now().strftime("%Y-%m-%d %H-%M-%S")}.html", "w", encoding="utf-8-sig") as f:
-                    #     f.write(await page.content())
-                    # if trys+1 == repeats: ?
-                    base_out = "\n".join([
-                            f"{dt.now().strftime("%Y-%m-%d %H-%M-%S")}",
-                            ERROR_PREFIX.get(),
-                            f"{header} ({trys+1}/{repeats})"
-                            ])
-                    tqdm.write(f"{base_out}")
-                    tqdm.write(f"{ex}")
-                    with open(f"./logs/_error.txt", 'a', encoding="utf8") as error_file:
-                        error_file.write(base_out+"\n")
-                        error_file.write(LOG_URL.get() + "\n")
-                        error_file.write(f"{fn.__name__}\n")
-                        error_file.write(f"{traceback.format_exc()}\n")
-                        # error_file.write(f"{ex}\n")
-                        # error_file.write("\n")
+                    # if trys+1 == repeats: # выводить ошибку только если они провалила последнюю попытку
+                        # # при ошибке - скриншот и сохранение кода страницы
+                        # page: Page = TMP.get()
+                        # await page.screenshot(path=f"./logs/err/{ERROR_PREFIX.get()}_{dt.now().strftime("%Y-%m-%d %H-%M-%S")}.png")
+                        # with open(f"./logs/err/{ERROR_PREFIX.get()}_{dt.now().strftime("%Y-%m-%d %H-%M-%S")}.html", "w", encoding="utf-8-sig") as f:
+                        #     f.write(await page.content())
+                        base_out = "\n".join([
+                                f"{dt.now().strftime("%Y-%m-%d %H-%M-%S")}",
+                                ERROR_PREFIX.get(),
+                                f"{header} ({trys+1}/{repeats})"
+                                ])
+                        tqdm.write(f"{base_out}")
+                        tqdm.write(f"{ex}")
+                        with open(f"./logs/_error.txt", 'a', encoding="utf8") as error_file:
+                            error_file.write(base_out+"\n")
+                            error_file.write(LOG_URL.get() + "\n")
+                            error_file.write(f"{fn.__name__}\n")
+                            error_file.write(f"{traceback.format_exc()}\n")
 
         return wrapper
     return decorator
@@ -63,25 +62,15 @@ async def scroll_to_last(elem_locator: Locator, strore = None):
         prev_count = 0
         retries = 0
         max_retries = 5
-        # ozon_cat_size = 0
         while retries < max_retries:
 
             count = await elem_locator.count()
-            # print("!", len( await elem_locator.evaluate_all("els => els.map(el => el.innerText)") ))
-            # print(f"Загружено карточек: {count}") # TODO log
             if count == prev_count:
                 retries += 1
             else:
                 retries = 0
             prev_count = count
 
-            # if strore == "ozon":  #TODO уже не надо?
-            #     if not ozon_cat_size:
-            #         ozon_cat_size = count
-            #     elif count >= ozon_cat_size*3:
-            #         break
-            
-            # await expect(elem_locator.nth(count - 1)).to_be_attached()
             await elem_locator.nth(count - 1).scroll_into_view_if_needed()
             await asyncio.sleep(0.5)
         # return count
@@ -176,7 +165,7 @@ async def goto_url(page: Page, url: str):
 
     #     finally:
     #         tqdm.write(f"{'='*50}")
-    await page.goto(url)
+    await page.goto(url, timeout=10000)
 
 @try_and_log_decor("Ожидание страницы", repeats=3)
 async def wait_page(page: Page, parser_config: ParserConfig):
