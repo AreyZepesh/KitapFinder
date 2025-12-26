@@ -126,14 +126,17 @@ async def _gen_cards(page: Page, parser_config: ParserConfig): #TODO вынес�
         return await parser_config.get_card_article(locator_element.last)
 
     await _extra_wait_cat(page)
+    zero_part_css = 'div[data-replace-layout-path]:has(div[data-widget="tileGridDesktop"])'
+    # match_block = page.locator(f'div#contentScrollPaginator > div:has({zero_part_css})')
 
     # ищем блок с карточками, появляющийся при открытии страницы
-    zero_part = page.locator('div[data-replace-layout-path]:has(div[data-widget="tileGridDesktop"])')
+    # zero_part = match_block.locator(f'{zero_part_css}')
+    zero_part = page.locator(f'{zero_part_css}')
     block = parser_config.get_card_locator(zero_part)
     # last_article = await _card_article(block.last)
     # last_article = await _get_last_article(block, parser_config)
     # запоминаем последний артикль блока ↑ и размер блока ↓
-    item_in_block = await block.count()
+    item_in_zero_block = await block.count()
     yield block
 
     # if last_article == await _get_last_article(block, parser_config):
@@ -145,10 +148,11 @@ async def _gen_cards(page: Page, parser_config: ParserConfig): #TODO вынес�
     # количество повторений и максимальная глубина в блоках
     part_indexes = ["-1"]
     retries = 0
-    depth = parser_config.get_max_depth(item_in_block)
+    depth = parser_config.get_max_depth(item_in_zero_block)
 
     while retries < 3 and len(part_indexes) < depth:
         # ищем остальные блоки, кроме первичного
+        # not_zero_parts = match_block.locator('div[data-index]:has(div > div[data-widget="tileGridDesktop"])')
         not_zero_parts = page.locator('div[data-index]:has(div > div[data-widget="tileGridDesktop"])')
 
         if await not_zero_parts.count() > 0:
@@ -160,13 +164,25 @@ async def _gen_cards(page: Page, parser_config: ParserConfig): #TODO вынес�
                     part_indexes.append(current_index)
                     block = parser_config.get_card_locator(part)
                     # last_article = await _get_last_article(block, parser_config)
+                    item_in_block = await block.count()
                     yield block
 
                     # if last_article == await _get_last_article(block, parser_config):
                     # Если последний артикль в блоке не изменился - листаем дальше 
                     # Это атавизм, оставщийся со времени скриншотов, так как те прокучивали страницу
                     await _page_scroll_to(page, locator_element = block.last)
-                    retries = 0
+
+                    # TODO тестить надо
+                    # if item_in_block > item_in_zero_block:
+                    #     retries = 3
+                    # el
+                    if item_in_block != item_in_zero_block:
+                        retries +=1
+                        # if item_in_block == 11:
+                        #     retries = 3
+                    else:
+                        retries = 0
+                        
                     break
 
             else:
@@ -190,7 +206,8 @@ async def _card_title(card: Locator):
 
 # @try_and_log_decor("Получение цены")
 async def _card_price(card: Locator):
-    return ( await card.locator("xpath=.//span[contains(@class, 'tsHeadline') and not( contains(., '×') or contains(., 'мес') )]" ).first.inner_text() ).split("₸")[0]
+    if await card.get_by_text( re.compile("Нет в наличии", re.IGNORECASE) ).count() == 0:
+        return ( await card.locator("xpath=.//span[contains(@class, 'tsHeadline') and not( contains(., '×') or contains(., 'мес') )]" ).first.inner_text(timeout = 3000) ).split("₸")[0]
 
 # @try_and_log_decor("Получение артикля")
 async def _card_article(card: Locator):
@@ -205,10 +222,13 @@ async def _card_cover(card: Locator, page) -> APIResponse:
 # async def _card_info(card: Locator):
 #     return card.locator("div:has(a)").first
 
-async def main(context: BrowserContext, book: EBook, test = False) ->  list[ShopCard]:
+async def main(context: BrowserContext, book: EBook, alter_search = False, test = False) ->  list[ShopCard]:
+    base_url = "https://ozon.kz/category/knigi-16500/?text="
+    if alter_search:
+        base_url = "https://ozon.kz/category/knigi-16500/?sorting=price&text="
     parser_config = ParserConfig(
         store = "ozon",
-        base_url = "https://ozon.kz/category/knigi-16500/?sorting=price&text=",
+        base_url = base_url,
         wait_for_load_stat = "networkidle",
         wait_for_load_time = 500,
 
@@ -220,7 +240,7 @@ async def main(context: BrowserContext, book: EBook, test = False) ->  list[Shop
         # fn_extra_wait_cat = _extra_wait_cat,
 
         get_card_locator = lambda page: page.locator('div[data-widget="tileGridDesktop"] > div[data-index][class][style]'),
-        element_limit = 1000, 
+        # element_limit = 1000, 
         generator_cards = _gen_cards,
 
         get_card_title = _card_title, 

@@ -65,13 +65,16 @@ async def _card_article(card: Locator):
 async def _card_cover(card: Locator, page: Page) -> APIResponse:
     # input()
     img_url = await card.locator("img.item-card__image").first.get_attribute("src")
+    if img_url is None:
+        img_url = await card.locator("img.item-card__image").first.get_attribute("data-src")
+
     try:
         req = await page.request.get(img_url)
         return req
     except Exception as ex:
-        tqdm.write(f"{img_url}")
+        ex.add_note(f"URL изображения: {img_url}")
+        tqdm.write(f"URL изображения: {img_url}")
         raise ex
-    return await page.request.get(img_url)
 
 # async def _card_info(card: Locator):
 #     return card.locator("div.item-card__info").first

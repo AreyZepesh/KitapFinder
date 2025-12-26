@@ -136,17 +136,27 @@ class EBook():
         иначе, если все слова содержатся в строке, вернется True.
         Я понимаю что такой метод оставляет возможность для ошибки.
         Для фикса этого добавил проверку наличия точки и длины title больше 2"""
+        # def save_to_csv(s1,s2,r):
+        #     import csv
+        #     with open("./tmp/name.csv", 'a', encoding="utf-8-sig", newline="") as file:
+        #         writer = csv.writer(file, delimiter=";")
+        #         writer.writerow([s1,s2,r])
+
         norm_title = self._str_from_comparison(self.title)
         norm_string = self._str_from_comparison(string)
         if norm_title in norm_string:
+            # save_to_csv(self.title, string, True)
             return True
         if "." in self.title:
             title_words = norm_title.split()
             if len(title_words) > 2:
                 for word in title_words: 
                     if word not in norm_string:
+                        # save_to_csv(self.title, string, False)
                         return False
+            # save_to_csv(self.title, string, True)
             return True
+        # save_to_csv(self.title, string, False)
         return False
 
 
@@ -167,6 +177,7 @@ class ParserConfig():
 
     store: str = field(default="")
     base_url: str = field(default="")
+    # base_url_alt: str = field(default=None)
 
     wait_for_load_stat: str = field(default=None)
     wait_for_load_time: int = field(default=500)

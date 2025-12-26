@@ -77,6 +77,7 @@ async def one_book(context, book: EBook):
             flip(context = context, book = book),
             kaspi(context = context, book = book),
             ozon(context = context, book = book),
+            ozon(context = context, book = book, alter_search = True),
 
             # ozon(context = context, book = book, test = True),
             # wb(context = context, book = book, test = True),

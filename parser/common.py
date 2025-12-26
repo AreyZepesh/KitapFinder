@@ -4,7 +4,8 @@
 
 from playwright.async_api import (
     async_playwright, expect, 
-    Page, BrowserContext, Locator, APIResponse)
+    Page, BrowserContext, Locator, APIResponse,
+    TimeoutError)
 import asyncio
 from datetime import datetime as dt
 from tqdm.asyncio import tqdm
@@ -51,7 +52,7 @@ def try_and_log_decor(header: str, repeats: int = 1):
 @try_and_log_decor("Прокрутка до конца страницы", repeats=3)
 async def scroll_to_last(elem_locator: Locator, strore = None):
         """Крутим к последнему элементу, если 5 раз колво не изменилось - далее\n
-        ozon_mode ограничевает прокрутку тремя первыми блоками"""
+        strore: kaspi - пропускается"""
         if strore == "kaspi":
             return
 
@@ -134,7 +135,8 @@ def get_search_urls(base_url: str, book: EBook) -> list[str]:
             file.write(book.title + " " + url[0] + "\n")
     return search_urls
 
-# @try_and_log_decor("Получение обложки")
+# TODO  в трае оно, чтобы проверить поведение кода, если обложка не будет получена, а процесс пойдет дальше
+@try_and_log_decor("Получение обложки", repeats=3)
 async def image_from_response(response: APIResponse):
     content_type = response.headers.get("content-type", "").lower()
 
@@ -179,9 +181,12 @@ async def wait_page(page: Page, parser_config: ParserConfig):
 
 @try_and_log_decor("Обработка одной карточки", repeats=3)
 async def parse_card(page: Page, card: Locator, book: EBook, parser_config: ParserConfig) -> ShopCard:
+    # try:
     card_title = await parser_config.get_card_title(card)
     if book.is_TITLE_in_STR(card_title):
         price = utils.normalizePrice( await parser_config.get_card_price(card) )
+        if price is None:
+            return
         article = await parser_config.get_card_article(card)
         cover_path = f"./tmp/SCREEN-{dt.now().strftime("%Y-%m-%d")}/{book.title.replace(":","")}/{parser_config.store}_{price}_{article}.png"
         cover_bytes = await image_from_response( await parser_config.get_card_cover(card, page) )
@@ -192,7 +197,43 @@ async def parse_card(page: Page, card: Locator, book: EBook, parser_config: Pars
             cover_path = cover_path, 
             cover_bytes = cover_bytes,
             )
-    pass
+    # except TimeoutError:
+    #     raise
+    # except Exception as ex:
+    #     ex.add_note(f"HTML элемента:\n {utils.prettify_html(await card.evaluate('element => element.outerHTML'))}")
+    #     await card.screenshot(path=f"./logs/{book.title}_{parser_config.store}_{dt.now().strftime("%Y-%m-%d %H-%M")}.png")
+    #     raise #ex
+
+@try_and_log_decor("Проваливаемся в карточку и проверяем", repeats=3)
+async def check_card(page: Page, card: ShopCard, book: EBook, parser_config: ParserConfig) -> bool:
+    # if parser_config.store != "ozon":
+    #     return True
+    
+    # try:
+    #     card_page: Page = await page.context.new_page()
+    #     await card_page.goto(card.get_url())
+    #     await wait_page(card_page, parser_config)
+
+    #     if await card_page.get_by_text("Подтвердите, что вы не бот").count():
+    #         tqdm.write(">>> Антибот")
+    #         return True
+    #     category = await card_page.locator("a[href='/category/knigi-16500/']").count()
+    #     if category == 0:
+    #         await card_page.wait_for_timeout(1000)
+    #         category = await card_page.locator("a[href='/category/knigi-16500/']").count()
+
+    #     if book.author:
+    #         author = await card_page.locator('div[data-widget="webShortCharacteristics"]').get_by_text(book.author).count()
+    #     else:
+    #         author = 1
+    #     if category != 0 and author != 0:
+    #         return True
+    #     tqdm.write(f"Категория: {category}. Автор: {author}. {card.get_url()}")
+    #     return False
+
+    # finally:
+    #     await card_page.close()
+    return True
 
 @try_and_log_decor("Парсим данные: основная функция")
 async def run_parser(context: BrowserContext, book: EBook, parser_config: ParserConfig) ->  list[ShopCard]:
@@ -200,6 +241,8 @@ async def run_parser(context: BrowserContext, book: EBook, parser_config: Parser
     page = await context.new_page()
     all_items = []
     search_urls = get_search_urls(parser_config.base_url, book)
+    # if parser_config.base_url_alt:
+    #     search_urls.extend( get_search_urls(parser_config.base_url_alt, book) )
     ERROR_PREFIX.set(f"{book.title}: {parser_config.store}")
     for url in search_urls:
         LOG_URL.set(url[0])
@@ -213,14 +256,6 @@ async def run_parser(context: BrowserContext, book: EBook, parser_config: Parser
         if await parser_config.fn_noresults(page):
             continue
 
-        # проверяем и переключаем валюту
-        await parser_config.fn_currency(page)
-
-        # указываем адрес
-        await parser_config.fn_city(page)
-
-        # await parser_config.fn_extra_wait_cat(page) # TODO вне цикла
-
         async for block in parser_config.generator_cards(page, parser_config):
             # Каталог прогружается постранично/поблочно через генератор,
             # возвращающий блок элементов 
@@ -231,15 +266,16 @@ async def run_parser(context: BrowserContext, book: EBook, parser_config: Parser
                 result = await parse_card(page, card, book, parser_config)
                 if result:
                     result.type_search = url[-1]
-                    result.save_cover()
+                    # result.save_cover()
                     all_items.append(result)
                     added += 1
             # если на странице ничего не найдено, на следующюю не идем, 
             # кроме некоторых (озон например, он быстрее грузится и редко, 
             # но бывает наличие нужного элемента где то вконце)
             if added == 0 and parser_config.store not in ["ozon"]:
+                # tqdm.write(f"{parser_config.store}")
                 break
-
+    # input("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
     await page.close()
     return all_items
 
@@ -255,3 +291,11 @@ async def run_parser_test(context: BrowserContext, book: EBook, parser_config: P
 #         #     if click_author == "noresults":
 #         #         continue
 #         #     await wait_page(page, parser_config)
+# 
+#         # проверяем и переключаем валюту
+#         # await parser_config.fn_currency(page)
+
+#         # указываем адрес
+#         # await parser_config.fn_city(page)
+
+#         # await parser_config.fn_extra_wait_cat(page)
