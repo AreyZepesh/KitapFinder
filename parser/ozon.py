@@ -35,20 +35,23 @@ async def _currency(page: Page):
         if await page.locator(":has-text('₸')").count() > 0:
             # continue
             return
+        
         await page.wait_for_timeout(1000)
-        button = page.locator("xpath=//button[contains(@data-widget, 'selectedCurrencyLanguage')]").first
-        await expect(button).to_be_attached()
-        text = await button.inner_text()
+        button = page.locator("xpath=//button[contains(@data-widget, 'selectedCurrencyLanguage')]")
+        if await button.count() != 0:
+            button = button.first
+            await expect(button).to_be_attached()
+            text = await button.inner_text()
 
-        if "KZT" not in text:
-            await button.click()
+            if "KZT" not in text:
+                await button.click()
 
-            widget = page.locator("xpath=//div[contains(@data-widget, 'currencyLanguageSelector')]") #
-            await expect(widget).to_be_attached()
-            cur_input = widget.get_by_role("combobox").last
-            await cur_input.fill("KZT")
-            await cur_input.press("Enter")
-            await widget.get_by_role("button").click()
+                widget = page.locator("xpath=//div[contains(@data-widget, 'currencyLanguageSelector')]") #
+                await expect(widget).to_be_attached()
+                cur_input = widget.get_by_role("combobox").last
+                await cur_input.fill("KZT")
+                await cur_input.press("Enter")
+                await widget.get_by_role("button").click()
         # break
     except Exception as ex:
         await page.reload()
