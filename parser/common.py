@@ -266,7 +266,7 @@ async def run_parser(context: BrowserContext, book: EBook, parser_config: Parser
     await page.close()
     return all_items
 
-@try_and_log_decor("Создание контекста")
+@try_and_log_decor("Создание контекста", repeats=3)
 async def run_create_context(context: BrowserContext, parser_config: ParserConfig):
     page = await context.new_page()
     CURRENT_PAGE.set(page)
@@ -274,10 +274,12 @@ async def run_create_context(context: BrowserContext, parser_config: ParserConfi
     LOG_URL.set(parser_config.base_url)
     await goto_url(page, parser_config.base_url+"Достоевский")
     await wait_page(page, parser_config)
-
-    if await parser_config.fn_login(page):
-        await goto_url(page, parser_config.base_url+"Достоевский")
-        await wait_page(page, parser_config)
+    # if sys.platform == "linux":
+    #     page.wait_for_timeout(2000)
+    if sys.platform == "win32":
+        if await parser_config.fn_login(page):
+            await goto_url(page, parser_config.base_url+"Достоевский")
+            await wait_page(page, parser_config)
 
     # проверяем и переключаем валюту
     await parser_config.fn_currency(page)

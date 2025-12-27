@@ -45,7 +45,8 @@ async def __run__(fn, books: EBook|list[EBook], headless = True):
         context = await browser.new_context(
                     viewport=viewport,
                     no_viewport=True,
-                    user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+                    user_agent=f"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+                    # user_agent=f"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/{browser.version} Safari/537.36",
                     permissions=["geolocation"],  # разрешаем
                     # # geolocation={"latitude": 43.238949, "longitude": 76.889709},  # Алматы :)
                     geolocation={"latitude": 52.265415, "longitude": 76.977453},  # Павлодар, Ломова 154
@@ -57,7 +58,18 @@ async def __run__(fn, books: EBook|list[EBook], headless = True):
                     storage_state = storage_state,
                                             )
 
-
+        await context.add_init_script("""
+                Object.defineProperty(navigator, 'webdriver', { get: () => undefined });
+                Object.defineProperty(navigator, 'platform', {get: () => 'Win32'});
+                """)
+        await context.add_init_script("""
+                delete window.cdc_adoQpoasnfa76pfcZLmcfl_Array;
+                delete window.cdc_adoQpoasnfa76pfcZLmcfl_JSON;
+                delete window.cdc_adoQpoasnfa76pfcZLmcfl_Object;
+                delete window.cdc_adoQpoasnfa76pfcZLmcfl_Promise;
+                delete window.cdc_adoQpoasnfa76pfcZLmcfl_Proxy;
+                delete window.cdc_adoQpoasnfa76pfcZLmcfl_Symbol;
+                """)
 
         context.my_data = {}
         context.my_data["zero_page"] = await context.new_page()
