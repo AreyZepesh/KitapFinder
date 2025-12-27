@@ -271,6 +271,7 @@ async def run_create_context(context: BrowserContext, parser_config: ParserConfi
     page = await context.new_page()
     CURRENT_PAGE.set(page)
     ERROR_PREFIX.set(f"{parser_config.store}")
+    LOG_URL.set(parser_config.base_url)
     await goto_url(page, parser_config.base_url+"Достоевский")
     await wait_page(page, parser_config)
 
