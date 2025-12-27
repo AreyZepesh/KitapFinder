@@ -12,14 +12,14 @@ from tqdm.asyncio import tqdm
 from functools import wraps
 import traceback
 import contextvars
-import re
+import re, sys
 
 import utils
 from models import EBook, ShopCard, ParserConfig
 
 ERROR_PREFIX = contextvars.ContextVar("Ошибка")
 LOG_URL = contextvars.ContextVar("")
-# TMP = contextvars.ContextVar("")
+CURRENT_PAGE = contextvars.ContextVar("")
 
 def try_and_log_decor(header: str, repeats: int = 1):
     """Асинхронный декоратор с повтором и логированием ошибок."""
@@ -31,11 +31,12 @@ def try_and_log_decor(header: str, repeats: int = 1):
                    return await fn(*args, **kwargs)
                 except Exception as ex:
                     # if trys+1 == repeats: # выводить ошибку только если они провалила последнюю попытку
-                        # # при ошибке - скриншот и сохранение кода страницы
-                        # page: Page = TMP.get()
-                        # await page.screenshot(path=f"./logs/err/{ERROR_PREFIX.get()}_{dt.now().strftime("%Y-%m-%d %H-%M-%S")}.png")
-                        # with open(f"./logs/err/{ERROR_PREFIX.get()}_{dt.now().strftime("%Y-%m-%d %H-%M-%S")}.html", "w", encoding="utf-8-sig") as f:
-                        #     f.write(await page.content())
+                        if sys.platform == "linux":
+                        # при ошибке - скриншот и сохранение кода страницы
+                            page: Page = CURRENT_PAGE.get()
+                            await page.screenshot(path=f"./logs/err/{ERROR_PREFIX.get()}_{dt.now().strftime("%Y-%m-%d %H-%M-%S")}.png")
+                            with open(f"./logs/err/{ERROR_PREFIX.get()}_{dt.now().strftime("%Y-%m-%d %H-%M-%S")}.html", "w", encoding="utf-8-sig") as f:
+                                f.write(await page.content())
                         base_out = "\n".join([
                                 f"{dt.now().strftime("%Y-%m-%d %H-%M-%S")}",
                                 ERROR_PREFIX.get(),
@@ -223,7 +224,7 @@ async def check_card(page: Page, card: ShopCard, book: EBook, parser_config: Par
 async def run_parser(context: BrowserContext, book: EBook, parser_config: ParserConfig) ->  list[ShopCard]:
     """Парсер, принимает контекст и объект книги, возвращает список объектов с 'карточками'"""
     page = await context.new_page()
-    # TMP.set(page)
+    CURRENT_PAGE.set(page)
     all_items = []
     search_urls = get_search_urls(parser_config.base_url, book)
     # if parser_config.base_url_alt:
@@ -265,6 +266,26 @@ async def run_parser(context: BrowserContext, book: EBook, parser_config: Parser
     await page.close()
     return all_items
 
+@try_and_log_decor("Создание контекста")
+async def run_create_context(context: BrowserContext, parser_config: ParserConfig):
+    page = await context.new_page()
+    ERROR_PREFIX.set(f"{parser_config.store}")
+    await goto_url(page, parser_config.base_url+"Достоевский")
+    await wait_page(page, parser_config)
+
+    if await parser_config.fn_login(page):
+        await goto_url(page, parser_config.base_url+"Достоевский")
+        await wait_page(page, parser_config)
+
+
+    # проверяем и переключаем валюту
+    await parser_config.fn_currency(page)
+    # указываем адрес
+    await parser_config.fn_city(page)
+
+    await page.close()
+    pass
+
 @try_and_log_decor("Парсим данные ТЕСТ: основная функция")
 async def run_parser_test(context: BrowserContext, book: EBook, parser_config: ParserConfig) ->  list[ShopCard]:
     """Парсер, принимает контекст и объект книги, возвращает список объектов с 'карточками'"""
@@ -278,10 +299,5 @@ async def run_parser_test(context: BrowserContext, book: EBook, parser_config: P
 #         #         continue
 #         #     await wait_page(page, parser_config)
 # 
-#         # проверяем и переключаем валюту
-#         # await parser_config.fn_currency(page)
-
-#         # указываем адрес
-#         # await parser_config.fn_city(page)
 
 #         # await parser_config.fn_extra_wait_cat(page)

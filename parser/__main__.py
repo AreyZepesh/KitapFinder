@@ -39,8 +39,8 @@ async def __run__(fn, books: EBook|list[EBook], headless = True):
 
         # Контекст задается для все сессии. После некоторые вещи сменить не выйдет. 
         viewport = {"width": 1920, "height": 1080}
-        if sys.platform == "linux":
-            viewport = {"width": 1600, "height": 900}
+        # if sys.platform == "linux":
+        #     viewport = {"width": 1600, "height": 900}
         
         context = await browser.new_context(
                     viewport=viewport,
@@ -62,10 +62,16 @@ async def __run__(fn, books: EBook|list[EBook], headless = True):
         context.my_data = {}
         context.my_data["zero_page"] = await context.new_page()
         
-        await fn(context, books)
+        # Создать контекст
+        await asyncio.gather(
+            wb(context = context, book = None, create_context = True),
+            flip(context = context, book = None, create_context = True),
+            kaspi(context = context, book = None, create_context = True),
+            ozon(context = context, book = None, create_context = True),
+             )
 
-        # TODO 
-        # input("Ручные изменения!")
+
+        await fn(context, books)
 
         # сохраняем состояние контекста
         await context.storage_state(path="./parser/state.json")
@@ -115,28 +121,6 @@ def run(books: EBook|list[EBook], headless = True):
            ))
 
 def main():
-    # TODO для отладки
-    books = EBook("Преступление и наказание", "Достоевский")
-    books = [
-    EBook("Преступление и наказание", "Достоевский"), 
-    EBook("Ключ из желтого металла", "Фрай"),
-    ]
-    run(
-        books = books,
-        headless = False
-        )
-    
-    for b in books:
-        b.sort_by_price()
-        text = f"{b.title}: {len(b.prices)}\n"
-        with open(f"./logs/resutls_{dt.now().strftime("%Y-%m-%d %H-%M")}.txt", 'a', encoding="utf8") as file:
-            # print(text)
-            file.write(text)
-            for p in b.prices:
-                # print(p.to_dict())
-                # print(p.get_url())
-                file.write(f"{p.price}: {p.get_url()} ({p.type_search})\n")
-            file.write(f"\n")
     pass
 
 if __name__  == '__main__':

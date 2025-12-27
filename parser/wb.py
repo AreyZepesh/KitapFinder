@@ -3,7 +3,7 @@ from .common import (
     BrowserContext, Locator, APIResponse,
     EBook, ShopCard, ParserConfig,
     run_parser, try_and_log_decor, 
-    run_parser_test, 
+    run_parser_test, run_create_context,
     nextpage_gen_cards,
     tqdm, re, dt,
     )
@@ -129,7 +129,7 @@ async def _card_cover(card: Locator, page: Page) -> APIResponse:
 # async def _card_info(card: Locator):
 #     return card.locator("div.product-card__middle-wrap").first
 
-async def main(context: BrowserContext, book: EBook, test = False) ->  list[ShopCard]:
+async def main(context: BrowserContext, book: EBook, create_context = False) ->  list[ShopCard]:
     parser_config = ParserConfig(
         store = "WB",
         base_url = "https://global.wildberries.ru/catalog/0/search.aspx?search=книга ",
@@ -152,6 +152,6 @@ async def main(context: BrowserContext, book: EBook, test = False) ->  list[Shop
         get_card_cover = _card_cover, #TODO photo
         # get_card_screen = _card_info, #TODO screen
         )
-    if test:
-        return await run_parser_test(context, book, parser_config)
+    if create_context:
+        return await run_create_context(context, parser_config)
     return await run_parser(context, book, parser_config)

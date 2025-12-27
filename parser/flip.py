@@ -3,7 +3,7 @@ from .common import (
     BrowserContext, Locator, APIResponse,
     EBook, ShopCard, ParserConfig,
     run_parser, try_and_log_decor, 
-    run_parser_test, 
+    run_parser_test, run_create_context,
     nextpage_gen_cards,
     tqdm, re,
     )
@@ -50,7 +50,7 @@ async def _card_cover(card: Locator, page: Page) -> APIResponse:
 # async def _card_info(card: Locator):
 #     return card.locator("div.product-data") #.first
 
-async def main(context: BrowserContext, book: EBook, test = False) ->  list[ShopCard]:
+async def main(context: BrowserContext, book: EBook, create_context = False) ->  list[ShopCard]:
     parser_config = ParserConfig(
         store = "flip",
         # base_url = "https://www.flip.kz/search?subsection=1&filter-i101=1&order=price.up&search=", # без листания результаты могут уехать, например Достоевский
@@ -68,6 +68,6 @@ async def main(context: BrowserContext, book: EBook, test = False) ->  list[Shop
         get_card_article = _card_article,
         get_card_cover = _card_cover,
         )
-    if test:
-        return await run_parser_test(context, book, parser_config)
+    if create_context:
+        return await run_create_context(context, parser_config)
     return await run_parser(context, book, parser_config)

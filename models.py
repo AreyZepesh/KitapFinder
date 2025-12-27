@@ -185,6 +185,7 @@ class ParserConfig():
     fn_extra_goto: Callable[[Any], None] = field(default=_noop) # для дополнения или замены урл
     # fn_click_author: Callable[[Any], None] = field(default=_noop) # выбор автора ВНИМАНИЕ! в проге должно запускаться ДО fn_noresults
     fn_noresults: Callable[[Any], bool] = field(default=_noop) # True если страница уведомляет о отсутвии результатов
+    fn_login: Callable[[Any], None] = field(default=_noop) # переключение валюты
     fn_currency: Callable[[Any], None] = field(default=_noop) # переключение валюты
     fn_city: Callable[[Any], None] = field(default=_noop) # выбор города
 

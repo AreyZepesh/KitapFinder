@@ -3,7 +3,7 @@ from .common import (
     BrowserContext, Locator, APIResponse,
     EBook, ShopCard, ParserConfig,
     run_parser, try_and_log_decor, 
-    run_parser_test, 
+    run_parser_test, run_create_context,
     nextpage_gen_cards,
     tqdm, re,
     )
@@ -25,6 +25,7 @@ async def _city(page: Page):
         city = await dialog.locator("a").get_by_text("Павлодар").first.click()
         await page.wait_for_timeout(100)
         await page.locator("html.js").first.click()
+        await page.wait_for_timeout(500)
     else:
         # tqdm.write("! Город уже норм")
         pass
@@ -79,7 +80,7 @@ async def _card_cover(card: Locator, page: Page) -> APIResponse:
 # async def _card_info(card: Locator):
 #     return card.locator("div.item-card__info").first
 
-async def main(context: BrowserContext, book: EBook, test = False) ->  list[ShopCard]:
+async def main(context: BrowserContext, book: EBook, create_context = False) ->  list[ShopCard]:
     parser_config = ParserConfig(
         store = "kaspi",
         base_url = f"https://kaspi.kz/shop/search/?q=:availableInZone:551010000:category:Books&text=",
@@ -98,8 +99,8 @@ async def main(context: BrowserContext, book: EBook, test = False) ->  list[Shop
         get_card_article = _card_article,
         get_card_cover = _card_cover, 
         )
-    if test:
-        return await run_parser_test(context, book, parser_config)
+    if create_context:
+        return await run_create_context(context, parser_config)
     return await run_parser(context, book, parser_config)
 
 def _no_only_isbn_urls(base_url, book):

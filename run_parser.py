@@ -13,6 +13,8 @@ def main():
         os.remove("./logs/_urls.txt")
     if os.path.exists("./logs/_error.txt"):
         os.remove("./logs/_error.txt")
+    if os.path.exists(f"./logs/err"):
+        rmtree(f"./logs/err")
     if os.path.exists(f"./tmp/SCREEN-{dt.now().strftime("%Y-%m-%d")}"):
         rmtree(f"./tmp/SCREEN-{dt.now().strftime("%Y-%m-%d")}")
     if os.path.exists(f"./tmp/SCREEN-ALT-{dt.now().strftime("%Y-%m-%d")}"):
@@ -112,11 +114,12 @@ def main():
     #     # EBook("Преступление и наказание", "Достоевский"), 
     #     # EBook(**{'title': 'Башня ярости. Всходы ветра', 'author': 'Камша', 'isbns': None, 'only_isbn': False}),
     #     EBook(**{'title': 'Волки Кальи+', 'author': 'Кинг', 'isbns': ['978-5-17-133881-7'], 'only_isbn': False}),
+    #     # EBook(**{'title': 'Пробуждение Левиафана', 'author': 'Кори', 'isbns': ['978-5-389-26449-6'], 'only_isbn': False},),
     #     # EBook(**),
     #     ]
 
     # books = [EBook("Преступление и наказание", "Достоевский")]
-    # books = [EBook(**{'title': 'Горменгаст', 'author': 'Пик', 'isbns': [], 'only_isbn': False})]
+    # books = [EBook(**{'title': 'Титус Гроан', 'author': 'Пик', 'isbns': [], 'only_isbn': False})]
 
 
     run(books=books, headless = True)
@@ -135,12 +138,12 @@ def main():
 
     save_objects("./tmp/data.pkl", books)
 
-    if sys.platform == "win32":
-        for b in books:
-            b.optimize_stores_by_cover()
-            # b.save_covers(alt_path = True)
-        print(dt.now().strftime("%Y-%m-%d %H-%M"))
-        save_objects("./tmp/data_opt.pkl", books)
+    # if sys.platform == "win32":
+    for b in books:
+        b.optimize_stores_by_cover()
+        # b.save_covers(alt_path = True)
+    print(dt.now().strftime("%Y-%m-%d %H-%M"))
+    save_objects("./tmp/data_opt.pkl", books)
 
     render_html_page(books)
 

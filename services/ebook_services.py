@@ -4,6 +4,7 @@ from tqdm import tqdm
 import cv2
 import numpy as np
 from models import ShopCard
+import sys
 
 def find_duplicate_via_hash(img_bytes1: bytes, img_bytes2: bytes, **kwargs) -> bool:
     """Сравниваем хеш двух байтмассивов изображение, возвращает True если совпадают"""
@@ -165,7 +166,7 @@ def optimize_stores_by_cover(data: list[ShopCard]):
     # Разбиваем цены по магазинам
     groups = defaultdict(list)
     for price_card in data:
-        groups[price_card.store].append(price_card)
+        groups[f"{price_card.store}_{price_card.type_search}"].append(price_card)
     
     # Прогоняем данные по отдельным магизинам
     # for store, price_cards in groups.items():
@@ -183,13 +184,16 @@ def optimize_stores_by_cover(data: list[ShopCard]):
             # заменяем исходный на очищенный от дубликатов список
             price_cards = get_cleaned_list(price_cards, duplicates)
 
-        # Прогоняем сравнение черещ OpenCV
-        duplicates = _connected_indices(price_cards, find_dublicate_via_opencv, 
-                                        # **{"method": "akaze", "reference_score": 0.5}
-                                        )
-        if duplicates != []:
-            # заменяем исходный на очищенный от дубликатов список
-            price_cards = get_cleaned_list(price_cards, duplicates)
+        # сравнение и оптимизации с высокими требованиями к железу - только на основном компе с виндой
+        # TODO не забыть убрать, если будет железо мощнее
+        if sys.platform == "win32":
+            # Прогоняем сравнение через OpenCV
+            duplicates = _connected_indices(price_cards, find_dublicate_via_opencv, 
+                                            # **{"method": "akaze", "reference_score": 0.5}
+                                            )
+            if duplicates != []:
+                # заменяем исходный на очищенный от дубликатов список
+                price_cards = get_cleaned_list(price_cards, duplicates)
         # Заменяем список в основном словаре 
         groups[store] = price_cards
 

@@ -3,7 +3,7 @@ from .common import (
     BrowserContext, Locator, APIResponse,
     EBook, ShopCard, ParserConfig,
     run_parser, try_and_log_decor, 
-    run_parser_test,
+    run_parser_test, run_create_context,
     tqdm, ERROR_PREFIX, dt,
     re,
     )
@@ -15,6 +15,18 @@ async def _noresults(page: Page):
     noresults = noresults1 + noresults2
     if "category/knigi-16500" not in page.url or noresults > 0 :
         return True
+
+@try_and_log_decor("Нажать 'Войти'", repeats = 3)
+async def _login(page: Page) -> bool:
+    """Попытка входа в учетную запись, если отработано - возращает True, что значит что надо перейти на предыдущую страницу"""
+    if await page.locator('div[data-widget="profileLogo"]').count() == 0:
+        login = page.locator('div[data-widget="profileMenuAnonymous"]')
+        if await login.count() != 0:
+            await login.first.click()
+            await page.wait_for_timeout(1000)
+            return True
+    else:
+        return False
 
 @try_and_log_decor("Переключение валюты", repeats = 3)
 async def _currency(page: Page):
@@ -219,10 +231,7 @@ async def _card_cover(card: Locator, page) -> APIResponse:
     # input(f"\n\n{img_url}")
     return await page.request.get(img_url)
 
-# async def _card_info(card: Locator):
-#     return card.locator("div:has(a)").first
-
-async def main(context: BrowserContext, book: EBook, alter_search = False, test = False) ->  list[ShopCard]:
+async def main(context: BrowserContext, book: EBook, alter_search = False, create_context = False) ->  list[ShopCard]:
     base_url = "https://ozon.kz/category/knigi-16500/?text="
     if alter_search:
         base_url = "https://ozon.kz/category/knigi-16500/?sorting=price&text="
@@ -233,6 +242,8 @@ async def main(context: BrowserContext, book: EBook, alter_search = False, test 
         wait_for_load_time = 500,
 
         fn_noresults = _noresults, 
+
+        fn_login = _login,
         fn_currency = _currency,
         fn_city = _city,
         # fn_click_author = _click_author,
@@ -248,6 +259,6 @@ async def main(context: BrowserContext, book: EBook, alter_search = False, test 
         get_card_article = _card_article,
         get_card_cover = _card_cover, 
         )
-    if test:
-        return await run_parser_test(context, book, parser_config)
+    if create_context:
+        return await run_create_context(context, parser_config)
     return await run_parser(context, book, parser_config)
