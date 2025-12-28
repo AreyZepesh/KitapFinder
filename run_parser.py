@@ -122,7 +122,7 @@ def main():
     # books = [EBook(**{'title': 'Титус Гроан', 'author': 'Пик', 'isbns': [], 'only_isbn': False})]
 
 
-    run(books=books, headless = True)
+    run(books=books, headless = False)
     
     for b in books:
         b.sort_by_price()
