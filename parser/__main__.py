@@ -17,7 +17,6 @@ from parser.ozon import main as ozon
 from parser.flip import main as flip
 from parser.kaspi import main as kaspi
 
-
 async def __run__(fn, books: EBook|list[EBook], headless = True):
     async with async_playwright() as p:
         browser = await p.chromium.launch(
@@ -46,7 +45,7 @@ async def __run__(fn, books: EBook|list[EBook], headless = True):
         
         context = await browser.new_context(
                     viewport=viewport,
-                    no_viewport=True,
+                    # no_viewport=True,
                     user_agent=user_agent,
                     permissions=["geolocation"],  # разрешаем
                     # # geolocation={"latitude": 43.238949, "longitude": 76.889709},  # Алматы :)
@@ -54,7 +53,7 @@ async def __run__(fn, books: EBook|list[EBook], headless = True):
                     locale="ru-RU",
                     timezone_id="Asia/Almaty",
                     # java_script_enabled=True,
-                    # device_scale_factor=1,
+                    device_scale_factor=1,
                     is_mobile=False,
                     storage_state = storage_state,
                                             )
@@ -71,7 +70,16 @@ async def __run__(fn, books: EBook|list[EBook], headless = True):
         #         delete window.cdc_adoQpoasnfa76pfcZLmcfl_Proxy;
         #         delete window.cdc_adoQpoasnfa76pfcZLmcfl_Symbol;
         #         """)
-
+        await context.add_init_script("""
+                const style = document.createElement('style');
+                style.innerHTML = `
+                * {
+                animation: none !important;
+                transition: none !important;
+                }
+                `;
+                document.head.appendChild(style);
+                """)
         context.my_data = {}
         context.my_data["zero_page"] = await context.new_page()
         
@@ -81,9 +89,9 @@ async def __run__(fn, books: EBook|list[EBook], headless = True):
 
         # Создать контекст
         await asyncio.gather(
-            # wb(context = context, book = None, create_context = True),
-            # flip(context = context, book = None, create_context = True),
-            # kaspi(context = context, book = None, create_context = True),
+            wb(context = context, book = None, create_context = True),
+            flip(context = context, book = None, create_context = True),
+            kaspi(context = context, book = None, create_context = True),
             ozon(context = context, book = None, create_context = True),
              )
 
@@ -99,13 +107,13 @@ async def __run__(fn, books: EBook|list[EBook], headless = True):
 async def one_book(context, book: EBook):
         # results = await asyncio.gather(
         stores = [
-            # wb(context = context, book = book),
-            # flip(context = context, book = book),
-            # kaspi(context = context, book = book),
-            # ozon(context = context, book = book),
+            wb(context = context, book = book),
+            flip(context = context, book = book),
+            kaspi(context = context, book = book),
+            ozon(context = context, book = book, alter_search = True),
              ]
         if sys.platform != "linux":
-            stores.extend([ozon(context = context, book = book, alter_search = True)])
+            stores.extend([ozon(context = context, book = book)])
         results = await tqdm.gather(*stores,
                                 desc=book.title, #tqdm options
                                 ncols=80, 

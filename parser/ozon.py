@@ -152,7 +152,7 @@ async def _gen_cards(page: Page, parser_config: ParserConfig): #TODO вынес�
     # last_article = await _get_last_article(block, parser_config)
     # запоминаем последний артикль блока ↑ и размер блока ↓
     item_in_zero_block = await block.count()
-    tqdm.write(f"Нулево блок: {item_in_zero_block}")
+    # tqdm.write(f"Нулево блок: {item_in_zero_block}")
     yield block
 
     # if last_article == await _get_last_article(block, parser_config):
@@ -181,7 +181,7 @@ async def _gen_cards(page: Page, parser_config: ParserConfig): #TODO вынес�
                     block = parser_config.get_card_locator(part)
                     # last_article = await _get_last_article(block, parser_config)
                     item_in_block = await block.count()
-                    tqdm.write(f"{current_index} блок: {item_in_zero_block}")
+                    # tqdm.write(f"{current_index} блок: {item_in_zero_block}")
                     yield block
 
                     # if last_article == await _get_last_article(block, parser_config):
@@ -210,8 +210,8 @@ async def _gen_cards(page: Page, parser_config: ParserConfig): #TODO вынес�
             # Если результатов нет, пробуем прокрутиться страницу вниз
             await _page_scroll_to(page, mouse_wheel = True)
             retries +=1
-    else:
-        tqdm.write(f"{part_indexes}") # TODO для отладки
+    # else:
+    #     tqdm.write(f"{part_indexes}") # TODO для отладки
 
 @try_and_log_decor("Дополнительное ожидание страницы")
 async def _extra_wait_cat(page: Page):
