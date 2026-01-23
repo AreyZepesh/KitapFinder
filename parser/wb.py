@@ -19,9 +19,12 @@ async def _extra_urls(page: Page):
 @try_and_log_decor("Проверка на noresult")
 async def _noresults(page: Page):
     # await page.wait_for_timeout(500)
-    noresults = await page.locator("div.not-found-search").count()
-    noresults_alt = await page.locator("div.not-found-result").count()
-    if noresults > 0 or noresults_alt > 0:
+    noresults = 0
+    noresults += await page.locator("div.not-found-search").count()
+    noresults += await page.locator("div.not-found-result").count()
+    noresults += await page.get_by_text("ничего не нашлось").count()
+
+    if noresults > 0:
         return True
     
 @try_and_log_decor("Переключение валюты")
@@ -98,11 +101,97 @@ async def _click_author(page: Page, author: str = None):
             return "noresults"
             # как то возвращать noresult?
     
+async def _gen_cards(page: Page, parser_config: ParserConfig):
+    """ Генератор списка локаторов карточек, возвращает locator \n
+    Этот возвращает несколько раз, по срезам (сперва 15/30, потом всё после них, и тд)
+    Время выполнения на 65 книг было 27:56
+    """
+    @try_and_log_decor("Генератор списка карточек: скролл", repeats = 3)
+    async def _page_scroll_to(page: Page, locator_element: Locator = None, mouse_wheel: bool = False):
+        if locator_element:
+            await locator_element.scroll_into_view_if_needed()
+
+        if mouse_wheel:
+            height = await page.evaluate("() => window.innerHeight")
+            scroll_to = height * 3
+            await page.mouse.wheel(0, scroll_to)
+        await page.wait_for_timeout(200)
+
+    cards_returned = 0
+    cards_loaded = 0
+    retries = 0
+    cards_list: Locator = page.locator('div.product-card-list') 
+
+    # tqdm.write(f"До цикла: {total_cards=} {retries=} {cards_loaded=}")
+    while retries < 3 and cards_returned < parser_config.element_limit:
+        block = cards_list.locator(f"article[data-card-index]:nth-of-type(n+{cards_returned+1})")
+        # Если пытаться отправлять срезы
+        # :nth-child(n+16):nth-child(-n+30)
+        # :nth-of-type(n+16):nth-of-type(-n+30)
+        cards_loaded = await parser_config.get_card_locator(page).count()
+
+        if cards_loaded > cards_returned:
+            # tqdm.write(f"Нормальноый ход, крутим до последнего элемента: {cards_returned=} {retries=} {cards_loaded=}")
+            retries = 0
+            cards_returned = cards_loaded
+            await _page_scroll_to(page, locator_element = block.last)
+        # elif cards_loaded == 0 or cards_loaded == cards:
+        elif cards_loaded == 0 and cards_loaded != cards_returned:
+            raise Exception(f"Неожиданная ошибка, сейчас карточек ноль, но недавно было больше: {cards_returned=} {retries=} {cards_loaded=}")
+        else:
+            retries += 1
+            # tqdm.write(f"Вход в ручную прокрутку: {cards_returned=} {retries=} {cards_loaded=}")
+            await _page_scroll_to(page, mouse_wheel = True)
+
+        yield block
 
 
-@try_and_log_decor("Дополнительное ожидание страницы")
+async def _gen_cards_(page: Page, parser_config: ParserConfig):
+    """ Генератор списка локаторов карточек, возвращает locator \n
+    Этот возвращает один раз, уже прокрученную страницу
+    Время выполнения на 65 книг было 27:54
+    """
+    @try_and_log_decor("Генератор списка карточек: скролл", repeats = 3)
+    async def _page_scroll_to(page: Page, locator_element: Locator = None, mouse_wheel: bool = False):
+        if locator_element:
+            await locator_element.scroll_into_view_if_needed()
+
+        if mouse_wheel:
+            height = await page.evaluate("() => window.innerHeight")
+            scroll_to = height * 3
+            await page.mouse.wheel(0, scroll_to)
+        await page.wait_for_timeout(200)
+
+    cards_returned = 0
+    cards_loaded = 0
+    retries = 0
+    block = parser_config.get_card_locator(page)
+
+    # tqdm.write(f"До цикла: {total_cards=} {retries=} {cards_loaded=}")
+    while retries < 3 and cards_returned < parser_config.element_limit:
+        cards_loaded = await block.count()
+
+        if cards_loaded > cards_returned:
+            # tqdm.write(f"Нормальноый ход, крутим до последнего элемента: {cards_returned=} {retries=} {cards_loaded=}")
+            retries = 0
+            cards_returned = cards_loaded
+            await _page_scroll_to(page, locator_element = block.last)
+        # elif cards_loaded == 0 or cards_loaded == cards:
+        elif cards_loaded == 0 and cards_loaded != cards_returned:
+            raise Exception(f"Неожиданная ошибка, сейчас карточек ноль, но недавно было больше: {cards_returned=} {retries=} {cards_loaded=}")
+        else:
+            retries += 1
+            # tqdm.write(f"Вход в ручную прокрутку: {cards_returned=} {retries=} {cards_loaded=}")
+            await _page_scroll_to(page, mouse_wheel = True)
+
+    # else:
+    #     tqdm.write(f"while отработал: {cards_returned=} {retries=} {cards_loaded=}")
+
+    yield block
+
+@try_and_log_decor("Дополнительное ожидание страницы", repeats=3)
 async def _extra_wait_cat(page: Page):
-    """Нажимаем кнопку окей, на информации о куках"""
+    await expect(page.locator("div.product-card-list")).to_be_attached()
     cookie = page.locator("div.fixed-block__cookies:has(button)")
     if await cookie.count() > 0:
         await cookie.get_by_role("button", name = "Окей").click()
@@ -136,15 +225,15 @@ async def main(context: BrowserContext, book: EBook, create_context = False) -> 
         wait_for_load_time = 1000,
 
         fn_extra_goto = _extra_urls,
+        fn_extra_wait_cat = _extra_wait_cat,
         fn_noresults = _noresults, 
         fn_currency = _currency,
-        # fn_click_author = _click_author,
-
-        # fn_extra_wait_cat = _extra_wait_cat,
         
-        get_card_locator = lambda page: page.locator('//div[@class="product-card-list"]').get_by_role('article'),
-        get_nextpage_locator = lambda page: page.locator("a.pagination-next:has-text('Следующая страница')"),
-        generator_cards = nextpage_gen_cards,
+        # get_card_locator = lambda page: page.locator('//div[@class="product-card-list"]').get_by_role('article'),
+        get_card_locator = lambda page: page.locator('div.product-card-list > article[data-card-index]'),
+        # get_nextpage_locator = lambda page: page.locator("a.pagination-next:has-text('Следующая страница')"),
+        # element_limit = 100, 
+        generator_cards = _gen_cards,
 
         get_card_title = _card_title, 
         get_card_price = _card_price,

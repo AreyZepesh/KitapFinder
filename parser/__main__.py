@@ -39,10 +39,13 @@ async def __run__(fn, books: EBook|list[EBook], headless = True):
         # Контекст задается для все сессии. После некоторые вещи сменить не выйдет. 
         viewport = {"width": 1920, "height": 1080}
         user_agent=f"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36"
+        user_agent=f"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36"
         if sys.platform == "linux":
             user_agent=f"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
             viewport = {"width": 1280, "height": 1024}
-        
+
+        user_agent=None
+
         context = await browser.new_context(
                     viewport=viewport,
                     # no_viewport=True,
@@ -84,8 +87,8 @@ async def __run__(fn, books: EBook|list[EBook], headless = True):
         context.my_data["zero_page"] = await context.new_page()
         
         # посмотреть юсерагент
-        #await context.my_data["zero_page"].goto("https://www.browserscan.net/ru/user-agent")
-        #input("!")
+        # await context.my_data["zero_page"].goto("https://www.browserscan.net/ru/user-agent")
+        # input("!")
 
         # Создать контекст
         await asyncio.gather(
@@ -111,9 +114,11 @@ async def one_book(context, book: EBook):
             flip(context = context, book = book),
             kaspi(context = context, book = book),
             ozon(context = context, book = book, alter_search = True),
+            ozon(context = context, book = book)
              ]
-        if sys.platform != "linux":
-            stores.extend([ozon(context = context, book = book)])
+        # if sys.platform != "linux":
+        #     stores.extend([
+        #                    ])
         results = await tqdm.gather(*stores,
                                 desc=book.title, #tqdm options
                                 ncols=80, 

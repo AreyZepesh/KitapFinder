@@ -120,7 +120,7 @@ async def _click_author(page: Page, author: str = None):
         return True
 
 
-async def _gen_cards(page: Page, parser_config: ParserConfig): #TODO вынести deep в конфиг парсера?
+async def _gen_cards(page: Page, parser_config: ParserConfig):
     """ Генератор списка локаторов карточек, возвращает locator \n
     card_locator: get_card_locator из парсер конфига \n
     deep: глубина, количество блоков с которых будет собранны данные \n
@@ -251,9 +251,6 @@ async def main(context: BrowserContext, book: EBook, alter_search = False, creat
         fn_login = _login,
         fn_currency = _currency,
         fn_city = _city,
-        # fn_click_author = _click_author,
-
-        # fn_extra_wait_cat = _extra_wait_cat,
 
         get_card_locator = lambda page: page.locator('div[data-widget="tileGridDesktop"] > div[data-index][class][style]'),
         # element_limit = 1000, 

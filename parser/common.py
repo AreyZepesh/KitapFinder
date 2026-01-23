@@ -235,9 +235,11 @@ async def run_parser(context: BrowserContext, book: EBook, parser_config: Parser
         await goto_url(page, url[0])
 
         await wait_page(page, parser_config)
-        
+
         if await parser_config.fn_extra_goto(page):
             await wait_page(page, parser_config)
+            
+        await parser_config.fn_extra_wait_cat(page)
 
         if await parser_config.fn_noresults(page):
             continue
@@ -258,7 +260,7 @@ async def run_parser(context: BrowserContext, book: EBook, parser_config: Parser
             # если на странице ничего не найдено, на следующюю не идем, 
             # кроме некоторых (озон например, он быстрее грузится и редко, 
             # но бывает наличие нужного элемента где то вконце)
-            if added == 0 and parser_config.store not in ["ozon"]:
+            if added == 0 and parser_config.store not in ["ozon", "WB"]:
                 # tqdm.write(f"{parser_config.store}")
                 break
     # if parser_config.store == "ozon":
@@ -276,16 +278,17 @@ async def run_create_context(context: BrowserContext, parser_config: ParserConfi
     await wait_page(page, parser_config)
     if sys.platform == "linux":
         await page.wait_for_timeout(1000)
-    if sys.platform == "win32":
-        if await parser_config.fn_login(page):
-            await goto_url(page, parser_config.base_url+"Достоевский")
-            await wait_page(page, parser_config)
+    # if sys.platform == "win32":
+    #     if await parser_config.fn_login(page):
+    #         await goto_url(page, parser_config.base_url+"Достоевский")
+    #         await wait_page(page, parser_config)
 
     # проверяем и переключаем валюту
     await parser_config.fn_currency(page)
     # указываем адрес
     await parser_config.fn_city(page)
 
+    # input("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
     await page.close()
     pass
 
@@ -303,4 +306,3 @@ async def run_parser_test(context: BrowserContext, book: EBook, parser_config: P
 #         #     await wait_page(page, parser_config)
 # 
 
-#         # await parser_config.fn_extra_wait_cat(page)

@@ -29,7 +29,6 @@ def main():
     books.extend( [
         EBook(**{'title': 'Портал Теней', 'author': 'Кук', 'isbns': ['978-5-389-17122-0'], 'only_isbn': False},),
 
-        EBook(**{'title': 'Осколок Зари', 'author': 'Сандерсон', 'isbns': ['978-5-389-26180-8'], 'only_isbn': False},),
         EBook(**{'title': 'Космер. Тайная история', 'author': 'Сандерсон', 'isbns': ['978-5-389-23731-5'], 'only_isbn': False},),
         EBook(**{'title': 'Убийца войн', 'author': 'Сандерсон', 'isbns': ['978-5-389-20180-4'], 'only_isbn': False},),
         EBook(**{'title': 'Легион', 'author': 'Сандерсон', 'isbns': ['978-5-389-16903-6'], 'only_isbn': False},),
@@ -56,12 +55,13 @@ def main():
         # EBook(**{'title': 'Увечный бог', 'author': 'Эриксон', 'isbns': [], 'only_isbn': False},),
         EBook(**{'title': 'След крови', 'author': 'Эриксон', 'isbns': [], 'only_isbn': False},),
 
-        EBook(**{'title': 'Пробуждение Левиафана', 'author': 'Кори', 'isbns': ['978-5-389-26449-6'], 'only_isbn': False},),
-        EBook(**{'title': 'Война Калибана', 'author': 'Кори', 'isbns': ['978-5-389-26911-8'], 'only_isbn': False},),
-        EBook(**{'title': 'Врата Абаддона', 'author': 'Кори', 'isbns': ['978-5-389-26910-1'], 'only_isbn': False},),
-        EBook(**{'title': 'Пожар Сиболы', 'author': 'Кори', 'isbns': ['978-5-389-27730-4'], 'only_isbn': False},),
-        EBook(**{'title': 'Игры Немезиды', 'author': 'Кори', 'isbns': ['978-5-389-27731-1'], 'only_isbn': False},),
-        EBook(**{'title': 'Пепел Вавилона', 'author': 'Кори', 'isbns': ['978-5-389-27732-8'], 'only_isbn': False},),
+        # EBook(**{'title': 'Пробуждение Левиафана', 'author': 'Кори', 'isbns': ['978-5-389-26449-6'], 'only_isbn': False},),
+        # EBook(**{'title': 'Война Калибана', 'author': 'Кори', 'isbns': ['978-5-389-26911-8'], 'only_isbn': False},),
+        # EBook(**{'title': 'Врата Абаддона', 'author': 'Кори', 'isbns': ['978-5-389-26910-1'], 'only_isbn': False},),
+        # EBook(**{'title': 'Пожар Сиболы', 'author': 'Кори', 'isbns': ['978-5-389-27730-4'], 'only_isbn': False},),
+        # EBook(**{'title': 'Игры Немезиды', 'author': 'Кори', 'isbns': ['978-5-389-27731-1'], 'only_isbn': False},),
+        # EBook(**{'title': 'Пепел Вавилона', 'author': 'Кори', 'isbns': ['978-5-389-27732-8'], 'only_isbn': False},),
+        EBook(**{'title': 'Восстание Персеполиса', 'author': 'Кори', 'isbns': ['978-5-389-28638-2'], 'only_isbn': False},),
 
         EBook(**{'title': 'Короли Жути', 'author': 'Имс', 'isbns': ['978-5-389-13190-3'], 'only_isbn': False},),
         EBook(**{'title': 'Кровавая Роза', 'author': 'Имс', 'isbns': ['978-5-389-16829-9'], 'only_isbn': False},),
@@ -70,13 +70,7 @@ def main():
         EBook(**{'title': 'Горменгаст', 'author': 'Пик', 'isbns': [], 'only_isbn': False},),
         EBook(**{'title': 'Титус один', 'author': 'Пик', 'isbns': [], 'only_isbn': False},),
 
-        EBook(**{'title': 'Легионы Калара', 'author': 'Батчер', 'isbns': ['978-5-389-24326-2'], 'only_isbn': False},),
-        EBook(**{'title': 'Фурии командира', 'author': 'Батчер', 'isbns': ['978-5-389-25018-5'], 'only_isbn': False},),
-        EBook(**{'title': 'Фурии принцепса', 'author': 'Батчер', 'isbns': ['978-5-389-24421-4'], 'only_isbn': False},),
-        EBook(**{'title': 'Фурия Первого консула', 'author': 'Батчер', 'isbns': ['978-5-389-26094-8'], 'only_isbn': False},),
-
         EBook(**{'title': 'Гроза из преисподней. Луна светит безумцам. Могила в подарок', 'author': 'Батчер', 'isbns': ['978-5-389-19143-3'], 'only_isbn': False},),
-        EBook(**{'title': 'Летний рыцарь. Лики смерти', 'author': 'Батчер', 'isbns': ['978-5-389-19146-4'], 'only_isbn': False},),
         EBook(**{'title': 'Кровавые ритуалы. Барабаны зомби', 'author': 'Батчер', 'isbns': ['978-5-389-19149-5'], 'only_isbn': False},),
         EBook(**{'title': 'Доказательства вины. Белая ночь', 'author': 'Батчер', 'isbns': ['978-5-389-20882-7'], 'only_isbn': False},),
         EBook(**{'title': 'Маленькое одолжение. Продажная шкура', 'author': 'Батчер', 'isbns': ['978-5-389-21273-2'], 'only_isbn': False},),
@@ -84,12 +78,8 @@ def main():
         EBook(**{'title': 'История призрака. Холодные дни', 'author': 'Батчер', 'isbns': ['978-5-389-22690-6'], 'only_isbn': False},),
         EBook(**{'title': 'Грязная игра. Правила чародейства', 'author': 'Батчер', 'isbns': ['978-5-389-23608-0'], 'only_isbn': False},),
         EBook(**{'title': 'Ведьмин час', 'author': 'Батчер', 'isbns': ['978-5-389-23643-1'], 'only_isbn': False},),
-        EBook(**{'title': 'Поле боя', 'author': 'Батчер', 'isbns': ['978-5-389-24260-9'], 'only_isbn': False},),
 
         EBook(**{'title': 'Украденный трон. Призыв. Маска призрака', 'author': 'Гейдер', 'isbns': ['978-5-389-19770-1'], 'only_isbn': False},),
-
-        EBook("Новый Дозор", "Лукьяненко", ['978-5-271-41900-3', '978-5-17-118480-3']),
-        EBook("Шестой Дозор", "Лукьяненко", ['978-5-17-088817-7', '978-5-17-118536-7']),
 
         # EBook(**{'title': 'Только ты можешь спасти человечество', 'author': 'Пратчетт', 'isbns': ['978-5-699-33519-0'], 'only_isbn': False},),
         # EBook(**{'title': 'Джонни и мертвецы', 'author': 'Пратчетт', 'isbns': ['978-5-699-33898-6'], 'only_isbn': False},),
@@ -112,14 +102,14 @@ def main():
     # books = [
     #     # EBook("Ключ из желтого металла", "Фрай"),
     #     # EBook("Преступление и наказание", "Достоевский"), 
-    #     # EBook(**{'title': 'Башня ярости. Всходы ветра', 'author': 'Камша', 'isbns': None, 'only_isbn': False}),
-    #     EBook(**{'title': 'Волки Кальи+', 'author': 'Кинг', 'isbns': ['978-5-17-133881-7'], 'only_isbn': False}),
-    #     # EBook(**{'title': 'Пробуждение Левиафана', 'author': 'Кори', 'isbns': ['978-5-389-26449-6'], 'only_isbn': False},),
+    #     EBook(**{'title': 'Нефритовый город', 'author': 'Фонда Ли', 'isbns': None, 'only_isbn': False},),
+    #     EBook(**{'title': 'Нефритовая война', 'author': 'Фонда Ли', 'isbns': None, 'only_isbn': False},),
+    #     EBook(**{'title': 'Нефритовое наследие', 'author': 'Фонда Ли', 'isbns': None, 'only_isbn': False},),
     #     # EBook(**),
     #     ]
 
     # books = [EBook("Преступление и наказание", "Достоевский")]
-    # books = [EBook(**{'title': 'Титус Гроан', 'author': 'Пик', 'isbns': [], 'only_isbn': False})]
+    # books = [EBook(**{'title': 'Незримые Академики', 'author': 'Пратчетт', 'isbns': [], 'only_isbn': False})]
 
 
     run(books=books, headless = True)

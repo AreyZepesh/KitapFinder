@@ -44,8 +44,6 @@ all_book = [
 {'title': 'Волки Кальи', 'author': 'Кинг', 'isbns': ['978-5-17-133881-7'], 'only_isbn': True},
 {'title': 'Песнь Сюзанны', 'author': 'Кинг', 'isbns': ['978-5-17-133029-3'], 'only_isbn': True},
 
-{'title': 'Тайны Колдовского мира', 'author': 'Нортон', 'isbns': ['978-5-389-19152-5'], 'only_isbn': False}, 
-
 # {'title': '', 'author': '', 'isbns': [''], 'only_isbn': True},
 # {'title': '', 'author': 'Кинг', 'isbns': [''], 'only_isbn': True},
 
@@ -96,7 +94,4 @@ all_book2 = [
 
 {'title': 'Волки Кальи', 'author': 'Кинг', 'isbns': ['978-5-17-133881-7'], 'only_isbn': True},
 {'title': 'Песнь Сюзанны', 'author': 'Кинг', 'isbns': ['978-5-17-133029-3'], 'only_isbn': True},
-
-
-{'title': 'Тайны Колдовского мира', 'author': 'Нортон', 'isbns': ['978-5-389-19152-5'], 'only_isbn': False}, 
     ]
