@@ -7,6 +7,8 @@ from models import ShopCard, EBook
 from datetime import datetime as dt
 
 def img_to_data_uri(img_bytes: bytes, mime="image/jpeg") -> str:
+    if img_bytes is None:
+        return
     b64 = base64.b64encode(img_bytes).decode("ascii")
     return f"data:{mime};base64,{b64}"
 

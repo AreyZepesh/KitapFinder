@@ -192,6 +192,10 @@ async def _gen_cards_(page: Page, parser_config: ParserConfig):
 @try_and_log_decor("Дополнительное ожидание страницы", repeats=3)
 async def _extra_wait_cat(page: Page):
     await expect(page.locator("div.product-card-list")).to_be_attached()
+
+    # TODO убрать скрин
+    # await page.screenshot(path=f"./logs/wb/{dt.now().strftime("%Y-%m-%d %H-%M-%S")}.png")
+
     cookie = page.locator("div.fixed-block__cookies:has(button)")
     if await cookie.count() > 0:
         await cookie.get_by_role("button", name = "Окей").click()
@@ -222,6 +226,8 @@ async def main(context: BrowserContext, book: EBook, create_context = False) -> 
     parser_config = ParserConfig(
         store = "WB",
         base_url = "https://global.wildberries.ru/catalog/0/search.aspx?search=книга ",
+        isbn_prefix = True,
+
         wait_for_load_time = 1000,
 
         fn_extra_goto = _extra_urls,

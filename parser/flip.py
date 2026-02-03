@@ -55,6 +55,7 @@ async def main(context: BrowserContext, book: EBook, create_context = False) -> 
         store = "flip",
         # base_url = "https://www.flip.kz/search?subsection=1&filter-i101=1&order=price.up&search=", # без листания результаты могут уехать, например Достоевский
         base_url = "https://www.flip.kz/search?subsection=1&filter-i101=1&search=",
+        isbn_prefix = True,
         fn_noresults = _noresults, 
         # fn_click_author = _click_author,
 
