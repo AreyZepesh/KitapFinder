@@ -25,10 +25,10 @@ all_book = [
 {'title': 'Наука Плоского мира. Книга 3. Часы Дарвина', 'author': 'Пратчетт', 'isbns': ['978-5-699-89838-1'], 'only_isbn': False},
 # {'title': 'О дивный новый мир. Остров. Возвращение в дивный новый мир', 'author': 'Хаксли', 'isbns': ['978-5-17-160649-7'], 'only_isbn': True},
 {'title': 'Последний мятеж', 'author': 'Щепетов Сергей', 'isbns': ['5-9717-0089-8'], 'only_isbn': False},
-{'title': 'Кровь заката', 'author': 'Камша', 'isbns': None, 'only_isbn': False},
-{'title': 'Довод королей', 'author': 'Камша', 'isbns': None, 'only_isbn': False},
-{'title': 'Башня ярости. Чёрные маки', 'author': 'Камша', 'isbns': None, 'only_isbn': False},
-{'title': 'Башня ярости. Всходы ветра', 'author': 'Камша', 'isbns': None, 'only_isbn': False},
+# {'title': 'Кровь заката', 'author': 'Камша', 'isbns': None, 'only_isbn': False},
+# {'title': 'Довод королей', 'author': 'Камша', 'isbns': None, 'only_isbn': False},
+# {'title': 'Башня ярости. Чёрные маки', 'author': 'Камша', 'isbns': None, 'only_isbn': False},
+# {'title': 'Башня ярости. Всходы ветра', 'author': 'Камша', 'isbns': None, 'only_isbn': False},
 {'title': 'Три мушкетера', 'author': 'Дюма', 'isbns': ['978-5-389-19881-4'], 'only_isbn': True},
 {'title': 'Двадцать лет спустя', 'author': 'Дюма', 'isbns': ['978-5-389-21145-2'], 'only_isbn': True},
 {'title': 'Виконт де Бражелон, или Еще десять лет спустя', 'author': 'Дюма', 'isbns': ['978-5-389-24464-1'], 'only_isbn': True},
@@ -37,11 +37,11 @@ all_book = [
 {'title': 'Острые края', 'author': 'Аберкромби', 'isbns': ['978-5-04-118152-9'], 'only_isbn': False},
 {'title': 'Лучше подавать холодным', 'author': 'Аберкромби', 'isbns': ['978-5-04-090300-9'], 'only_isbn': False},
 # {'title': 'Море Осколков', 'author': 'Аберкромби', 'isbns': ['978-5-04-122888-0'], 'only_isbn': True},
-{'title': 'Полкороля', 'author': 'Аберкромби', 'isbns': ['978-5-04-157042-2'], 'only_isbn': False},
+# {'title': 'Полкороля', 'author': 'Аберкромби', 'isbns': ['978-5-04-157042-2'], 'only_isbn': False},
 
 {'title': 'HHhH', 'author': 'Бине', 'isbns': ['978-5-86471-701-1'], 'only_isbn': False},
 
-{'title': 'Волки Кальи', 'author': 'Кинг', 'isbns': ['978-5-17-133881-7'], 'only_isbn': True},
+# {'title': 'Волки Кальи', 'author': 'Кинг', 'isbns': ['978-5-17-133881-7'], 'only_isbn': True},
 {'title': 'Песнь Сюзанны', 'author': 'Кинг', 'isbns': ['978-5-17-133029-3'], 'only_isbn': True},
 
 # {'title': '', 'author': '', 'isbns': [''], 'only_isbn': True},
@@ -88,10 +88,10 @@ all_book2 = [
 
 {'title': 'Острые края', 'author': 'Аберкромби', 'isbns': ['978-5-04-118152-9'], 'only_isbn': False},
 {'title': 'Лучше подавать холодным', 'author': 'Аберкромби', 'isbns': ['978-5-04-090300-9'], 'only_isbn': False},
-{'title': 'Полкороля', 'author': 'Аберкромби', 'isbns': ['978-5-04-157042-2'], 'only_isbn': False},
+# {'title': 'Полкороля', 'author': 'Аберкромби', 'isbns': ['978-5-04-157042-2'], 'only_isbn': False},
 
 {'title': 'HHhH', 'author': 'Бине', 'isbns': ['978-5-86471-701-1'], 'only_isbn': False},
 
-{'title': 'Волки Кальи', 'author': 'Кинг', 'isbns': ['978-5-17-133881-7'], 'only_isbn': True},
+# {'title': 'Волки Кальи', 'author': 'Кинг', 'isbns': ['978-5-17-133881-7'], 'only_isbn': True},
 {'title': 'Песнь Сюзанны', 'author': 'Кинг', 'isbns': ['978-5-17-133029-3'], 'only_isbn': True},
     ]

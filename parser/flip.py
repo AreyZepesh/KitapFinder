@@ -31,6 +31,8 @@ async def _click_author(page: Page, author: str = None):
 
 # @try_and_log_decor("Получение тайтла")
 async def _card_title(card: Locator):
+    if await card.locator("div.noavailable").count() > 0:
+        return ""
     return await card.locator("div.title").first.inner_text()
 
 # @try_and_log_decor("Получение цены")
@@ -54,8 +56,9 @@ async def main(context: BrowserContext, book: EBook, create_context = False) -> 
     parser_config = ParserConfig(
         store = "flip",
         # base_url = "https://www.flip.kz/search?subsection=1&filter-i101=1&order=price.up&search=", # без листания результаты могут уехать, например Достоевский
-        base_url = "https://www.flip.kz/search?subsection=1&filter-i101=1&search=",
-        isbn_prefix = True,
+        # base_url = "https://www.flip.kz/search?subsection=1&filter-i101=1&search=",
+        base_url = "https://www.flip.kz/search?subsection=1&search=",
+        isbn_escaping_dash = True,
         fn_noresults = _noresults, 
         # fn_click_author = _click_author,
 

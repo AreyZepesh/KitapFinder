@@ -216,6 +216,7 @@ async def _gen_cards(page: Page, parser_config: ParserConfig):
 @try_and_log_decor("Дополнительное ожидание страницы")
 async def _extra_wait_cat(page: Page):
     await page.wait_for_load_state("networkidle")
+    await expect(page.locator("div.container")).to_be_attached()
 
 # @try_and_log_decor("Получение тайтла")
 async def _card_title(card: Locator):
@@ -247,6 +248,7 @@ async def main(context: BrowserContext, book: EBook, alter_search = False, creat
         wait_for_load_time = 500,
 
         fn_noresults = _noresults, 
+        fn_extra_wait_cat = _extra_wait_cat,
 
         fn_login = _login,
         fn_currency = _currency,

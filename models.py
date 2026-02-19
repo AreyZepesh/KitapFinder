@@ -178,6 +178,7 @@ class ParserConfig():
     store: str = field(default="")
     base_url: str = field(default="")
     isbn_prefix: bool = field(default=False)
+    isbn_escaping_dash: bool = field(default=False)
     # base_url_alt: str = field(default=None)
 
     wait_for_load_stat: str = field(default=None)

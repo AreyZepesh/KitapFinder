@@ -114,9 +114,10 @@ async def nextpage_gen_cards(page: Page, parser_config: ParserConfig):
             await page.wait_for_timeout(200)
             retries +=1
 
-def get_search_urls(base_url: str, book: EBook, isbn_prefix = False) -> list[str]:
+def get_search_urls(base_url: str, book: EBook, isbn_prefix: bool = False, escaping_dash_in_isbn: bool = False) -> list[str]:
     """Генерируем список url для поиска книги, 
-    принимает базовый url к которому добавляет данные из объекта книги"""
+    принимает базовый url к которому добавляет данные из объекта книги
+    escaping_a_character_in_isbn: экранируем тире в isbn"""
 
     search_urls = [(str(base_url+book.get_search_text()).replace(" ", "+"), "text")]
     if book.isbns:
@@ -124,7 +125,11 @@ def get_search_urls(base_url: str, book: EBook, isbn_prefix = False) -> list[str
             base_url += "isbn "
         if book.only_isbn:
              search_urls = []
-        search_urls.extend( [(base_url.replace(" ", "+")+isbn, "isbn") for isbn in book.isbns] )
+        for isbn in book.isbns:
+            url = base_url.replace(" ", "+")
+            url += isbn.replace("-", "\\-") if escaping_dash_in_isbn else isbn
+            search_urls.append((url, "isbn"))
+        # search_urls.extend( [(base_url.replace(" ", "+")+isbn, "isbn") for isbn in book.isbns] )
 
     # Затычка сохраняющая ссылки
     for url in search_urls:
@@ -229,7 +234,7 @@ async def run_parser(context: BrowserContext, book: EBook, parser_config: Parser
     page = await context.new_page()
     CURRENT_PAGE.set(page)
     all_items = []
-    search_urls = get_search_urls(parser_config.base_url, book, parser_config.isbn_prefix)
+    search_urls = get_search_urls(parser_config.base_url, book, parser_config.isbn_prefix, parser_config.isbn_escaping_dash)
     # if parser_config.base_url_alt:
     #     search_urls.extend( get_search_urls(parser_config.base_url_alt, book) )
     ERROR_PREFIX.set(f"{book.title}: {parser_config.store}")

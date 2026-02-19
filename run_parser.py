@@ -27,6 +27,9 @@ def main():
     for book in all_book:
         books.append(EBook(**book))
     books.extend( [
+        EBook(**{'title': 'Молли Блэкуотер. За краем мира', 'author': 'Перумов', 'isbns': ['978-5-699-86948-0'], 'only_isbn': False}),
+        EBook(**{'title': 'За краем мира', 'author': 'Перумов', 'isbns': ['978-5-699-86948-0'], 'only_isbn': False}),
+        
         EBook(**{'title': 'Портал Теней', 'author': 'Кук', 'isbns': ['978-5-389-17122-0'], 'only_isbn': False},),
 
         EBook(**{'title': 'Ветер и правда', 'author': 'Сандерсон', 'isbns': [], 'only_isbn': False},),
@@ -58,6 +61,8 @@ def main():
 
 
         EBook(**{'title': 'Восстание Персеполиса', 'author': 'Кори', 'isbns': ['978-5-389-28638-2'], 'only_isbn': False},),
+        EBook(**{'title': 'Гнев Тиамат', 'author': 'Кори', 'isbns': [], 'only_isbn': False},),
+        EBook(**{'title': 'Падение Левиафана', 'author': 'Кори', 'isbns': [], 'only_isbn': False},),
 
         EBook(**{'title': 'Короли Жути', 'author': 'Имс', 'isbns': ['978-5-389-13190-3'], 'only_isbn': False},),
         EBook(**{'title': 'Кровавая Роза', 'author': 'Имс', 'isbns': ['978-5-389-16829-9'], 'only_isbn': False},),
@@ -80,31 +85,46 @@ def main():
         # EBook(**{'title': 'Только ты можешь спасти человечество', 'author': 'Пратчетт', 'isbns': ['978-5-699-33519-0'], 'only_isbn': False},),
         # EBook(**{'title': 'Джонни и мертвецы', 'author': 'Пратчетт', 'isbns': ['978-5-699-33898-6'], 'only_isbn': False},),
         # EBook(**{'title': 'Джонни и бомба', 'author': 'Пратчетт', 'isbns': ['978-5-699-34451-2'], 'only_isbn': False},),
-        EBook(**{'title': 'Финт', 'author': 'Пратчетт', 'isbns': ['978-5-699-84214-8'], 'only_isbn': False},),
         # EBook(**{'title': 'Угонщики', 'author': 'Пратчетт', 'isbns': ['978-5-699-31259-7'], 'only_isbn': False},),
         # EBook(**{'title': 'Землекопы', 'author': 'Пратчетт', 'isbns': ['978-5-699-31257-3'], 'only_isbn': False},),
         # EBook(**{'title': 'Крылья', 'author': 'Пратчетт', 'isbns': ['978-5-699-31263-4'], 'only_isbn': False},),
         EBook(**{'title': 'Страта', 'author': 'Пратчетт', 'isbns': ['978-5-889-23131-8', '978-5-699-23137-9'], 'only_isbn': False},),
         EBook(**{'title': 'Народ, или Когда-то мы были дельфинами', 'author': 'Пратчетт', 'isbns': ['978-5-699-42326-2', '978-5-04-119664-6'], 'only_isbn': False},),
 
-        EBook(**{'title': 'Волки Кальи+', 'author': 'Кинг', 'isbns': ['978-5-17-133881-7'], 'only_isbn': False}),
-        EBook(**{'title': 'Песнь Сюзанны+', 'author': 'Кинг', 'isbns': ['978-5-17-133029-3'], 'only_isbn': False}),
-
         EBook(**{'title': 'Душа Бога', 'author': 'Перумов', 'isbns': ['978-5-04-110924-0'], 'only_isbn': False}),
+        
+        EBook(**{'title': 'Джонатан Стрендж и мистер Норрелл', 'author': 'Кларк', 'isbns': [], 'only_isbn': False},),
+        EBook(**{'title': 'Страж', 'author': 'Пехов', 'isbns': ['978-5-9922-3553-1', '978-5-9922-2037-7'], 'only_isbn': True},),
+        EBook(**{'title': 'Республика воров', 'author': 'Линч', 'isbns': ['978-5-389-08784-2', '978-5-389-25810-5'], 'only_isbn': False},),
+        # EBook(**{'title': 'Лорд Дарси. Убийства и магия', 'author': 'Рэндалл Гаррет', 'isbns': ['978-5-04-211385-7'], 'only_isbn': False},),
+
+        # EBook(**{'title': 'Влад Талтош. Том 1', 'author': 'Браст', 'isbns': ["978-5-04-211206-5"], 'only_isbn': False},),
+        # EBook(**{'title': 'Влад Талтош. Том 2', 'author': 'Браст', 'isbns': ["978-5-04-212675-8"], 'only_isbn': False},),
+        # EBook(**{'title': 'Влад Талтош. Том 3', 'author': 'Браст', 'isbns': ["978-5-04-212678-9"], 'only_isbn': False},),
+        EBook(**{'title': 'Влад Талтош. Том 4', 'author': 'Браст', 'isbns': ["978-5-04-212681-9"], 'only_isbn': False},),
+        # EBook(**{'title': 'Влад Талтош', 'author': 'Браст', 'isbns': ["978-5-04-211206-5"], 'only_isbn': True},),
+        # EBook(**{'title': 'Влад Талтош', 'author': 'Браст', 'isbns': ["978-5-04-212675-8"], 'only_isbn': True},),
+        # EBook(**{'title': 'Влад Талтош', 'author': 'Браст', 'isbns': ["978-5-04-212678-9"], 'only_isbn': True},),
+        EBook(**{'title': 'Влад Талтош', 'author': 'Браст', 'isbns': ["978-5-04-212681-9"], 'only_isbn': True},),
+        
+        EBook(**{'title': 'Песнь Сюзанны+', 'author': 'Кинг', 'isbns': ['978-5-17-133029-3'], 'only_isbn': False}),
 
         # EBook(**{'title': '', 'author': '', 'isbns': [], 'only_isbn': False},),
         ] )
 
     # books = [
+        # EBook(**{'title': '', 'author': '', 'isbns': [], 'only_isbn': False},),
     #     # EBook("Ключ из желтого металла", "Фрай"),
     #     # EBook("Преступление и наказание", "Достоевский"), 
     #     EBook(**{'title': 'Нефритовый город', 'author': 'Фонда Ли', 'isbns': None, 'only_isbn': False},),
     #     EBook(**{'title': 'Нефритовая война', 'author': 'Фонда Ли', 'isbns': None, 'only_isbn': False},),
     #     EBook(**{'title': 'Нефритовое наследие', 'author': 'Фонда Ли', 'isbns': None, 'only_isbn': False},),
     #     # EBook(**),
-    #     ]
+        # ]
 
     # books = [EBook("Преступление и наказание", "Достоевский")]
+    # books = [EBook("Остров Сахалин", "Чехов", ['978-5-389-28937-6'])]
+    # books = [EBook(**{'title': 'Виконт де Бражелон, или Еще десять лет спустя', 'author': 'Дюма', 'isbns': ['978-5-389-24464-1'], 'only_isbn': True},)]
     # books = [EBook(**{'title': 'Незримые Академики', 'author': 'Пратчетт', 'isbns': [], 'only_isbn': False})]
 
 
