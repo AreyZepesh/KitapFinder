@@ -177,6 +177,12 @@ async def parse_card(page: Page, card: Locator, book: EBook, parser_config: Pars
     # try:
     card_title = await parser_config.get_card_title(card)
     if book.is_TITLE_in_STR(card_title):
+        card_title = card_title.replace("| Книга б/у", "")
+        if book.need_check_author:
+            if parser_config.store == "ozon" and "sorting=price" not in page.url:
+                if (book.author and "|" in card_title) and not book.is_AUTHOR_in_STR(card_title):
+                    # tqdm.write(f"{await parser_config.get_card_article(card)}   {book.author=}   {card_title=}") #  TODO Для отладки
+                    return 
         price = utils.normalizePrice( await parser_config.get_card_price(card) )
         if price is None:
             return

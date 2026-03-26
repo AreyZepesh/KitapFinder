@@ -53,6 +53,8 @@ class EBook():
     isbns: list[str] = field(default_factory=list,)
     only_isbn: bool = field(default=False)
     prices: list[ShopCard] = field(default_factory=list)
+    alt_author: str = field(default=None)
+    need_check_author: bool = field(default=False)
 
     def get_search_text(self):
         if self.author:
@@ -157,6 +159,32 @@ class EBook():
             # save_to_csv(self.title, string, True)
             return True
         # save_to_csv(self.title, string, False)
+        return False
+    
+    def is_AUTHOR_in_STR(self, string: str) -> bool:
+        """Проверяет, содержится ли автор в строке.\n\n
+        Проверяет вхождение author в string.
+        Сперва проверяется наличие author как есть: 
+        если является частью string, вернется True.
+        Иначе запускается цикл, по слову из author:
+        если одного из слов есть в string, вернется True;
+        Я понимаю что такой метод оставляет возможность для ошибки."""
+        norm_author = self._str_from_comparison(self.author)
+        norm_string = self._str_from_comparison(string)
+
+        if norm_author in norm_string:
+            return True
+        if self.alt_author:
+            if self._str_from_comparison(self.alt_author) in norm_string:
+                return True
+        if " " in self.author:
+            author_words = norm_author.split()
+            for word in author_words: 
+                # делаю наоборот от того же с названием: если есть хотя бы одно слова из имени автора - True
+                if word in norm_string:
+                    return True
+            # return True
+        # print(f"\n {norm_author} / {norm_string}")
         return False
 
 

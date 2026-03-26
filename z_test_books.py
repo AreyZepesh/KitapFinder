@@ -11,14 +11,14 @@ books = [
 {'title': 'Душа Бога. Том 1', 'author': 'Перумов', 'isbns': ['978-5-04-110924-0'], 'only_isbn': False},
 {'title': 'Душа Бога', 'author': 'Перумов', 'isbns': ['978-5-04-110924-0'], 'only_isbn': False},
 
-{'title': 'Пирамиды', 'author': 'Пратчетт', 'isbns': ['5-699-16835-4'], 'only_isbn': False},
-{'title': 'Последний герой. Сказание о Плоском мире', 'author': 'Пратчетт', 'isbns': ['5-699-17413-3', '978-5-699-17413-3'], 'only_isbn': False},
-{'title': 'Ночная стража', 'author': 'Пратчетт', 'isbns': ['978-5-699-52239-2'], 'only_isbn': False},
-{'title': 'Незримые Академики', 'author': 'Пратчетт', 'isbns': ['978-5-699-69984-1'], 'only_isbn': False},
-{'title': 'Наука Плоского мира. Книга 3. Часы Дарвина', 'author': 'Пратчетт', 'isbns': ['978-5-699-89838-1'], 'only_isbn': False},
-{'title': 'Бесконечная Земля', 'author': 'Пратчетт', 'isbns': ['978-5-699-72378-2'], 'only_isbn': False},
-{'title': 'Страта', 'author': 'Пратчетт', 'isbns': ['978-5-889-23131-8', '978-5-699-23137-9'], 'only_isbn': False},
-{'title': 'Народ, или Когда-то мы были дельфинами', 'author': 'Пратчетт', 'isbns': ['978-5-699-42326-2', '978-5-04-119664-6'], 'only_isbn': False},
+{'title': 'Пирамиды', 'author': 'Пратчетт', 'isbns': ['5-699-16835-4', '978-5-699-16835-4'], 'only_isbn': False, 'alt_author': 'Pratchett', 'need_check_author': True},
+{'title': 'Последний герой. Сказание о Плоском мире', 'author': 'Пратчетт', 'isbns': ['5-699-17413-3', '978-5-699-17413-3'], 'only_isbn': False, 'alt_author': 'Pratchett', 'need_check_author': True},
+{'title': 'Ночная стража', 'author': 'Пратчетт', 'isbns': ['978-5-699-52239-2'], 'only_isbn': False, 'alt_author': 'Pratchett', 'need_check_author': True},
+{'title': 'Незримые Академики', 'author': 'Пратчетт', 'isbns': ['978-5-699-69984-1'], 'only_isbn': False, 'alt_author': 'Pratchett', 'need_check_author': True},
+{'title': 'Наука Плоского мира. Книга 3. Часы Дарвина', 'author': 'Пратчетт', 'isbns': ['978-5-699-89838-1'], 'only_isbn': False, 'alt_author': 'Pratchett', 'need_check_author': True},
+{'title': 'Бесконечная Земля', 'author': 'Пратчетт', 'isbns': ['978-5-699-72378-2'], 'only_isbn': False, 'alt_author': 'Pratchett', 'need_check_author': True},
+{'title': 'Страта', 'author': 'Пратчетт', 'isbns': ['978-5-889-23131-8', '978-5-699-23137-9'], 'only_isbn': False, 'alt_author': 'Pratchett', 'need_check_author': True},
+{'title': 'Народ, или Когда-то мы были дельфинами', 'author': 'Пратчетт', 'isbns': ['978-5-699-42326-2', '978-5-04-119664-6'], 'only_isbn': False, 'alt_author': 'Pratchett', 'need_check_author': True},
 
 {'title': 'Острые края', 'author': 'Аберкромби', 'isbns': ['978-5-04-118152-9'], 'only_isbn': False},
     ]
@@ -103,12 +103,12 @@ books3 = [
 # {'title': 'Влад Талтош', 'author': 'Браст', 'isbns': ["978-5-04-212678-9"], 'only_isbn': True},
 {'title': 'Влад Талтош', 'author': 'Браст', 'isbns': ["978-5-04-212681-9"], 'only_isbn': True},
 
-{'title': 'Черный гондольер', 'author': 'Фриц Лейбер', 'isbns': ['978-5-389-18580-7'], 'only_isbn': False},
-{'title': 'Корабль отплывает в полночь', 'author': 'Фриц Лейбер', 'isbns': ['978-5-389-17575-4'], 'only_isbn': False},
+{'title': 'Черный гондольер', 'author': 'Лейбер', 'isbns': ['978-5-389-18580-7'], 'only_isbn': False},
+{'title': 'Корабль отплывает в полночь', 'author': 'Лейбер', 'isbns': ['978-5-389-17575-4'], 'only_isbn': False},
 
 {'title': 'Мистические истории. Похищенные сердца', 'author': None, 'isbns': ['978-5-389-27312-2'], 'only_isbn': False},
 
-{'title': 'Террор', 'author': 'Симмонс', 'isbns': [], 'only_isbn': False},
+{'title': 'Террор', 'author': 'Симмонс', 'isbns': [], 'only_isbn': False, 'need_check_author': True},
 {'title': 'Гиперион. Падение Гипериона', 'author': 'Симмонс', 'isbns': ['978-5-17-085290-1'], 'only_isbn': True},
 {'title': 'Эндимион. Восход Эндимиона', 'author': 'Симмонс', 'isbns': ['978-5-17-085322-9'], 'only_isbn': True},
 # {'title': '', 'author': '', 'isbns': [], 'only_isbn': False},
@@ -154,7 +154,7 @@ books_Aizada = [
 {'title': 'Песнь Сюзанны+', 'author': 'Кинг', 'isbns': ['978-5-17-133029-3'], 'only_isbn': False},
 
 {'title': 'Приговор', 'author': 'Отохико Кага', 'isbns': ['978-5-89332-370-2'], 'only_isbn': True},
-{'title': 'Приговор', 'author': 'Отохико Кага', 'isbns': ['978-5-89332-370-2'], 'only_isbn': False},
+{'title': 'Приговор', 'author': 'Отохико Кага', 'isbns': ['978-5-89332-370-2'], 'only_isbn': False, 'need_check_author': True},
 
 # {'title': '', 'author': '', 'isbns': [], 'only_isbn': False},
     ]

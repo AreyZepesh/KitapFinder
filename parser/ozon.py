@@ -158,7 +158,12 @@ async def _gen_cards(page: Page, parser_config: ParserConfig):
     completed_items = item_in_zero_block
     # depth = parser_config.get_max_depth(item_in_zero_block)
     depth = parser_config.get_max_depth(0)
-    # TODO исправить максимальную глубину
+
+    # ограничивая вполовину поиск для несортированного поиска, так как там выходят и рекомендации.. вроде)
+    # вообще этот поиск дублирующий, так что думаю не страшно
+    if "sorting=price" not in page.url: 
+        depth = int(depth//2)
+
     # while retries < 3 and len(part_indexes) < depth:
     while retries < 3 and completed_items < depth:
         # ищем остальные блоки, кроме первичного
@@ -235,9 +240,9 @@ async def _card_cover(card: Locator, page) -> APIResponse:
     return await page.request.get(img_url)
 
 async def main(context: BrowserContext, book: EBook, alter_search = False, create_context = False) ->  list[ShopCard]:
-    base_url = "https://ozon.kz/category/knigi-16500/?text="
+    base_url = "https://ozon.kz/category/knigi-16500/?sorting=price&text="
     if alter_search:
-        base_url = "https://ozon.kz/category/knigi-16500/?sorting=price&text="
+        base_url = "https://ozon.kz/category/knigi-16500/?text="
     parser_config = ParserConfig(
         store = "ozon",
         base_url = base_url,
