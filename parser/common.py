@@ -31,12 +31,12 @@ def try_and_log_decor(header: str, repeats: int = 1):
                    return await fn(*args, **kwargs)
                 except Exception as ex:
                     # if trys+1 == repeats: # выводить ошибку только если они провалила последнюю попытку
-                        if sys.platform == "linux":
-                        # при ошибке - скриншот и сохранение кода страницы
-                            page: Page = CURRENT_PAGE.get()
-                            await page.screenshot(path=f"./logs/err/{ERROR_PREFIX.get()}_{dt.now().strftime("%Y-%m-%d %H-%M-%S")}.png")
-                            with open(f"./logs/err/{ERROR_PREFIX.get()}_{dt.now().strftime("%Y-%m-%d %H-%M-%S")}.html", "w", encoding="utf-8-sig") as f:
-                                f.write(await page.content())
+                        # if sys.platform == "linux":
+                        # # при ошибке - скриншот и сохранение кода страницы
+                        #     page: Page = CURRENT_PAGE.get()
+                        #     await page.screenshot(path=f"./logs/err/{ERROR_PREFIX.get()}_{dt.now().strftime("%Y-%m-%d %H-%M-%S")}.png")
+                        #     with open(f"./logs/err/{ERROR_PREFIX.get()}_{dt.now().strftime("%Y-%m-%d %H-%M-%S")}.html", "w", encoding="utf-8-sig") as f:
+                        #         f.write(await page.content())
                         base_out = "\n".join([
                                 f"{dt.now().strftime("%Y-%m-%d %H-%M-%S")}",
                                 ERROR_PREFIX.get(),

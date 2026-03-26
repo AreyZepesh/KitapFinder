@@ -141,32 +141,26 @@ async def _gen_cards(page: Page, parser_config: ParserConfig):
         return await parser_config.get_card_article(locator_element.last)
 
     await _extra_wait_cat(page)
-    zero_part_css = 'div[data-replace-layout-path]:has(div[data-widget="tileGridDesktop"])'
-    # match_block = page.locator(f'div#contentScrollPaginator > div:has({zero_part_css})')
 
-    # ищем блок с карточками, появляющийся при открытии страницы
-    # zero_part = match_block.locator(f'{zero_part_css}')
+    zero_part_css = 'div#contentScrollPaginator div[data-replace-layout-path]:has(div[data-widget="tileGridDesktop"])'
     zero_part = page.locator(f'{zero_part_css}')
     block = parser_config.get_card_locator(zero_part)
-    # last_article = await _card_article(block.last)
-    # last_article = await _get_last_article(block, parser_config)
-    # запоминаем последний артикль блока ↑ и размер блока ↓
     item_in_zero_block = await block.count()
+    # запоминаем размер блока 
     # tqdm.write(f"Нулево блок: {item_in_zero_block}")
     yield block
-
-    # if last_article == await _get_last_article(block, parser_config):
-        # Если последний артикль в блоке не изменился - листаем дальше 
-        # Это атавизм, оставщийся со времени скриншотов, так как те прокучивали страницу
     await _page_scroll_to(page, locator_element = block.last)
 
     # инициализируем переменные: список пройденых индексов, чтобы не повторяться, 
     # количество повторений и максимальная глубина в блоках
     part_indexes = ["-1"]
     retries = 0
-    depth = parser_config.get_max_depth(item_in_zero_block)
-
-    while retries < 3 and len(part_indexes) < depth:
+    completed_items = item_in_zero_block
+    # depth = parser_config.get_max_depth(item_in_zero_block)
+    depth = parser_config.get_max_depth(0)
+    # TODO исправить максимальную глубину
+    # while retries < 3 and len(part_indexes) < depth:
+    while retries < 3 and completed_items < depth:
         # ищем остальные блоки, кроме первичного
         # not_zero_parts = match_block.locator('div[data-index]:has(div > div[data-widget="tileGridDesktop"])')
         not_zero_parts = page.locator('div[data-index]:has(div > div[data-widget="tileGridDesktop"])')
@@ -183,7 +177,7 @@ async def _gen_cards(page: Page, parser_config: ParserConfig):
                     item_in_block = await block.count()
                     # tqdm.write(f"{current_index} блок: {item_in_zero_block}")
                     yield block
-
+                    completed_items += item_in_block
                     # if last_article == await _get_last_article(block, parser_config):
                     # Если последний артикль в блоке не изменился - листаем дальше 
                     # Это атавизм, оставщийся со времени скриншотов, так как те прокучивали страницу
@@ -211,12 +205,15 @@ async def _gen_cards(page: Page, parser_config: ParserConfig):
             await _page_scroll_to(page, mouse_wheel = True)
             retries +=1
     # else:
-    #     tqdm.write(f"{part_indexes}") # TODO для отладки
+    #     # TODO для отладки
+    #     tqdm.write(f"{completed_items}") 
+    #     tqdm.write(f"{part_indexes}") 
 
 @try_and_log_decor("Дополнительное ожидание страницы")
 async def _extra_wait_cat(page: Page):
     await page.wait_for_load_state("networkidle")
     await expect(page.locator("div.container")).to_be_attached()
+    await expect(page.locator("div#contentScrollPaginator")).to_be_attached()
 
 # @try_and_log_decor("Получение тайтла")
 async def _card_title(card: Locator):
@@ -254,7 +251,8 @@ async def main(context: BrowserContext, book: EBook, alter_search = False, creat
         fn_currency = _currency,
         fn_city = _city,
 
-        get_card_locator = lambda page: page.locator('div[data-widget="tileGridDesktop"] > div[data-index][class][style]'),
+        # get_card_locator = lambda page: page.locator('div[data-widget="tileGridDesktop"] > div[data-index][class][style]'),
+        get_card_locator = lambda page: page.locator('div[data-widget="tileGridDesktop"] div[data-index][class][style]'),
         # element_limit = 1000, 
         generator_cards = _gen_cards,
 
