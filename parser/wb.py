@@ -10,10 +10,14 @@ from .common import (
 
 @try_and_log_decor("Смена url")
 async def _extra_urls(page: Page):
-    # await page.wait_for_timeout(500)
     replaced = await page.locator("a.searching-results__query-replaced").first.is_visible()
     if replaced:
         await page.goto(page.url+"&nocorrection=1")
+    
+    await page.wait_for_timeout(500)
+    await page.reload() # TEST 
+
+    if replaced:
         return True
 
 @try_and_log_decor("Проверка на noresult")
@@ -193,8 +197,11 @@ async def _gen_cards_(page: Page, parser_config: ParserConfig):
 async def _extra_wait_cat(page: Page):
     await expect(page.locator("div.product-card-list")).to_be_attached()
 
-    # TODO убрать скрин
+    # TODO убрать скрин и сохранение страницы
     # await page.screenshot(path=f"./logs/wb/{dt.now().strftime("%Y-%m-%d %H-%M-%S")}.png")
+    # from utils import prettify_html
+    # with open(f"./logs/wb/{dt.now().strftime("%Y-%m-%d %H-%M-%S")}.html", "w", encoding="utf-8") as file:
+    #     file.write(prettify_html(await page.content()))
 
     cookie = page.locator("div.fixed-block__cookies:has(button)")
     if await cookie.count() > 0:

@@ -177,10 +177,10 @@ async def parse_card(page: Page, card: Locator, book: EBook, parser_config: Pars
     # try:
     card_title = await parser_config.get_card_title(card)
     if book.is_TITLE_in_STR(card_title):
-        card_title = card_title.replace("| Книга б/у", "")
         if book.need_check_author:
-            if parser_config.store == "ozon" and "sorting=price" not in page.url:
-                if (book.author and "|" in card_title) and not book.is_AUTHOR_in_STR(card_title):
+            card_title = card_title.replace("| Книга б/у", "")
+            if parser_config.store == "ozon" and "|" in card_title:
+                if book.author and not book.is_AUTHOR_in_STR(card_title):
                     # tqdm.write(f"{await parser_config.get_card_article(card)}   {book.author=}   {card_title=}") #  TODO Для отладки
                     return 
         price = utils.normalizePrice( await parser_config.get_card_price(card) )
@@ -199,8 +199,8 @@ async def parse_card(page: Page, card: Locator, book: EBook, parser_config: Pars
     # except TimeoutError:
     #     raise
     # except Exception as ex:
-    #     ex.add_note(f"HTML элемента:\n {utils.prettify_html(await card.evaluate('element => element.outerHTML'))}")
-    #     await card.screenshot(path=f"./logs/{book.title}_{parser_config.store}_{dt.now().strftime("%Y-%m-%d %H-%M")}.png")
+        # ex.add_note(f"HTML элемента:\n {utils.prettify_html(await card.evaluate('element => element.outerHTML'))}")
+        # await card.screenshot(path=f"./logs/{book.title}_{parser_config.store}_{dt.now().strftime("%Y-%m-%d %H-%M")}.png")
     #     raise #ex
 
 @try_and_log_decor("Проваливаемся в карточку и проверяем", repeats=3)
@@ -274,9 +274,11 @@ async def run_parser(context: BrowserContext, book: EBook, parser_config: Parser
             # если на странице ничего не найдено, на следующюю не идем, 
             # кроме некоторых (озон например, он быстрее грузится и редко, 
             # но бывает наличие нужного элемента где то вконце)
-            if added == 0 and parser_config.store not in ["ozon", "WB"]:
+            if added == 0 and parser_config.store not in ["ozon", "wb"]:
                 # tqdm.write(f"{parser_config.store}")
                 break
+            # else:
+            #     tqdm.write(f"{parser_config.store} {added=}")
     # if parser_config.store == "ozon":
     #     input("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
     await page.close()

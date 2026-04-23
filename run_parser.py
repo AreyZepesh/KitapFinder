@@ -21,6 +21,8 @@ def main():
         rmtree(f"./tmp/SCREEN-ALT-{dt.now().strftime("%Y-%m-%d")}")
     if os.path.exists(f"./logs/_nores"):
         rmtree(f"./logs/_nores")
+    if os.path.exists(f"./logs/wb"):
+        rmtree(f"./logs/wb")
     time_start = dt.now().strftime("%Y-%m-%d %H-%M")
 
     books = []
@@ -37,8 +39,8 @@ def main():
     # books = [EBook("Преступление и наказание", "Достоевский")]
     # books = [EBook("Остров Сахалин", "Чехов", ['978-5-389-28937-6'])]
     # books = [EBook(**{'title': 'Виконт де Бражелон, или Еще десять лет спустя', 'author': 'Дюма', 'isbns': ['978-5-389-24464-1'], 'only_isbn': True},)]
-    # books = [EBook(**{'title': 'Незримые Академики', 'author': 'Пратчетт', 'isbns': [], 'only_isbn': False})]
-
+    # books = [EBook(**{'title': 'Террор', 'author': 'Симмонс', 'isbns': [], 'only_isbn': False, 'need_check_author': True},)]
+    # books = [books[0]]
 
     run(books=books, headless = True)
     # <button class="rb" onclick="reload()">Обновить</button>
@@ -55,6 +57,7 @@ def main():
     print(dt.now().strftime("%Y-%m-%d %H-%M"))
 
     save_objects("./tmp/data.pkl", books)
+    render_html_page(books, "index_full")
 
     # if sys.platform == "win32":
     for b in books:
