@@ -41,7 +41,8 @@ async def _card_price(card: Locator):
 
 # @try_and_log_decor("Получение артикля")
 async def _card_article(card: Locator):
-    return (await card.locator("a.product[data-event-item-id]").first.get_attribute("data-event-item-id"))
+    return (await card.locator("a.product[href]").first.get_attribute("href")).replace("/catalog?prod=", "")
+    # return (await card.locator("a.product[data-event-item-id]").first.get_attribute("data-event-item-id"))
 
 # @try_and_log_decor("Получение обложки")
 async def _card_cover(card: Locator, page: Page) -> APIResponse:

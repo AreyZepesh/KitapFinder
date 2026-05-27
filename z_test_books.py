@@ -10,15 +10,16 @@ books = [
 
 {'title': 'Душа Бога. Том 1', 'author': 'Перумов', 'isbns': ['978-5-04-110924-0'], 'only_isbn': False},
 {'title': 'Душа Бога', 'author': 'Перумов', 'isbns': ['978-5-04-110924-0'], 'only_isbn': False},
+{'title': 'Восстание безумных богов. Магия крови', 'author': 'Перумов', 'isbns': ['978-5-222-41915-1'], 'only_isbn': False},
 
-{'title': 'Пирамиды', 'author': 'Пратчетт', 'isbns': ['5-699-16835-4', '978-5-699-16835-4'], 'only_isbn': False, 'alt_author': 'Pratchett', 'need_check_author': True},
-{'title': 'Последний герой. Сказание о Плоском мире', 'author': 'Пратчетт', 'isbns': ['5-699-17413-3', '978-5-699-17413-3'], 'only_isbn': False, 'alt_author': 'Pratchett', 'need_check_author': True},
-{'title': 'Ночная стража', 'author': 'Пратчетт', 'isbns': ['978-5-699-52239-2'], 'only_isbn': False, 'alt_author': 'Pratchett', 'need_check_author': True},
-{'title': 'Незримые Академики', 'author': 'Пратчетт', 'isbns': ['978-5-699-69984-1'], 'only_isbn': False, 'alt_author': 'Pratchett', 'need_check_author': True},
-{'title': 'Наука Плоского мира. Книга 3. Часы Дарвина', 'author': 'Пратчетт', 'isbns': ['978-5-699-89838-1'], 'only_isbn': False, 'alt_author': 'Pratchett', 'need_check_author': True},
-{'title': 'Бесконечная Земля', 'author': 'Пратчетт', 'isbns': ['978-5-699-72378-2'], 'only_isbn': False, 'alt_author': 'Pratchett', 'need_check_author': True},
-{'title': 'Страта', 'author': 'Пратчетт', 'isbns': ['978-5-889-23131-8', '978-5-699-23137-9'], 'only_isbn': False, 'alt_author': 'Pratchett', 'need_check_author': True},
-{'title': 'Народ, или Когда-то мы были дельфинами', 'author': 'Пратчетт', 'isbns': ['978-5-699-42326-2', '978-5-04-119664-6'], 'only_isbn': False, 'alt_author': 'Pratchett', 'need_check_author': True},
+# {'title': 'Пирамиды', 'author': 'Пратчетт', 'isbns': ['5-699-16835-4', '978-5-699-16835-4'], 'only_isbn': False, 'alt_author': 'Pratchett', 'need_check_author': True},
+{'title': 'Последний герой. Сказание о Плоском мире', 'author': 'Пратчетт', 'isbns': ['5-699-17413-3', '978-5-699-17413-3'], 'only_isbn': False, 'alt_author': 'Pratchett', 'need_check_author': False},
+{'title': 'Ночная стража', 'author': 'Пратчетт', 'isbns': ['978-5-699-52239-2'], 'only_isbn': False, 'alt_author': 'Pratchett', 'need_check_author': False},
+{'title': 'Незримые Академики', 'author': 'Пратчетт', 'isbns': ['978-5-699-69984-1'], 'only_isbn': False, 'alt_author': 'Pratchett', 'need_check_author': False},
+{'title': 'Наука Плоского мира. Книга 3. Часы Дарвина', 'author': 'Пратчетт', 'isbns': ['978-5-699-89838-1'], 'only_isbn': False, 'alt_author': 'Pratchett', 'need_check_author': False},
+{'title': 'Бесконечная Земля', 'author': 'Пратчетт', 'isbns': ['978-5-699-72378-2'], 'only_isbn': False, 'alt_author': 'Pratchett', 'need_check_author': False},
+{'title': 'Страта', 'author': 'Пратчетт', 'isbns': ['978-5-889-23131-8', '978-5-699-23137-9'], 'only_isbn': False, 'alt_author': 'Pratchett', 'need_check_author': False},
+# {'title': 'Народ, или Когда-то мы были дельфинами', 'author': 'Пратчетт', 'isbns': ['978-5-699-42326-2', '978-5-04-119664-6'], 'only_isbn': False, 'alt_author': 'Pratchett', 'need_check_author': True},
 
 {'title': 'Острые края', 'author': 'Аберкромби', 'isbns': ['978-5-04-118152-9'], 'only_isbn': False, 'need_check_author': True},
     ]
@@ -103,7 +104,15 @@ books3 = [
 
 {'title': 'Кровавая Роза', 'author': 'Имс', 'isbns': ['978-5-389-16829-9'], 'only_isbn': False},
 
-{'title': 'Страж', 'author': 'Пехов', 'isbns': ['978-5-9922-3553-1', '978-5-9922-2037-7'], 'only_isbn': True},
+{'title': 'Аутодафе', 'author': 'Пехов', 'isbns': ['978-5-00242-197-8'], 'only_isbn': True},
+{'title': 'Золотые костры', 'author': 'Пехов', 'isbns': ['978-5-00242-243-2'], 'only_isbn': True},
+{'title': 'Крадущийся в тени', 'author': 'Пехов', 'isbns': ['978-5-00242-011-7'], 'only_isbn': True},
+{'title': 'Джанга с тенями', 'author': 'Пехов', 'isbns': ['978-5-00242-027-8'], 'only_isbn': True},
+{'title': 'Вьюга теней', 'author': 'Пехов', 'isbns': ['978-5-00242-090-2'], 'only_isbn': True},
+{'title': 'Искатели ветра', 'author': 'Пехов', 'isbns': ['978-5-00242-105-3'], 'only_isbn': True},
+{'title': 'Ветер Полыни', 'author': 'Пехов', 'isbns': ['978-5-00242-171-8'], 'only_isbn': True},
+# {'title': 'Птицеед', 'author': 'Пехов', 'isbns': ['978-5-00242-060-5'], 'only_isbn': True},
+{'title': 'Птицелов', 'author': 'Пехов', 'isbns': ['978-5-00242-235-7'], 'only_isbn': False},
 
 {'title': 'Республика воров', 'author': 'Линч', 'isbns': ['978-5-389-08784-2', '978-5-389-25810-5'], 'only_isbn': False},
 
@@ -128,6 +137,10 @@ books3 = [
 
 {'title': 'Распознавание образов. Страна призраков. Нулевое досье', 'author': 'Гибсон', 'isbns': ['978-5-389-31974-5'], 'only_isbn': False},
 
+{'title': 'Повелители DOOM', 'author': None, 'isbns': [], 'only_isbn': False},
+
+{'title': 'Восставший из ада', 'author': 'Баркер', 'isbns': [], 'only_isbn': False},
+
 # {'title': '', 'author': '', 'isbns': [], 'only_isbn': False},
         ] 
 
@@ -139,12 +152,9 @@ books4 = [
 
 {'title': 'Джонатан Стрендж и мистер Норрелл', 'author': 'Кларк', 'isbns': [], 'only_isbn': False},
 
-{'title': 'Три мушкетера', 'author': 'Дюма', 'isbns': ['978-5-389-19881-4'], 'only_isbn': True},
-{'title': 'Двадцать лет спустя', 'author': 'Дюма', 'isbns': ['978-5-389-21145-2'], 'only_isbn': True},
-{'title': 'Виконт де Бражелон, или Еще десять лет спустя', 'author': 'Дюма', 'isbns': ['978-5-389-24464-1'], 'only_isbn': True},
-
-{'title': 'Клинок Тишалла', 'author': 'Стовер', 'isbns': ['978-5-389-21351-7'], 'only_isbn': False},
-{'title': 'Герои умирают', 'author': 'Стовер', 'isbns': ['978-5-389-21257-2'], 'only_isbn': False},
+# {'title': 'Три мушкетера', 'author': 'Дюма', 'isbns': ['978-5-389-19881-4'], 'only_isbn': True},
+# {'title': 'Двадцать лет спустя', 'author': 'Дюма', 'isbns': ['978-5-389-21145-2'], 'only_isbn': True},
+# {'title': 'Виконт де Бражелон, или Еще десять лет спустя', 'author': 'Дюма', 'isbns': ['978-5-389-24464-1'], 'only_isbn': True},
     ]
 
 books_Aizada = [
@@ -157,7 +167,7 @@ books_Aizada = [
 # {'title': 'Жизнь моя стала фантастическая', 'author': 'Чуковский', 'isbns': ['978-5-389-22573-2'], 'only_isbn': False}, #6500
 # {'title': 'Нужно быть благодарным судьбе', 'author': 'Чуковский', 'isbns': ['978-5-389-22978-5'], 'only_isbn': False},
 
-{'title': 'Зеркало и свет', 'author': 'Хилари Мантел', 'isbns': ['978-5-389-18523-4'], 'only_isbn': False},
+# {'title': 'Зеркало и свет', 'author': 'Хилари Мантел', 'isbns': ['978-5-389-18523-4'], 'only_isbn': False},
 
 # {'title': 'Сияние', 'author': 'Кинг', 'isbns': ['978-5-17-133880-0'], 'only_isbn': True},
 # {'title': 'Доктор Сон', 'author': 'Кинг', 'isbns': ['978-5-17-134431-3'], 'only_isbn': True},
