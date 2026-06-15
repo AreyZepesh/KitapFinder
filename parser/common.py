@@ -2,7 +2,8 @@
 # os.chdir( os.path.abspath( os.path.dirname( os.path.dirname(__file__) ) ) )
 # sys.path.append( os.getcwd() )
 
-from playwright.async_api import (
+from patchright.async_api import (
+# from playwright.async_api import (
     async_playwright, expect, 
     Page, BrowserContext, Locator, APIResponse,
     TimeoutError)
@@ -30,13 +31,13 @@ def try_and_log_decor(header: str, repeats: int = 1):
                 try:
                    return await fn(*args, **kwargs)
                 except Exception as ex:
-                    # if trys+1 == repeats: # выводить ошибку только если они провалила последнюю попытку
+                        if trys+1 == repeats: # выводить ошибку только если они провалила последнюю попытку
                         # if sys.platform == "linux":
-                        # # при ошибке - скриншот и сохранение кода страницы
-                        #     page: Page = CURRENT_PAGE.get()
-                        #     await page.screenshot(path=f"./logs/err/{ERROR_PREFIX.get()}_{dt.now().strftime("%Y-%m-%d %H-%M-%S")}.png")
-                        #     with open(f"./logs/err/{ERROR_PREFIX.get()}_{dt.now().strftime("%Y-%m-%d %H-%M-%S")}.html", "w", encoding="utf-8-sig") as f:
-                        #         f.write(await page.content())
+                        # при ошибке - скриншот и сохранение кода страницы
+                            page: Page = CURRENT_PAGE.get()
+                            await page.screenshot(path=f"./logs/err/{dt.now().strftime("%Y-%m-%d %H-%M-%S")}.png")
+                            with open(f"./logs/err/{dt.now().strftime("%Y-%m-%d %H-%M-%S")}.html", "w", encoding="utf-8-sig") as f:
+                                f.write(await page.content())
                         base_out = "\n".join([
                                 f"{dt.now().strftime("%Y-%m-%d %H-%M-%S")}",
                                 ERROR_PREFIX.get(),

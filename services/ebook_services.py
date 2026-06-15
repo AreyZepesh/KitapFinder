@@ -162,7 +162,7 @@ def get_cleaned_list(price_cards: list[ShopCard], duplicates: list[list]) -> lis
             
     return sorted(opt_cards, key=lambda b: b.price)
 
-def optimize_stores_by_cover(data: list[ShopCard]):
+def optimize_stores_by_cover(data: list[ShopCard], from_covers_per_store = 0):
     # Разбиваем цены по магазинам
     groups = defaultdict(list)
     for price_card in data:
@@ -175,6 +175,9 @@ def optimize_stores_by_cover(data: list[ShopCard]):
                        desc=f"Оптимизация",
                        leave=False,
                        ):
+        # Если на магазин обложек меньше заявленного количества - ничего не делать
+        if len(price_cards) <= from_covers_per_store and from_covers_per_store > 0:
+            continue
         # Сортируем по возрастанию цены,
         price_cards = sorted(price_cards, key=lambda b: b.price) 
 

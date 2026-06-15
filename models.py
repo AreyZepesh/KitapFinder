@@ -111,9 +111,9 @@ class EBook():
                 temp_price.extend([card for card in cards if card.price == min_price])
         self.prices = temp_price
 
-    def optimize_stores_by_cover(self):
+    def optimize_stores_by_cover(self, from_covers_per_store = 0):
         from services.ebook_services import optimize_stores_by_cover
-        self.prices = optimize_stores_by_cover(self.prices)
+        self.prices = optimize_stores_by_cover(self.prices, from_covers_per_store = from_covers_per_store)
         self.sort_by_price() 
 
     def save_covers(self, alt_path: bool = False):

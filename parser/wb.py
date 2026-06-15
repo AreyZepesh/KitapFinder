@@ -195,6 +195,22 @@ async def _gen_cards_(page: Page, parser_config: ParserConfig):
 
 @try_and_log_decor("Дополнительное ожидание страницы", repeats=3)
 async def _extra_wait_cat(page: Page):
+    # antibot = await page.get_by_text("Подозрительная активность").count()
+    # antibot += await page.get_by_text("подождите").count()
+    # if antibot > 0:
+    #     tqdm.write("\nЖдем страницу, так как вылез антибот")
+    #     # await page.reload()
+    #     # await page.wait_for_load_state()
+    #     await page.wait_for_timeout(60000)
+    #     await page.wait_for_load_state()
+
+    # antibot = await page.get_by_text("Подозрительная активность").count()
+    # antibot += await page.get_by_text("подождите").count()
+    # if antibot > 0:
+    #     tqdm.write("\nЖдем страницу, так как вылез антибот")
+    #     await page.reload()
+    #     await page.wait_for_load_state()
+        
     await expect(page.locator("div.product-card-list")).to_be_attached()
 
     # TODO убрать скрин и сохранение страницы
