@@ -44,7 +44,24 @@ def try_and_log_decor(header: str, repeats: int = 1):
                                 f"{header} ({trys+1}/{repeats})"
                                 ])
                         tqdm.write(f"{base_out}")
-                        tqdm.write(f"{ex}")
+                        # tqdm.write(f"{ex}")
+                        # для patchright
+                        try:
+                            # tb_lines = traceback.format_exception(type(ex), ex, ex.__traceback__)
+                            tb_lines = str(ex).split("\n")
+                            if len(tb_lines) > 10:
+                                short_tb = (
+                                    tb_lines[:5] +
+                                    ["\n...\n"] +
+                                    tb_lines[-5:]
+                                )
+                                tqdm.write("".join(short_tb))
+                            else:
+                                tqdm.write("".join(tb_lines))
+                        except Exception as path_ex:
+                            tqdm.write(f"{ex}")
+                            tqdm.write(f"\n... и ошибка сокращения ошибки)))")
+                            tqdm.write(f"{path_ex}")
                         with open(f"./logs/_error.txt", 'a', encoding="utf8") as error_file:
                             error_file.write(base_out+"\n")
                             error_file.write(LOG_URL.get() + "\n")
