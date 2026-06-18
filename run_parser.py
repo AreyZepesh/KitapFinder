@@ -40,9 +40,12 @@ def main():
     # books = [EBook("Остров Сахалин", "Чехов", ['978-5-389-28937-6'])]
     # books = [EBook(**{'title': 'Виконт де Бражелон, или Еще десять лет спустя', 'author': 'Дюма', 'isbns': ['978-5-389-24464-1'], 'only_isbn': True},)]
     # books = [EBook(**{'title': 'Террор', 'author': 'Симмонс', 'isbns': [], 'only_isbn': False, 'need_check_author': True},)]
+    # books = [EBook(**{'title': 'Ведьма. Матерь Тьмы', 'author': 'Лейбер', 'isbns': [], 'only_isbn': False},)]
+    headless = True
     # books = [books[1]]
-
-    run(books=books, headless = True)
+    # headless = False
+    
+    run(books=books, headless = headless)
     # <button class="rb" onclick="reload()">Обновить</button>
     for b in books:
         b.sort_by_price()
@@ -61,7 +64,7 @@ def main():
 
     # if sys.platform == "win32":
     for b in books:
-        b.optimize_stores_by_cover(from_covers_per_store = 5)
+        b.optimize_stores_by_cover(from_covers_per_store = 0)
         # b.save_covers(alt_path = True)
     print(dt.now().strftime("%Y-%m-%d %H-%M"))
     save_objects("./tmp/data_opt.pkl", books)

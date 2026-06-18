@@ -74,7 +74,7 @@ books2 = [
 
 {'title': 'Слышащий', 'author': 'Маккаммон', 'isbns': ['978-5-389-16149-8'], 'only_isbn': False},
 {'title': 'Они жаждут', 'author': 'Маккаммон', 'isbns': ['978-5-389-20942-8'], 'only_isbn': False},
-{'title': 'Кусака', 'author': 'Маккаммон', 'isbns': ['978-5-389-20390-7'], 'only_isbn': False},
+# {'title': 'Кусака', 'author': 'Маккаммон', 'isbns': ['978-5-389-20390-7'], 'only_isbn': False},
 {'title': 'Зов ночной птицы', 'author': 'Маккаммон', 'isbns': ['978-5-389-16150-4'], 'only_isbn': False},
 
 {'title': 'Нефритовый город', 'author': 'Фонда Ли', 'isbns': None, 'only_isbn': False},
@@ -125,13 +125,13 @@ books3 = [
 {'title': 'Влад Талтош', 'author': 'Браст', 'isbns': ["978-5-04-212681-9"], 'only_isbn': True},
 
 {'title': 'Корабль отплывает в полночь', 'author': 'Лейбер', 'isbns': ['978-5-389-17575-4'], 'only_isbn': False},
-{'title': 'Ведьма. Матерь Тьмы', 'author': 'Лейбер', 'isbns': [], 'only_isbn': False},
+{'title': 'Ведьма. Матерь Тьмы', 'author': 'Лейбер', 'isbns': ['978-5-389-32144-1'], 'only_isbn': False},
 
 {'title': 'Мистические истории. Похищенные сердца', 'author': None, 'isbns': ['978-5-389-27312-2'], 'only_isbn': False},
 
 {'title': 'Террор', 'author': 'Симмонс', 'isbns': [], 'only_isbn': False, 'need_check_author': True},
-{'title': 'Гиперион. Падение Гипериона', 'author': 'Симмонс', 'isbns': ['978-5-17-085290-1'], 'only_isbn': True},
-{'title': 'Эндимион. Восход Эндимиона', 'author': 'Симмонс', 'isbns': ['978-5-17-085322-9'], 'only_isbn': True},
+# {'title': 'Гиперион. Падение Гипериона', 'author': 'Симмонс', 'isbns': ['978-5-17-085290-1'], 'only_isbn': True},
+# {'title': 'Эндимион. Восход Эндимиона', 'author': 'Симмонс', 'isbns': ['978-5-17-085322-9'], 'only_isbn': True},
 
 {'title': 'Распознавание образов. Страна призраков. Нулевое досье', 'author': 'Гибсон', 'isbns': ['978-5-389-31974-5'], 'only_isbn': False},
 
@@ -149,7 +149,7 @@ books4 = [
     ]
 
 books_Aizada = [
-{'title': 'Унесённые ветром', 'author': 'Митчелл', 'isbns': ['978-5-04-108998-6', '978-5-04-109006-7'], 'only_isbn': True},
+{'title': 'Унесённые ветром', 'author': 'Митчелл', 'isbns': ['978-5-04-108998-6'], 'only_isbn': True},
 # {'title': 'Унесённые ветром', 'author': 'Митчелл', 'isbns': ['978-5-04-108998-6', '978-5-04-109006-7'], 'only_isbn': False},
 
 # {'title': 'Жизнь моя стала фантастическая', 'author': 'Чуковский', 'isbns': ['978-5-389-22573-2'], 'only_isbn': False}, #6500

@@ -20,10 +20,11 @@ from parser.kaspi import main as kaspi
 async def __run__(fn, books: EBook|list[EBook], headless = True):
     async with async_playwright() as p:
         browser = await p.chromium.launch(
+                    proxy = None,
                     headless = headless,
                     args = [
                     "--start-maximized", 
-                    '--disable-blink-features=AutomationControlled',
+                    # '--disable-blink-features=AutomationControlled', # дублируется в patchright, включать в playright
                     # "--disable-infobars",
                     "--no-sandbox",
                     # "--disable-dev-shm-usage",
@@ -39,7 +40,7 @@ async def __run__(fn, books: EBook|list[EBook], headless = True):
         # Контекст задается для все сессии. После некоторые вещи сменить не выйдет. 
         viewport = {"width": 1920, "height": 1080}
         # user_agent=f"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36"
-        user_agent=f"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36"
+        user_agent=f"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36"
         # if sys.platform == "linux":
         #     user_agent=f"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
         #     viewport = {"width": 1280, "height": 1024}
@@ -73,16 +74,16 @@ async def __run__(fn, books: EBook|list[EBook], headless = True):
         #         delete window.cdc_adoQpoasnfa76pfcZLmcfl_Proxy;
         #         delete window.cdc_adoQpoasnfa76pfcZLmcfl_Symbol;
         #         """)
-        await context.add_init_script("""
-                const style = document.createElement('style');
-                style.innerHTML = `
-                * {
-                animation: none !important;
-                transition: none !important;
-                }
-                `;
-                document.head.appendChild(style);
-                """)
+        # await context.add_init_script("""
+        #         const style = document.createElement('style');
+        #         style.innerHTML = `
+        #         * {
+        #         animation: none !important;
+        #         transition: none !important;
+        #         }
+        #         `;
+        #         document.head.appendChild(style);
+        #         """)
         context.my_data = {}
         context.my_data["zero_page"] = await context.new_page()
         

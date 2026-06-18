@@ -31,7 +31,7 @@ def try_and_log_decor(header: str, repeats: int = 1):
                 try:
                    return await fn(*args, **kwargs)
                 except Exception as ex:
-                        if trys+1 == repeats: # выводить ошибку только если они провалила последнюю попытку
+                        if trys+1 == repeats: # выводить ошибку только если она провалила последнюю попытку
                         # if sys.platform == "linux":
                         # при ошибке - скриншот и сохранение кода страницы
                             page: Page = CURRENT_PAGE.get()
@@ -45,7 +45,7 @@ def try_and_log_decor(header: str, repeats: int = 1):
                                 ])
                         tqdm.write(f"{base_out}")
                         # tqdm.write(f"{ex}")
-                        # для patchright
+                        # # для patchright
                         try:
                             # tb_lines = traceback.format_exception(type(ex), ex, ex.__traceback__)
                             tb_lines = str(ex).split("\n")
