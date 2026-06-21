@@ -16,7 +16,7 @@ async def _extra_urls(page: Page):
         await page.goto(page.url+"&nocorrection=1")
     
     await page.wait_for_timeout(500)
-    # await page.reload() # TEST 
+    await page.reload() # часто с первой загрузки данные не корректные, обновление это лечит 
 
     if replaced:
         return True
