@@ -11,11 +11,12 @@ from .common import (
 
 @try_and_log_decor("Смена url")
 async def _extra_urls(page: Page):
+    await page.wait_for_timeout(1000)
     replaced = await page.locator("a.searching-results__query-replaced").first.is_visible()
     if replaced:
         await page.goto(page.url+"&nocorrection=1")
     
-    await page.wait_for_timeout(500)
+    await page.wait_for_timeout(200)
     await page.reload() # часто с первой загрузки данные не корректные, обновление это лечит 
 
     if replaced:

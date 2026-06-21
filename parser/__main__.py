@@ -20,7 +20,9 @@ from parser.kaspi import main as kaspi
 async def __run__(fn, books: EBook|list[EBook], headless = True):
     async with async_playwright() as p:
         browser = await p.chromium.launch(
-                    channel="chrome",
+                    # executable_path=r"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe",
+                    # channel="chrome",
+                    # channel="chromium",
                     proxy = None,
                     headless = headless,
                     args = [

@@ -297,7 +297,8 @@ async def run_parser(context: BrowserContext, book: EBook, parser_config: Parser
                 break
             # else:
             #     tqdm.write(f"{parser_config.store} {added=}")
-    # if parser_config.store == "ozon":
+    # if parser_config.store.lower() == "wb" and len(all_items) == 0:
+    #     await page.screenshot(path=f"./logs/err/zero/{dt.now().strftime("%Y-%m-%d %H-%M-%S")}_{book.title}.png")
     #     input("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
     await page.close()
     return all_items
@@ -323,7 +324,11 @@ async def run_create_context(context: BrowserContext, parser_config: ParserConfi
     # указываем адрес
     await parser_config.fn_city(page)
 
-    # input("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+    # if parser_config.store.lower() == "wb":
+        # await page.wait_for_url("**/account/**", timeout=0)
+        # await asyncio.to_thread(input, "Продолжить? ")
+    #     input("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+        
     await page.close()
     pass
 
