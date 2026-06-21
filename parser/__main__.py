@@ -20,6 +20,7 @@ from parser.kaspi import main as kaspi
 async def __run__(fn, books: EBook|list[EBook], headless = True):
     async with async_playwright() as p:
         browser = await p.chromium.launch(
+                    channel="chrome",
                     proxy = None,
                     headless = headless,
                     args = [
@@ -44,8 +45,6 @@ async def __run__(fn, books: EBook|list[EBook], headless = True):
         # if sys.platform == "linux":
         #     user_agent=f"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
         #     viewport = {"width": 1280, "height": 1024}
-
-        user_agent=None
 
         context = await browser.new_context(
                     viewport=viewport,

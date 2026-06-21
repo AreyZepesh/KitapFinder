@@ -5,7 +5,8 @@ from .common import (
     run_parser, try_and_log_decor, 
     run_parser_test, run_create_context,
     nextpage_gen_cards,
-    tqdm, re, dt,
+    tqdm, re, dt, 
+    utils,
     )
 
 @try_and_log_decor("Смена url")
@@ -15,7 +16,7 @@ async def _extra_urls(page: Page):
         await page.goto(page.url+"&nocorrection=1")
     
     await page.wait_for_timeout(500)
-    await page.reload() # TEST 
+    # await page.reload() # TEST 
 
     if replaced:
         return True
@@ -195,29 +196,29 @@ async def _gen_cards_(page: Page, parser_config: ParserConfig):
 
 @try_and_log_decor("Дополнительное ожидание страницы", repeats=3)
 async def _extra_wait_cat(page: Page):
+    # await page.screenshot(path=f"./logs/err/{dt.now().strftime("%Y-%m-%d %H-%M-%S")}.png")
+    # with open(f"./logs/err/{dt.now().strftime("%Y-%m-%d %H-%M-%S")}.html", "w", encoding="utf-8-sig") as f:
+    #     f.write(utils.prettify_html(await page.content()))
+    # await page.wait_for_timeout(1000)
+    # await page.screenshot(path=f"./logs/err/{dt.now().strftime("%Y-%m-%d %H-%M-%S")}.png")
+    # with open(f"./logs/err/{dt.now().strftime("%Y-%m-%d %H-%M-%S")}.html", "w", encoding="utf-8-sig") as f:
+    #     f.write(utils.prettify_html(await page.content()))
     # antibot = await page.get_by_text("Подозрительная активность").count()
     # antibot += await page.get_by_text("подождите").count()
-    # if antibot > 0:
-    #     tqdm.write("\nЖдем страницу, так как вылез антибот")
-    #     # await page.reload()
-    #     # await page.wait_for_load_state()
-    #     await page.wait_for_timeout(60000)
-    #     await page.wait_for_load_state()
+    # tqdm.write(f"{antibot=}")
 
-    # antibot = await page.get_by_text("Подозрительная активность").count()
-    # antibot += await page.get_by_text("подождите").count()
     # if antibot > 0:
     #     tqdm.write("\nЖдем страницу, так как вылез антибот")
-    #     await page.reload()
+    #     reload_time = await page.locator('meta[http-equiv="refresh"]').first.get_attribute('content')
+    #     reload_time = utils.normalizePrice(reload_time)
+    #     reload_time += 10
+    #     reload_time *= 1000
+    #     tqdm.write(f"{reload_time=}ms")
+
+    #     await page.wait_for_timeout(reload_time)
     #     await page.wait_for_load_state()
         
     await expect(page.locator("div.product-card-list")).to_be_attached()
-
-    # TODO убрать скрин и сохранение страницы
-    # await page.screenshot(path=f"./logs/wb/{dt.now().strftime("%Y-%m-%d %H-%M-%S")}.png")
-    # from utils import prettify_html
-    # with open(f"./logs/wb/{dt.now().strftime("%Y-%m-%d %H-%M-%S")}.html", "w", encoding="utf-8") as file:
-    #     file.write(prettify_html(await page.content()))
 
     cookie = page.locator("div.fixed-block__cookies:has(button)")
     if await cookie.count() > 0:

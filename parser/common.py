@@ -37,7 +37,7 @@ def try_and_log_decor(header: str, repeats: int = 1):
                             page: Page = CURRENT_PAGE.get()
                             await page.screenshot(path=f"./logs/err/{dt.now().strftime("%Y-%m-%d %H-%M-%S")}.png")
                             with open(f"./logs/err/{dt.now().strftime("%Y-%m-%d %H-%M-%S")}.html", "w", encoding="utf-8-sig") as f:
-                                f.write(await page.content())
+                                f.write(utils.prettify_html(await page.content()))
                         base_out = "\n".join([
                                 f"{dt.now().strftime("%Y-%m-%d %H-%M-%S")}",
                                 ERROR_PREFIX.get(),
@@ -307,9 +307,10 @@ async def run_create_context(context: BrowserContext, parser_config: ParserConfi
     page = await context.new_page()
     CURRENT_PAGE.set(page)
     ERROR_PREFIX.set(f"{parser_config.store}")
-    LOG_URL.set(parser_config.base_url)
+    LOG_URL.set(parser_config.base_url+"Достоевский")
     await goto_url(page, parser_config.base_url+"Достоевский")
     await wait_page(page, parser_config)
+    await parser_config.fn_extra_wait_cat(page)
     if sys.platform == "linux":
         await page.wait_for_timeout(1000)
     # if sys.platform == "win32":

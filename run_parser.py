@@ -1,5 +1,5 @@
 from models import EBook, ShopCard
-from z_test_books import all_books, books_Aizada
+from z_test_books import all_books, books_Aizada, book_stasheff
 from utils import save_objects, save_image_from_bytes
 from services.html_generator import render_html_page
 

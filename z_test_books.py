@@ -35,8 +35,6 @@ books2 = [
 {'title': 'Кузница тьмы', 'author': 'Эриксон', 'isbns': ['978-5-389-23072-9'], 'only_isbn': False},
 {'title': 'Бог не желает', 'author': 'Эриксон', 'isbns': ['978-5-389-25785-6'], 'only_isbn': False},    
 
-# {'title': 'Маг-крестоносец. Маг и кошка', 'author': 'Сташеф', 'isbns': ['5-17-022745-0', '5-9577-1188-8'], 'only_isbn': False},
-
 # {'title': 'Слимперия', 'author': 'Бабкин', 'isbns': ['5-93556-229-4'], 'only_isbn': False},
 
 {'title': 'Мы. Бич Божий', 'author': 'Замятин', 'isbns': ['978-5-389-20387-7'], 'only_isbn': True},
@@ -115,13 +113,13 @@ books3 = [
 
 {'title': 'Золотой сын', 'author': 'Браун', 'isbns': ['978-5-389-08460-5'], 'only_isbn': False},
 
-# {'title': 'Влад Талтош. Том 1', 'author': 'Браст', 'isbns': ["978-5-04-211206-5"], 'only_isbn': False},
-# {'title': 'Влад Талтош. Том 2', 'author': 'Браст', 'isbns': ["978-5-04-212675-8"], 'only_isbn': False},
-# {'title': 'Влад Талтош. Том 3', 'author': 'Браст', 'isbns': ["978-5-04-212678-9"], 'only_isbn': False},
+{'title': 'Влад Талтош. Том 1', 'author': 'Браст', 'isbns': ["978-5-04-211206-5"], 'only_isbn': False},
+{'title': 'Влад Талтош. Том 2', 'author': 'Браст', 'isbns': ["978-5-04-212675-8"], 'only_isbn': False},
+{'title': 'Влад Талтош. Том 3', 'author': 'Браст', 'isbns': ["978-5-04-212678-9"], 'only_isbn': False},
 {'title': 'Влад Талтош. Том 4', 'author': 'Браст', 'isbns': ["978-5-04-212681-9"], 'only_isbn': False},
-# {'title': 'Влад Талтош', 'author': 'Браст', 'isbns': ["978-5-04-211206-5"], 'only_isbn': True},
-# {'title': 'Влад Талтош', 'author': 'Браст', 'isbns': ["978-5-04-212675-8"], 'only_isbn': True},
-# {'title': 'Влад Талтош', 'author': 'Браст', 'isbns': ["978-5-04-212678-9"], 'only_isbn': True},
+{'title': 'Влад Талтош', 'author': 'Браст', 'isbns': ["978-5-04-211206-5"], 'only_isbn': True},
+{'title': 'Влад Талтош', 'author': 'Браст', 'isbns': ["978-5-04-212675-8"], 'only_isbn': True},
+{'title': 'Влад Талтош', 'author': 'Браст', 'isbns': ["978-5-04-212678-9"], 'only_isbn': True},
 {'title': 'Влад Талтош', 'author': 'Браст', 'isbns': ["978-5-04-212681-9"], 'only_isbn': True},
 
 {'title': 'Корабль отплывает в полночь', 'author': 'Лейбер', 'isbns': ['978-5-389-17575-4'], 'only_isbn': False},
@@ -146,6 +144,15 @@ books4 = [
 {'title': 'На руинах империи', 'author': 'Стейвли', 'isbns': ['978-5-389-23155-9'], 'only_isbn': False},
  
 {'title': 'Украденный трон. Призыв. Маска призрака', 'author': 'Гейдер', 'isbns': ['978-5-389-19770-1'], 'only_isbn': False},
+
+{'title': 'Убийцы Крондора', 'author': 'Фэйст', 'isbns': ["5-699-06261-0"], 'only_isbn': False},
+{'title': 'Слеза Богов Крондора', 'author': 'Фэйст', 'isbns': ["5-699-10114-4"], 'only_isbn': False},
+{'title': 'Возвращение изгнанника', 'author': 'Фэйст', 'isbns': ["5-699-20605-1"], 'only_isbn': False},
+{'title': 'Дочь Империи', 'author': 'Фэйст', 'isbns': ["5-7684-0556-9"], 'only_isbn': False},
+{'title': 'Пленник Империи', 'author': 'Фэйст', 'isbns': ["5-7684-0565-8"], 'only_isbn': False},
+{'title': 'Слуга Империи', 'author': 'Фэйст', 'isbns': ["5-7684-0561-5"], 'only_isbn': False},
+{'title': 'Воин Империи', 'author': 'Фэйст', 'isbns': ["5-7684-0370-1"], 'only_isbn': False},
+{'title': 'Хозяйка Империи', 'author': 'Фэйст', 'isbns': ["5-7684-0394-9"], 'only_isbn': False},
     ]
 
 books_Aizada = [
@@ -193,12 +200,22 @@ books_bardugo = [
 {'title': 'Крах и восход', 'author': 'Бардуго', 'isbns': ['978-5-17-108822-4'], 'only_isbn': False},
 {'title': 'Король шрамов', 'author': 'Бардуго', 'isbns': ['978-5-17-114497-5'], 'only_isbn': False},
 {'title': 'Правление волков', 'author': 'Бардуго', 'isbns': ['978-5-17-138086-1'], 'only_isbn': False},
-    
+    ]
+
+book_stasheff = [
+    {'title': 'Маг-крестоносец. Маг и кошка', 'author': 'Сташеф', 'isbns': ['5-17-022745-0', '5-9577-1188-8'], 'only_isbn': False},
+    {'title': 'Скорость побега. Чародей поневоле', 'author': 'Сташеф', 'isbns': ['5-17-005182-4'], 'only_isbn': False},
+    {'title': 'Король Кобольд. Очарованный чародей', 'author': 'Сташеф', 'isbns': ['5-17-014372-9'], 'only_isbn': False},
+    {'title': 'Чародей в ярости. Чародей-странник', 'author': 'Сташеф', 'isbns': ['5-17-015006-7'], 'only_isbn': False},
+    {'title': 'Волшебник не в своем уме. Волшебник в бедламе', 'author': 'Сташеф', 'isbns': ['5-17-006502-7'], 'only_isbn': False},
+    {'title': 'Зачарованный книжник. Здесь водятся чудовища', 'author': 'Сташеф', 'isbns': ['5-17-019151-0', '5-9577-0067-3'], 'only_isbn': False},
+    {'title': 'Волшебник на пути. Последний путь чародея', 'author': 'Сташеф', 'isbns': ['5-17-037546-8', '5-9713-2303-2', '5-9578-4448-9'], 'only_isbn': False},
     ]
 
 # books.extend(books2)
 books.extend(books3)
 books.extend(books4)
+books.extend(book_stasheff)
 books.extend(books_Aizada)
 books.extend(books_salvatore)
 books.extend(books_bardugo)
