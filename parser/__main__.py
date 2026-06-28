@@ -34,7 +34,7 @@ async def __run__(fn, books: EBook|list[EBook], headless = True, test_context = 
         #     viewport = {"width": 1280, "height": 1024}
         executable_path = r"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
         executable_path = None
-        
+
         if not test_context:
             browser = await p.chromium.launch(
                         executable_path=executable_path,
@@ -82,6 +82,7 @@ async def __run__(fn, books: EBook|list[EBook], headless = True, test_context = 
                             # channel="chrome",
                             headless=headless,
                             viewport=viewport,
+                            proxy = None,
                             locale="ru-RU",
                             timezone_id="Asia/Almaty",
                             permissions=["geolocation"],

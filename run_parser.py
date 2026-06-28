@@ -66,6 +66,8 @@ def main():
 
     # if sys.platform == "win32":
     for b in books:
+        if len(b.prices) > 250:
+            continue
         b.optimize_stores_by_cover(from_covers_per_store = 0)
         # b.save_covers(alt_path = True)
     print(dt.now().strftime("%Y-%m-%d %H-%M"))

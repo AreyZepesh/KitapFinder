@@ -165,7 +165,7 @@ books_Aizada = [
 # {'title': 'Доктор Сон', 'author': 'Кинг', 'isbns': ['978-5-17-134431-3'], 'only_isbn': False},
 
 {'title': 'Приговор', 'author': 'Отохико Кага', 'isbns': ['978-5-89332-370-2'], 'only_isbn': True},
-{'title': 'Приговор', 'author': 'Отохико Кага', 'isbns': ['978-5-89332-370-2'], 'only_isbn': False, 'need_check_author': True},
+# {'title': 'Приговор', 'author': 'Отохико Кага', 'isbns': ['978-5-89332-370-2'], 'only_isbn': False, 'need_check_author': True},
 
 # {'title': '', 'author': '', 'isbns': [], 'only_isbn': False},
     ]
