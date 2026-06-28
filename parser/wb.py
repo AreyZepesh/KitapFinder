@@ -15,9 +15,9 @@ async def _extra_urls(page: Page):
     replaced = await page.locator("a.searching-results__query-replaced").first.is_visible()
     if replaced:
         await page.goto(page.url+"&nocorrection=1")
+        await page.wait_for_timeout(200)
     
-    await page.wait_for_timeout(200)
-    await page.reload() # часто с первой загрузки данные не корректные, обновление это лечит 
+    # await page.reload() # часто с первой загрузки данные не корректные, обновление это лечит 
 
     if replaced:
         return True
@@ -247,10 +247,13 @@ async def _card_cover(card: Locator, page: Page) -> APIResponse:
 # async def _card_info(card: Locator):
 #     return card.locator("div.product-card__middle-wrap").first
 
-async def main(context: BrowserContext, book: EBook, create_context = False) ->  list[ShopCard]:
+async def main(context: BrowserContext, book: EBook, alter_search = False, create_context = False) ->  list[ShopCard]:
+    base_url = "https://global.wildberries.ru/catalog/0/search.aspx?search=книга "
+    if alter_search:
+        base_url = "https://global.wildberries.ru/catalog/0/search.aspx?search="
     parser_config = ParserConfig(
         store = "WB",
-        base_url = "https://global.wildberries.ru/catalog/0/search.aspx?search=книга ",
+        base_url = base_url,
         isbn_prefix = True,
 
         wait_for_load_time = 1000,

@@ -139,10 +139,10 @@ class EBook():
         Я понимаю что такой метод оставляет возможность для ошибки.
         Для фикса этого добавил проверку наличия точки и длины title больше 2"""
         # def save_to_csv(s1,s2,r):
-        #     import csv
-        #     with open("./tmp/name.csv", 'a', encoding="utf-8-sig", newline="") as file:
-        #         writer = csv.writer(file, delimiter=";")
-        #         writer.writerow([s1,s2,r])
+            # import csv
+            # with open("./tmp/name.csv", 'a', encoding="utf-8-sig", newline="") as file:
+            #     writer = csv.writer(file, delimiter=";")
+                # writer.writerow([s1,s2,r])
 
         norm_title = self._str_from_comparison(self.title)
         norm_string = self._str_from_comparison(string)

@@ -1,6 +1,8 @@
 */*
 **/__pycache__/*
 !parser/*
+**/profile
+**/profile/*
 !services/*
 .note.md
 test*.*

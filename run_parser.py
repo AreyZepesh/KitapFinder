@@ -42,10 +42,12 @@ def main():
     # books = [EBook(**{'title': 'Террор', 'author': 'Симмонс', 'isbns': [], 'only_isbn': False, 'need_check_author': True},)]
     # books = [EBook(**{'title': 'Ведьма. Матерь Тьмы', 'author': 'Лейбер', 'isbns': [], 'only_isbn': False},)]
     headless = True
+    test_context = False
     # books = [books[1]]
     # headless = False
+    test_context = True
     
-    run(books=books, headless = headless)
+    run(books=books, headless = headless, test_context = test_context)
     # <button class="rb" onclick="reload()">Обновить</button>
     for b in books:
         b.sort_by_price()
