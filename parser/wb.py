@@ -219,7 +219,9 @@ async def _extra_wait_cat(page: Page):
     #     await page.wait_for_timeout(reload_time)
     #     await page.wait_for_load_state()
         
-    await expect(page.locator("div.product-card-list")).to_be_attached()
+    await expect(page.locator("div.product-card-list")).to_be_attached(
+                                                                # timeout=7500
+                                                                       )
 
     cookie = page.locator("div.fixed-block__cookies:has(button)")
     if await cookie.count() > 0:

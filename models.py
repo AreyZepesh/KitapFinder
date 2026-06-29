@@ -223,7 +223,7 @@ class ParserConfig():
 
     get_card_locator: Callable[[Any], Any] = field(default=_noop)
     get_nextpage_locator: Callable[[Any], Any] = field(default=_noop)
-    element_limit: int = field(default=500)
+    element_limit: int = field(default=250)
     # get_max_depth: Callable[[Any], int] = field(default=_get_max_depth)
     generator_cards: Callable[[Any], Any] = field(default=_noop)
 

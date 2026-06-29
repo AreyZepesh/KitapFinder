@@ -43,7 +43,7 @@ def main():
     # books = [EBook(**{'title': 'Ведьма. Матерь Тьмы', 'author': 'Лейбер', 'isbns': [], 'only_isbn': False},)]
     headless = True
     test_context = False
-    # books = [books[1]]
+    # books = [books[0]]
     # headless = False
     test_context = True
     
