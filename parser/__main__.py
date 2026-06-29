@@ -21,10 +21,13 @@ import json
 
 async def __run__(fn, books: EBook|list[EBook], headless = True, test_context = False):
     async with async_playwright() as p:
+        state_path = "./parser/state.json"
+        if test_context:
+            state_path = "./parser/profile/state.json"""
         # загружаем состояние контекста
         storage_state = None
-        if os.path.exists("./parser/state.json"):
-            storage_state = "./parser/state.json"
+        if os.path.exists(state_path):
+            storage_state = state_path
         # Контекст задается для все сессии. После некоторые вещи сменить не выйдет. 
         viewport = {"width": 1920, "height": 1080}
         user_agent=f"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36"
@@ -114,7 +117,7 @@ async def __run__(fn, books: EBook|list[EBook], headless = True, test_context = 
         await fn(context, books)
 
         # сохраняем состояние контекста
-        await context.storage_state(path="./parser/state.json")
+        await context.storage_state(path=state_path)
 
         if not test_context:
             await browser.close()
