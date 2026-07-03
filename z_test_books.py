@@ -1,6 +1,7 @@
+books = []
 # {'title': '', 'author': '', 'isbns': [], 'only_isbn': False},
 # {'title': '', 'author': '', 'isbns': None, 'only_isbn': False},
-books = [
+books1 = [
 {'title': 'Закон девяток', 'author': 'Гудкайнд', 'isbns': None, 'only_isbn': False},
 
 {'title': 'Душа Бога. Том 1', 'author': 'Перумов', 'isbns': ['978-5-04-110924-0'], 'only_isbn': False},
@@ -35,7 +36,7 @@ books2 = [
 {'title': 'Кузница тьмы', 'author': 'Эриксон', 'isbns': ['978-5-389-23072-9'], 'only_isbn': False},
 {'title': 'Бог не желает', 'author': 'Эриксон', 'isbns': ['978-5-389-25785-6'], 'only_isbn': False},    
 
-# {'title': 'Слимперия', 'author': 'Бабкин', 'isbns': ['5-93556-229-4'], 'only_isbn': False},
+{'title': 'Слимперия', 'author': 'Бабкин', 'isbns': ['5-93556-229-4'], 'only_isbn': False},
 
 {'title': 'Мы. Бич Божий', 'author': 'Замятин', 'isbns': ['978-5-389-20387-7'], 'only_isbn': True},
 
@@ -95,6 +96,11 @@ books2 = [
 {'title': 'Повелители DOOM', 'author': None, 'isbns': [], 'only_isbn': False},
 
 {'title': 'Восставший из ада', 'author': 'Баркер', 'isbns': [], 'only_isbn': False},
+
+{'title': 'Присягнувшая Черепу', 'author': 'Стейвли', 'isbns': ['978-5-389-21765-2'], 'only_isbn': False},
+{'title': 'На руинах империи', 'author': 'Стейвли', 'isbns': ['978-5-389-23155-9'], 'only_isbn': False},
+ 
+{'title': 'Украденный трон. Призыв. Маска призрака', 'author': 'Гейдер', 'isbns': ['978-5-389-19770-1'], 'only_isbn': False},
     ]
 
 books3 = [
@@ -111,7 +117,7 @@ books3 = [
 {'title': 'Вьюга теней', 'author': 'Пехов', 'isbns': ['978-5-00242-090-2'], 'only_isbn': True},
 {'title': 'Искатели ветра', 'author': 'Пехов', 'isbns': ['978-5-00242-105-3'], 'only_isbn': True},
 {'title': 'Ветер Полыни', 'author': 'Пехов', 'isbns': ['978-5-00242-171-8'], 'only_isbn': True},
-{'title': 'Птицелов', 'author': 'Пехов', 'isbns': ['978-5-00242-235-7'], 'only_isbn': True },
+# {'title': 'Птицелов', 'author': 'Пехов', 'isbns': ['978-5-00242-235-7'], 'only_isbn': True },
 
 {'title': 'Республика воров', 'author': 'Линч', 'isbns': ['978-5-389-08784-2', '978-5-389-25810-5'], 'only_isbn': False},
 
@@ -120,31 +126,25 @@ books3 = [
 # {'title': 'Влад Талтош. Том 1', 'author': 'Браст', 'isbns': ["978-5-04-211206-5"], 'only_isbn': False},
 # {'title': 'Влад Талтош. Том 2', 'author': 'Браст', 'isbns': ["978-5-04-212675-8"], 'only_isbn': False},
 # {'title': 'Влад Талтош. Том 3', 'author': 'Браст', 'isbns': ["978-5-04-212678-9"], 'only_isbn': False},
-# {'title': 'Влад Талтош. Том 4', 'author': 'Браст', 'isbns': ["978-5-04-212681-9"], 'only_isbn': False},
 # {'title': 'Влад Талтош', 'author': 'Браст', 'isbns': ["978-5-04-211206-5"], 'only_isbn': True},
 # {'title': 'Влад Талтош', 'author': 'Браст', 'isbns': ["978-5-04-212675-8"], 'only_isbn': True},
 # {'title': 'Влад Талтош', 'author': 'Браст', 'isbns': ["978-5-04-212678-9"], 'only_isbn': True},
-# {'title': 'Влад Талтош', 'author': 'Браст', 'isbns': ["978-5-04-212681-9"], 'only_isbn': True},
 
 {'title': 'Корабль отплывает в полночь', 'author': 'Лейбер', 'isbns': ['978-5-389-17575-4'], 'only_isbn': False},
 {'title': 'Ведьма. Матерь Тьмы', 'author': 'Лейбер', 'isbns': ['978-5-389-32144-1'], 'only_isbn': False},
 
 {'title': 'Мистические истории. Похищенные сердца', 'author': None, 'isbns': ['978-5-389-27312-2'], 'only_isbn': False},
 
-{'title': 'Террор', 'author': 'Симмонс', 'isbns': [], 'only_isbn': False, 'need_check_author': True},
+# {'title': 'Террор', 'author': 'Симмонс', 'isbns': [], 'only_isbn': False, 'need_check_author': True},
+{'title': 'Илион. Олимп', 'author': 'Симмонс', 'isbns': ['978-5-17-108341-0', '978-5-389-33081-8'], 'only_isbn': False, 'need_check_author': True},
+{'title': 'Илион', 'author': 'Симмонс', 'isbns': ['978-5-389-21479-8'], 'only_isbn': False, 'need_check_author': True},
+{'title': 'Олимп', 'author': 'Симмонс', 'isbns': ['978-5-389-22285-4'], 'only_isbn': False, 'need_check_author': True},
 
 {'title': 'Распознавание образов. Страна призраков. Нулевое досье', 'author': 'Гибсон', 'isbns': ['978-5-389-31974-5'], 'only_isbn': False},
         ] 
 
 books4 = [
-# {'title': 'Присягнувшая Черепу', 'author': 'Стейвли', 'isbns': ['978-5-389-21765-2'], 'only_isbn': False},
-# {'title': 'На руинах империи', 'author': 'Стейвли', 'isbns': ['978-5-389-23155-9'], 'only_isbn': False},
- 
-# {'title': 'Украденный трон. Призыв. Маска призрака', 'author': 'Гейдер', 'isbns': ['978-5-389-19770-1'], 'only_isbn': False},
-
 {'title': 'Убийцы Крондора', 'author': 'Фэйст', 'isbns': ["5-699-06261-0"], 'only_isbn': False},
-# {'title': 'Слеза Богов Крондора', 'author': 'Фэйст', 'isbns': ["5-699-10114-4"], 'only_isbn': False},
-# {'title': 'Возвращение изгнанника', 'author': 'Фэйст', 'isbns': ["5-699-20605-1"], 'only_isbn': False},
 # {'title': 'Дочь Империи', 'author': 'Фэйст', 'isbns': ["5-7684-0556-9"], 'only_isbn': False},
 # {'title': 'Пленник Империи', 'author': 'Фэйст', 'isbns': ["5-7684-0565-8"], 'only_isbn': False},
 # {'title': 'Слуга Империи', 'author': 'Фэйст', 'isbns': ["5-7684-0561-5"], 'only_isbn': False},
@@ -203,23 +203,31 @@ books_bardugo = [
         ]
 
 book_stasheff = [
-    # {'title': 'Маг-крестоносец. Маг и кошка', 'author': 'Сташеф', 'isbns': ['5-17-022745-0', '5-9577-1188-8'], 'only_isbn': False},
-    # {'title': 'Скорость побега. Чародей поневоле', 'author': 'Сташеф', 'isbns': ['5-17-005182-4'], 'only_isbn': False},
-    # {'title': 'Король Кобольд. Очарованный чародей', 'author': 'Сташеф', 'isbns': ['5-17-014372-9'], 'only_isbn': False},
-    # {'title': 'Чародей в ярости. Чародей-странник', 'author': 'Сташеф', 'isbns': ['5-17-015006-7'], 'only_isbn': False},
-    # {'title': 'Волшебник не в своем уме. Волшебник в бедламе', 'author': 'Сташеф', 'isbns': ['5-17-006502-7'], 'only_isbn': False},
     {'title': 'Зачарованный книжник. Здесь водятся чудовища', 'author': 'Сташеф', 'isbns': ['5-17-019151-0', '5-9577-0067-3'], 'only_isbn': False},
     {'title': 'Волшебник на пути. Последний путь чародея', 'author': 'Сташеф', 'isbns': ['5-17-037546-8', '5-9713-2303-2', '5-9578-4448-9'], 'only_isbn': False},
     {'title': 'Волшебник на пути', 'author': 'Сташеф', 'isbns': ['5-17-037546-8', '5-9713-2303-2', '5-9578-4448-9'], 'only_isbn': False},
     {'title': 'Последний путь чародея', 'author': 'Сташеф', 'isbns': ['5-17-037546-8', '5-9713-2303-2', '5-9578-4448-9'], 'only_isbn': False},
         ]
 
+book_master_fantasy = [
+    {'title': 'Шуттовская рота', 'author': 'Асприн', 'isbns': ['978-5-17-151818-9'], 'only_isbn': True},
+    {'title': 'Вся Шуттовская рать', 'author': 'Асприн', 'isbns': ['978-5-17-151819-6'], 'only_isbn': True},
+
+    {'title': 'Мерзость', 'author': 'Симмонс', 'isbns': ['978-5-17-147158-3'], 'only_isbn': True},
+    {'title': 'Неглубокая могила. Лютая зима. Круче некуда', 'author': 'Симмонс', 'isbns': ['978-5-17-175636-9'], 'only_isbn': True},
+    {'title': 'Дети Ночи. Песнь Кали', 'author': 'Симмонс', 'isbns': ['978-5-17-187347-9'], 'only_isbn': True},
+    {'title': 'Друд, или Человек в чёрном', 'author': 'Симмонс', 'isbns': ['978-5-17-156919-8'], 'only_isbn': True},
+    {'title': 'Утеха падали', 'author': 'Симмонс', 'isbns': ['978-5-17-180042-0'], 'only_isbn': True},
+        ]
+
+books.extend(books1)
 # books.extend(books2)
 books.extend(books3)
 books.extend(books4)
 books.extend(book_stasheff)
 books.extend(books_Aizada)
 books.extend(books_salvatore)
+books.extend(book_master_fantasy)
 # books.extend(books_bardugo)
 
 all_books = books

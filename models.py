@@ -156,8 +156,8 @@ class EBook():
                     if word not in norm_string:
                         # save_to_csv(self.title, string, False)
                         return False
-            # save_to_csv(self.title, string, True)
-            return True
+                # save_to_csv(self.title, string, True)
+                return True
         # save_to_csv(self.title, string, False)
         return False
     

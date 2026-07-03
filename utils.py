@@ -1,4 +1,5 @@
 import pickle
+from urllib.parse import urlparse
 
 def normalizePrice(string: str) -> int:
     """Нормализует цену, делает из строки число"""
@@ -38,3 +39,34 @@ def prettify_html(html_content):
     from bs4 import BeautifulSoup
     soup = BeautifulSoup(html_content, "html.parser")
     return soup.prettify()
+
+# def is_target(url, domain_url):
+#     if not url:
+#         return False
+#     print(url, domain_url)
+#     print(url.endswith(domain_url))
+#     return urlparse(url).netloc.endswith(domain_url)
+
+def state_filter(data: dict, domain_url: str):
+    filtered_cookies = []
+    filtered_origins = []
+    cookies = data.get("cookies")
+    if cookies:
+        filtered_cookies = [ 
+            c for c in cookies 
+            # if is_target( c.get("domain"), domain_url ) 
+            if c.get("domain", '').endswith(domain_url)
+            or c.get("partitionKey", '').endswith(domain_url) 
+                            ]
+    origins = data.get("origins")
+    if origins:
+        filtered_origins = [
+            o for o in origins
+            # if is_target(o.get("origins"), domain_url)
+            if o.get("origins", '').endswith(domain_url)
+            ]
+
+    return {
+        "cookies": filtered_cookies,
+        "origins": filtered_origins
+        }

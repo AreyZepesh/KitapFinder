@@ -9,7 +9,7 @@ from parser.common import (
     async_playwright,
     asyncio, dt,
     EBook,
-    tqdm,
+    tqdm, utils
     )
 
 from parser.wb import main as wb
@@ -23,7 +23,7 @@ async def __run__(fn, books: EBook|list[EBook], headless = True, test_context = 
     async with async_playwright() as p:
         state_path = "./parser/state.json"
         if test_context:
-            state_path = "./parser/profile/state.json"""
+            state_path = "./parser/profile/state.json"
         # загружаем состояние контекста
         storage_state = None
         if os.path.exists(state_path):
@@ -31,7 +31,7 @@ async def __run__(fn, books: EBook|list[EBook], headless = True, test_context = 
         # Контекст задается для все сессии. После некоторые вещи сменить не выйдет. 
         viewport = {"width": 1920, "height": 1080}
         user_agent=f"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36"
-        user_agent=None
+        # user_agent=None
         # if sys.platform == "linux":
         #     user_agent=f"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
         #     viewport = {"width": 1280, "height": 1024}
@@ -105,7 +105,9 @@ async def __run__(fn, books: EBook|list[EBook], headless = True, test_context = 
             if storage_state:    
                 # NOTE: загрузка данных прошлой сессии
                 state = json.load(open(storage_state, encoding="utf-8"))
-                cookies = state["cookies"]
+                # cookies = state["cookies"]
+                # получаем только ozon state
+                cookies = utils.state_filter(state, "ozon.kz")["cookies"]
                 await context.add_cookies(cookies)
 
             context.my_data = {}
