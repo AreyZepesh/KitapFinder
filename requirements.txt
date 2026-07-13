@@ -1,7 +1,7 @@
 setuptools
 pytest_playwright
 Pillow
-opencv-contrib-python
+opencv-contrib-python==4.12.0.88
 BeautifulSoup4
 tqdm
 patchright

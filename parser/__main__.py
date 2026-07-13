@@ -110,9 +110,9 @@ async def __run__(fn, books: EBook|list[EBook], headless = True, test_context = 
                 cookies = utils.state_filter(state, "ozon.kz")["cookies"]
                 await context.add_cookies(cookies)
 
-            context.my_data = {}
-            context.my_data["zero_page"] = await context.new_page()
-            await context.my_data["zero_page"].goto("https://ozon.kz/product/3909169867/?__rr=1")
+            # context.my_data = {}
+            # context.my_data["zero_page"] = await context.new_page()
+            # await context.my_data["zero_page"].goto("https://ozon.kz/product/3909169867/?__rr=1")
 
         # Создать контекст
         await create_context(context)
