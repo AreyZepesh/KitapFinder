@@ -117,9 +117,6 @@ books3 = [
 {'title': 'Вьюга теней', 'author': 'Пехов', 'isbns': ['978-5-00242-090-2'], 'only_isbn': True},
 {'title': 'Искатели ветра', 'author': 'Пехов', 'isbns': ['978-5-00242-105-3'], 'only_isbn': True},
 {'title': 'Ветер Полыни', 'author': 'Пехов', 'isbns': ['978-5-00242-171-8'], 'only_isbn': True},
-# {'title': 'Птицелов', 'author': 'Пехов', 'isbns': ['978-5-00242-235-7'], 'only_isbn': True },
-
-{'title': 'Республика воров', 'author': 'Линч', 'isbns': ['978-5-389-08784-2', '978-5-389-25810-5'], 'only_isbn': False},
 
 {'title': 'Золотой сын', 'author': 'Браун', 'isbns': ['978-5-389-08460-5'], 'only_isbn': False},
 
