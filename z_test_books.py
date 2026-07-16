@@ -105,7 +105,7 @@ books2 = [
 
 books3 = [
 {'title': 'Падение Левиафана', 'author': 'Кори', 'isbns': ['978-5-389-28641-2'], 'only_isbn': False},
-# {'title': 'Легион памяти', 'author': 'Кори', 'isbns': ['978-5-389-28642-9'], 'only_isbn': False},
+{'title': 'Легион памяти', 'author': 'Кори', 'isbns': ['978-5-389-28642-9'], 'only_isbn': False},
 
 {'title': 'Кровавая Роза', 'author': 'Имс', 'isbns': ['978-5-389-16829-9'], 'only_isbn': False},
 

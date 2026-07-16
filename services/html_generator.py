@@ -16,7 +16,20 @@ def render_book_table(soup: BeautifulSoup, book: EBook) -> None:
     #TODO привести к единому стилю: 
     # типизировать, или нет переменные 
     # х = append или y.append(x) везде
+    
+    # иницииурем таблицу и заголовок
+    table = soup.new_tag("table", **{"class": "book-table"})
+    # table = soup.body.append( soup.new_tag("table") )
+    thead = table.append( soup.new_tag("thead") )
+    tr_title = thead.append(soup.new_tag("tr"))
+
     if not book.prices:
+         # создаем заголовок с названием/автором
+        thead_th = tr_title.append( soup.new_tag("th", colspan = 1, **{"class": "book-title"}) )
+        thead_th.string = f"{book.title}{' - '+book.author if book.author else ''}"
+        
+        soup.body.append(table)
+        soup.body.append( soup.new_tag("br") )
         return
     
     # раскидываем цены по магазинам
@@ -32,18 +45,11 @@ def render_book_table(soup: BeautifulSoup, book: EBook) -> None:
         # Сортируем по возрастанию цены,
         groups[store].sort(key=lambda b: b.price)
 
-    # иницииурем таблицу
-    table = soup.new_tag("table", **{"class": "book-table"})
-    # table = soup.body.append( soup.new_tag("table") )
-    
-    # создаем заголовоки
-    thead = table.append( soup.new_tag("thead") )
-
-    tr_title = thead.append(soup.new_tag("tr"))
+    # создаем заголовок с названием/автором
     thead_th = tr_title.append( soup.new_tag("th", colspan = str(max_columns), **{"class": "book-title"}) )
     thead_th.string = f"{book.title}{' - '+book.author if book.author else ''}"
-    #шапка с названиями магазинов
 
+    #шапка с названиями магазинов
     tr_shops = thead.append( soup.new_tag("tr") )
     for store in stores:
         tr_shops.append( soup.new_tag("th") ).string = f"{store}"
