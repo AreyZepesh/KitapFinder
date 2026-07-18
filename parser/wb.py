@@ -17,7 +17,7 @@ async def _extra_urls(page: Page):
         await page.goto(page.url+"&nocorrection=1")
     
     await page.wait_for_timeout(200)
-    # await page.reload() # часто с первой загрузки данные не корректные, обновление это лечит 
+    await page.reload() # часто с первой загрузки данные не корректные, обновление это лечит 
 
     if replaced:
         return True
@@ -218,10 +218,26 @@ async def _extra_wait_cat(page: Page):
 
     #     await page.wait_for_timeout(reload_time)
     #     await page.wait_for_load_state()
-    if "%D0%BA%D0%BD%D0%B8%D0%B3%D0%B0%20%D0%94%D0%BE%D1%81%D1%82%D0%BE%D0%B5%D0%B2%D1%81%D0%BA%D0%B8%D0%B9" in page.url:
-        await page.wait_for_timeout(30000)
-        await page.wait_for_load_state()
+    
+    # # NOTE: блок задержки при создании контекста
+    # if "%D0%BA%D0%BD%D0%B8%D0%B3%D0%B0%20%D0%94%D0%BE%D1%81%D1%82%D0%BE%D0%B5%D0%B2%D1%81%D0%BA%D0%B8%D0%B9" in page.url:
+    #     await page.wait_for_timeout(30000)
+    #     await page.wait_for_load_state()
 
+    loading = await page.locator("div.general-preloader j-initial-preloader").count()
+    trys = 0
+    while loading != 0 and trys < 50:
+        # tqdm.write(f"{page.url=}: {loading=}, {trys=}")
+        await page.wait_for_timeout(5000)
+        loading = await page.locator("div.general-preloader j-initial-preloader").count()
+        trys += 1
+    if trys > 0:
+        tqdm.write(f"{page.url=}: {loading=}, {trys=}")
+
+    # await expect(page.locator("div.general-preloader j-initial-preloader hide")).to_be_attached(
+    #                                                             timeout=7500
+    #                                                                    )
+    
     await expect(page.locator("div.product-card-list")).to_be_attached(
                                                                 timeout=7500
                                                                        )

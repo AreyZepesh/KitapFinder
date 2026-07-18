@@ -132,11 +132,6 @@ books3 = [
 
 {'title': 'Мистические истории. Похищенные сердца', 'author': None, 'isbns': ['978-5-389-27312-2'], 'only_isbn': False},
 
-# {'title': 'Террор', 'author': 'Симмонс', 'isbns': [], 'only_isbn': False, 'need_check_author': True},
-{'title': 'Илион. Олимп', 'author': 'Симмонс', 'isbns': ['978-5-17-108341-0', '978-5-389-33081-8'], 'only_isbn': False, 'need_check_author': True},
-{'title': 'Илион', 'author': 'Симмонс', 'isbns': ['978-5-389-21479-8'], 'only_isbn': False, 'need_check_author': True},
-{'title': 'Олимп', 'author': 'Симмонс', 'isbns': ['978-5-389-22285-4'], 'only_isbn': False, 'need_check_author': True},
-
 {'title': 'Распознавание образов. Страна призраков. Нулевое досье', 'author': 'Гибсон', 'isbns': ['978-5-389-31974-5'], 'only_isbn': False},
         ] 
 
@@ -206,15 +201,18 @@ book_stasheff = [
     {'title': 'Последний путь чародея', 'author': 'Сташеф', 'isbns': ['5-17-037546-8', '5-9713-2303-2', '5-9578-4448-9'], 'only_isbn': False},
         ]
 
-book_master_fantasy = [
-    {'title': 'Шуттовская рота', 'author': 'Асприн', 'isbns': ['978-5-17-151818-9'], 'only_isbn': True},
-    {'title': 'Вся Шуттовская рать', 'author': 'Асприн', 'isbns': ['978-5-17-151819-6'], 'only_isbn': True},
-
+book_master_fantasy_simons = [
+    {'title': 'Илион. Олимп', 'author': 'Симмонс', 'isbns': ['978-5-17-108341-0', '978-5-389-33081-8'], 'only_isbn': False, 'need_check_author': True},
+    {'title': 'Илион', 'author': 'Симмонс', 'isbns': ['978-5-389-21479-8'], 'only_isbn': False, 'need_check_author': True},
+    {'title': 'Олимп', 'author': 'Симмонс', 'isbns': ['978-5-389-22285-4'], 'only_isbn': False, 'need_check_author': True},
     {'title': 'Мерзость', 'author': 'Симмонс', 'isbns': ['978-5-17-147158-3'], 'only_isbn': True},
     {'title': 'Неглубокая могила. Лютая зима. Круче некуда', 'author': 'Симмонс', 'isbns': ['978-5-17-175636-9'], 'only_isbn': True},
     {'title': 'Дети Ночи. Песнь Кали', 'author': 'Симмонс', 'isbns': ['978-5-17-187347-9'], 'only_isbn': True},
     {'title': 'Друд, или Человек в чёрном', 'author': 'Симмонс', 'isbns': ['978-5-17-156919-8'], 'only_isbn': True},
     {'title': 'Утеха падали', 'author': 'Симмонс', 'isbns': ['978-5-17-180042-0'], 'only_isbn': True},
+
+    {'title': 'Шуттовская рота', 'author': 'Асприн', 'isbns': ['978-5-17-151818-9'], 'only_isbn': True},
+    {'title': 'Вся Шуттовская рать', 'author': 'Асприн', 'isbns': ['978-5-17-151819-6'], 'only_isbn': True},
         ]
 
 books.extend(books1)
@@ -224,7 +222,7 @@ books.extend(books4)
 books.extend(book_stasheff)
 books.extend(books_Aizada)
 books.extend(books_salvatore)
-books.extend(book_master_fantasy)
+# books.extend(book_master_fantasy_simons)
 # books.extend(books_bardugo)
 
 all_books = books

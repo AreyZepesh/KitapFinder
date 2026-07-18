@@ -22,6 +22,14 @@ ERROR_PREFIX = contextvars.ContextVar("Ошибка")
 LOG_URL = contextvars.ContextVar("")
 CURRENT_PAGE = contextvars.ContextVar("")
 
+async def screen_and_save_page(dir_path: str, page: Page, file_prefix: str = "", file_suffix: str = ""):
+    while dir_path[-1] == "/":
+        dir_path = dir_path[:-1]
+    base_path = f"{dir_path}/{file_prefix}{dt.now().strftime("%Y-%m-%d %H-%M-%S")}{file_suffix}"
+    await page.screenshot(path=f"{base_path}.png")
+    with open(f"{base_path}.html", "w", encoding="utf-8-sig") as f:
+        f.write(utils.prettify_html(await page.content()))
+
 def try_and_log_decor(header: str, repeats: int = 1):
     """Асинхронный декоратор с повтором и логированием ошибок."""
     def decorator(fn):
@@ -42,9 +50,7 @@ def try_and_log_decor(header: str, repeats: int = 1):
                         # if sys.platform == "linux":
                             # при ошибке - скриншот и сохранение кода страницы
                             page: Page = CURRENT_PAGE.get()
-                            await page.screenshot(path=f"./logs/err/{dt.now().strftime("%Y-%m-%d %H-%M-%S")}.png")
-                            with open(f"./logs/err/{dt.now().strftime("%Y-%m-%d %H-%M-%S")}.html", "w", encoding="utf-8-sig") as f:
-                                f.write(utils.prettify_html(await page.content()))
+                            await screen_and_save_page(dir_path = './logs/err', page = page)
 
                             # tqdm.write(f"{ex}")
                             # # для patchright
@@ -301,7 +307,7 @@ async def run_parser(context: BrowserContext, book: EBook, parser_config: Parser
             # else:
             #     tqdm.write(f"{parser_config.store} {added=}")
     # if parser_config.store.lower() == "wb" and len(all_items) == 0:
-    #     await page.screenshot(path=f"./logs/err/zero/{dt.now().strftime("%Y-%m-%d %H-%M-%S")}_{book.title}.png")
+    #     await screen_and_save_page(dir_path = './logs/err/zero', page = page, file_prefix=f"{parser_config.store}_", file_suffix=f"_{book.title}")
     #     input("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
     await page.close()
     return all_items

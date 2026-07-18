@@ -214,8 +214,14 @@ async def _gen_cards(page: Page, parser_config: ParserConfig):
     #     tqdm.write(f"{completed_items}") 
     #     tqdm.write(f"{part_indexes}") 
 
-@try_and_log_decor("Дополнительное ожидание страницы")
+@try_and_log_decor("Дополнительное ожидание страницы", repeats=3)
 async def _extra_wait_cat(page: Page):
+    antibot = await page.locator('[src*="ozon.kz/challenge.html"]').count()
+    if antibot > 0:
+        tqdm.write(f"ozon словили антибота: {page.url}, пробуем перезагрузить")
+        await page.reload()
+        await page.wait_for_timeout(10000)
+
     await page.wait_for_load_state("networkidle")
     await expect(page.locator("div.container")).to_be_attached()
     await expect(page.locator("div#contentScrollPaginator")).to_be_attached()
