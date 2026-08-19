@@ -1,5 +1,5 @@
 from models import EBook, ShopCard
-from z_test_books import all_books, books_Aizada, book_stasheff
+from z_test_books import all_books, books_Aizada
 from utils import save_objects, save_image_from_bytes
 from services.html_generator import render_html_page
 
@@ -51,7 +51,7 @@ def main():
     # <button class="rb" onclick="reload()">Обновить</button>
     for b in books:
         b.sort_by_price()
-        text = f"{b.get_search_text()}: {len(b.prices)}\n"
+        # text = f"{b.get_search_text()}: {len(b.prices)}\n"
         # with open(f"./logs/resutls_{time_start}.txt", 'a', encoding="utf8") as file:
         #     file.write(text)
         #     for p in b.prices:

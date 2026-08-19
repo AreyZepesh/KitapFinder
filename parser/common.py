@@ -13,7 +13,7 @@ from tqdm.asyncio import tqdm
 from functools import wraps
 import traceback
 import contextvars
-import re, sys
+import re, sys, random
 
 import utils
 from models import EBook, ShopCard, ParserConfig
@@ -79,6 +79,15 @@ def try_and_log_decor(header: str, repeats: int = 1):
 
         return wrapper
     return decorator
+
+async def human_mouse_move(page, target_x, target_y, steps=25):
+    box = await page.evaluate("() => ({w: window.innerWidth, h: window.innerHeight})")
+    start_x, start_y = random.randint(0, box["w"]), random.randint(0, box["h"])
+    for i in range(steps):
+        x = start_x + (target_x - start_x) * i / steps + random.uniform(-3, 3)
+        y = start_y + (target_y - start_y) * i / steps + random.uniform(-3, 3)
+        await page.mouse.move(x, y)
+        await asyncio.sleep(random.uniform(0.005, 0.02))
 
 @try_and_log_decor("Прокрутка до конца страницы", repeats=3)
 async def scroll_to_last(elem_locator: Locator, strore = None):
@@ -306,8 +315,9 @@ async def run_parser(context: BrowserContext, book: EBook, parser_config: Parser
                 break
             # else:
             #     tqdm.write(f"{parser_config.store} {added=}")
-    # if parser_config.store.lower() == "wb" and len(all_items) == 0:
-    #     await screen_and_save_page(dir_path = './logs/err/zero', page = page, file_prefix=f"{parser_config.store}_", file_suffix=f"_{book.title}")
+    if parser_config.store.lower() == "wb" and len(all_items) == 0:
+        await page.evaluate("window.scrollTo(0, 0)")
+        await screen_and_save_page(dir_path = './logs/err/zero', page = page, file_prefix=f"{parser_config.store}_", file_suffix=f"_{book.title}")
     #     input("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
     await page.close()
     return all_items

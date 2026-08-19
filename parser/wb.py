@@ -197,33 +197,6 @@ async def _gen_cards_(page: Page, parser_config: ParserConfig):
 
 @try_and_log_decor("Дополнительное ожидание страницы", repeats=3)
 async def _extra_wait_cat(page: Page):
-    # await page.screenshot(path=f"./logs/err/{dt.now().strftime("%Y-%m-%d %H-%M-%S")}.png")
-    # with open(f"./logs/err/{dt.now().strftime("%Y-%m-%d %H-%M-%S")}.html", "w", encoding="utf-8-sig") as f:
-    #     f.write(utils.prettify_html(await page.content()))
-    # await page.wait_for_timeout(1000)
-    # await page.screenshot(path=f"./logs/err/{dt.now().strftime("%Y-%m-%d %H-%M-%S")}.png")
-    # with open(f"./logs/err/{dt.now().strftime("%Y-%m-%d %H-%M-%S")}.html", "w", encoding="utf-8-sig") as f:
-    #     f.write(utils.prettify_html(await page.content()))
-    # antibot = await page.get_by_text("Подозрительная активность").count()
-    # antibot += await page.get_by_text("подождите").count()
-    # tqdm.write(f"{antibot=}")
-
-    # if antibot > 0:
-    #     tqdm.write("\nЖдем страницу, так как вылез антибот")
-    #     reload_time = await page.locator('meta[http-equiv="refresh"]').first.get_attribute('content')
-    #     reload_time = utils.normalizePrice(reload_time)
-    #     reload_time += 10
-    #     reload_time *= 1000
-    #     tqdm.write(f"{reload_time=}ms")
-
-    #     await page.wait_for_timeout(reload_time)
-    #     await page.wait_for_load_state()
-    
-    # # NOTE: блок задержки при создании контекста
-    # if "%D0%BA%D0%BD%D0%B8%D0%B3%D0%B0%20%D0%94%D0%BE%D1%81%D1%82%D0%BE%D0%B5%D0%B2%D1%81%D0%BA%D0%B8%D0%B9" in page.url:
-    #     await page.wait_for_timeout(30000)
-    #     await page.wait_for_load_state()
-
     loading = await page.locator("div.general-preloader j-initial-preloader").count()
     trys = 0
     while loading != 0 and trys < 50:
@@ -233,23 +206,30 @@ async def _extra_wait_cat(page: Page):
         trys += 1
     if trys > 0:
         tqdm.write(f"{page.url=}: {loading=}, {trys=}")
+        
+    antibot = await page.get_by_text("Подозрительная активность").count()
+    # antibot += await page.get_by_text("подождите").count()
+    if antibot > 0:
+        tqdm.write(f"WB Ждем страницу, так как вылез антибот: {page.url}")
+        reload_time = await page.locator('meta[http-equiv="refresh"]').first.get_attribute('content')
+        reload_time = utils.normalizePrice(reload_time)
+        reload_time += 10
+        reload_time *= 1000
+        tqdm.write(f"{reload_time=}ms")
 
-    # await expect(page.locator("div.general-preloader j-initial-preloader hide")).to_be_attached(
-    #                                                             timeout=7500
-    #                                                                    )
+        await page.wait_for_timeout(reload_time)
+        await page.wait_for_load_state()
     
-    await expect(page.locator("div.product-card-list")).to_be_attached(
-                                                                timeout=7500
-                                                                       )
+    await expect(page.locator("div.product-card-list")).to_be_attached(timeout=7500)
 
     cookie = page.locator("div.fixed-block__cookies:has(button)")
     if await cookie.count() > 0:
         await cookie.get_by_role("button", name = "Окей").click()
-        # cookie.locator("button.cookies__btn btn-minor-md")
 
 # @try_and_log_decor("Получение тайтла")
 async def _card_title(card: Locator):
-    return await card.locator('span.product-card__name').first.inner_text()
+    return await card.locator('span[class*=productName]').first.inner_text()
+    # return await card.locator('span.product-card__name').first.inner_text()
 
 # @try_and_log_decor("Получение цены")
 async def _card_price(card: Locator):

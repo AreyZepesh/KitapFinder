@@ -45,43 +45,42 @@ books1_to_complete_series = [
     {'title': 'Незримые Академики', 'author': 'Пратчетт', 'isbns': ['978-5-699-69984-1'], 'only_isbn': False, 'alt_author': 'Pratchett', 'need_check_author': False},
     {'title': 'Наука Плоского мира. Книга 3. Часы Дарвина', 'author': 'Пратчетт', 'isbns': ['978-5-699-89838-1'], 'only_isbn': False, 'alt_author': 'Pratchett', 'need_check_author': False},
 
-    {'title': 'Ветер и Правда', 'author': 'Сандерсон', 'isbns': ['978-5-389-30822-0'], 'only_isbn': True},
+    # {'title': 'Ветер и Правда', 'author': 'Сандерсон', 'isbns': ['978-5-389-30822-0'], 'only_isbn': True},
     {'title': 'Ветер и Правда. Том 2', 'author': 'Сандерсон', 'isbns': ['978-5-389-30822-0'], 'only_isbn': False},
 
     {'title': 'Падение Левиафана', 'author': 'Кори', 'isbns': ['978-5-389-28641-2'], 'only_isbn': False},
-    {'title': 'Легион памяти', 'author': 'Кори', 'isbns': ['978-5-389-28642-9'], 'only_isbn': False},
+    # {'title': 'Легион памяти', 'author': 'Кори', 'isbns': ['978-5-389-28642-9'], 'only_isbn': False},
 
     {'title': 'Кровавая Роза', 'author': 'Имс', 'isbns': ['978-5-389-16829-9'], 'only_isbn': False},
 
     {'title': 'Золотой сын', 'author': 'Браун', 'isbns': ['978-5-389-08460-5'], 'only_isbn': False},
 
     {'title': 'Корабль отплывает в полночь', 'author': 'Лейбер', 'isbns': ['978-5-389-17575-4'], 'only_isbn': False},
-    {'title': 'Ведьма. Матерь Тьмы', 'author': 'Лейбер', 'isbns': ['978-5-389-32144-1'], 'only_isbn': False},
+    # {'title': 'Ведьма. Матерь Тьмы', 'author': 'Лейбер', 'isbns': ['978-5-389-32144-1'], 'only_isbn': False},
 
     {'title': 'Мистические истории. Похищенные сердца', 'author': None, 'isbns': ['978-5-389-27312-2'], 'only_isbn': False},
 
-    {'title': 'Распознавание образов. Страна призраков. Нулевое досье', 'author': 'Гибсон', 'isbns': ['978-5-389-31974-5'], 'only_isbn': False},
+    # {'title': 'Распознавание образов. Страна призраков. Нулевое досье', 'author': 'Гибсон', 'isbns': ['978-5-389-31974-5'], 'only_isbn': False},
     ]
 
 books2_optional_old_authors = [
     # Асприн
-    {'title': 'Шуттовская рота', 'author': 'Асприн', 'isbns': ['978-5-17-151818-9'], 'only_isbn': True},
-    {'title': 'Вся Шуттовская рать', 'author': 'Асприн', 'isbns': ['978-5-17-151819-6'], 'only_isbn': True},
+    # {'title': 'Шуттовская рота', 'author': 'Асприн', 'isbns': ['978-5-17-151818-9'], 'only_isbn': True},
+    # {'title': 'Вся Шуттовская рать', 'author': 'Асприн', 'isbns': ['978-5-17-151819-6'], 'only_isbn': True},
 
     # Аберкромби
     {'title': 'Острые края', 'author': 'Аберкромби', 'isbns': ['978-5-04-118152-9'], 'only_isbn': False, 'need_check_author': True},
 
-    
     # Стейвли
     {'title': 'Присягнувшая Черепу', 'author': 'Стейвли', 'isbns': ['978-5-389-21765-2'], 'only_isbn': False},
-    {'title': 'На руинах империи', 'author': 'Стейвли', 'isbns': ['978-5-389-23155-9'], 'only_isbn': False},
+    # {'title': 'На руинах империи', 'author': 'Стейвли', 'isbns': ['978-5-389-23155-9'], 'only_isbn': False},
     ]
 
 books_Duma = [# Дюма
     {'title': 'Три мушкетера', 'author': 'Дюма', 'isbns': ['978-5-389-19881-4'], 'only_isbn': True},
     {'title': 'Двадцать лет спустя', 'author': 'Дюма', 'isbns': ['978-5-389-21145-2'], 'only_isbn': True},
     {'title': 'Виконт де Бражелон, или Еще десять лет спустя', 'author': 'Дюма', 'isbns': ['978-5-389-24464-1'], 'only_isbn': True},
-]
+    ]
 
 books_Sanderson_extended = [# Сандерсон
     {'title': 'Устремленная в небо', 'author': 'Сандерсон', 'isbns': ['978-5-389-16425-3'], 'only_isbn': False},
@@ -103,7 +102,7 @@ books_Erikson = [# Эриксон
     {'title': 'Увечный бог', 'author': 'Эриксон', 'isbns': [], 'only_isbn': False},
     {'title': 'Кузница тьмы', 'author': 'Эриксон', 'isbns': ['978-5-389-23072-9'], 'only_isbn': False},
     {'title': 'Бог не желает', 'author': 'Эриксон', 'isbns': ['978-5-389-25785-6'], 'only_isbn': False},    
-]
+    ]
 
 books_kamsha = [# Камша
     {'title': 'Кровь заката', 'author': 'Камша', 'isbns': None, 'only_isbn': False},
@@ -158,24 +157,28 @@ books_brast = [# Браст
         ] 
 
 books_pehov = [
-    {'title': 'Аутодафе', 'author': 'Пехов', 'isbns': ['978-5-00242-197-8'], 'only_isbn': True},
-    {'title': 'Золотые костры', 'author': 'Пехов', 'isbns': ['978-5-00242-243-2'], 'only_isbn': True},
+    # {'title': 'Аутодафе', 'author': 'Пехов', 'isbns': ['978-5-00242-197-8'], 'only_isbn': True},
+    # {'title': 'Золотые костры', 'author': 'Пехов', 'isbns': ['978-5-00242-243-2'], 'only_isbn': True},
     {'title': 'Проклятый горн', 'author': 'Пехов', 'isbns': [], 'only_isbn': False},
-    {'title': 'Крадущийся в тени', 'author': 'Пехов', 'isbns': ['978-5-00242-011-7'], 'only_isbn': True},
+    # {'title': 'Крадущийся в тени', 'author': 'Пехов', 'isbns': ['978-5-00242-011-7'], 'only_isbn': True},
     {'title': 'Джанга с тенями', 'author': 'Пехов', 'isbns': ['978-5-00242-027-8'], 'only_isbn': True},
     {'title': 'Вьюга теней', 'author': 'Пехов', 'isbns': ['978-5-00242-090-2'], 'only_isbn': True},
-    {'title': 'Искатели ветра', 'author': 'Пехов', 'isbns': ['978-5-00242-105-3'], 'only_isbn': True},
-    {'title': 'Ветер Полыни', 'author': 'Пехов', 'isbns': ['978-5-00242-171-8'], 'only_isbn': True},
+    # {'title': 'Искатели ветра', 'author': 'Пехов', 'isbns': ['978-5-00242-105-3'], 'only_isbn': True},
+    # {'title': 'Ветер Полыни', 'author': 'Пехов', 'isbns': ['978-5-00242-171-8'], 'only_isbn': True},
     ]
 
 books_salvatore = [
     {'title': 'Легенда о Темном эльфе', 'author': 'Сальваторе', 'isbns': 
-        ['978-5-91878-101-2', "978-5-91878-210-1", '978-5-91878-284-2', '978-5-91878-365-8', '978-5-91878-462-4', '978-5-91878-463-1', '978-5-91878-464-8'], 
+        ['978-5-91878-101-2', 
+        #  "978-5-91878-210-1", '978-5-91878-284-2', '978-5-91878-365-8', '978-5-91878-462-4', '978-5-91878-463-1', '978-5-91878-464-8'
+         ], 
         'only_isbn': False},
     {'title': 'Сальваторе', 'author': 'Сальваторе', 'isbns': 
-        ['978-5-91878-101-2', "978-5-91878-210-1", '978-5-91878-284-2', '978-5-91878-365-8', '978-5-91878-462-4', '978-5-91878-463-1', '978-5-91878-464-8'], 
+        ['978-5-91878-101-2', 
+        #  "978-5-91878-210-1", '978-5-91878-284-2', '978-5-91878-365-8', '978-5-91878-462-4', '978-5-91878-463-1', '978-5-91878-464-8'
+         ], 
         'only_isbn': True},
-    # {'title': 'Легенда о Темном эльфе. Книга 1. Отступник. Изгнанник. Воин', 'author': 'Сальваторе', 'isbns': ['978-5-91878-101-2'], 'only_isbn': False},
+    {'title': 'Легенда о Темном эльфе. Книга 1. Отступник. Изгнанник. Воин', 'author': 'Сальваторе', 'isbns': ['978-5-91878-101-2'], 'only_isbn': False},
     # {'title': 'Легенда о Темном Эльфе. Книга III', 'author': 'Сальваторе', 'isbns': ["978-5-91878-210-1"], 'only_isbn': False},
     # {'title': 'Легенда о Темном Эльфе. Книга 3', 'author': 'Сальваторе', 'isbns': ["978-5-91878-210-1"], 'only_isbn': False},
     # {'title': 'Легенда о Темном Эльфе. Темное наследие', 'author': 'Сальваторе', 'isbns': ["978-5-91878-210-1"], 'only_isbn': False},
@@ -192,19 +195,12 @@ books_salvatore = [
 
 books_bardugo = [
     # {'title': 'Шестерка воронов', 'author': 'Бардуго', 'isbns': ['978-5-17-108154-6'], 'only_isbn': False},
-    {'title': 'Продажное королевство', 'author': 'Бардуго', 'isbns': ['978-5-17-108910-8'], 'only_isbn': True},
-    # {'title': 'Тень и кость', 'author': 'Бардуго', 'isbns': ['978-5-17-105260-7'], 'only_isbn': False},
-    # {'title': 'Штурм и буря', 'author': 'Бардуго', 'isbns': ['978-5-17-108603-9'], 'only_isbn': False},
-    # {'title': 'Крах и восход', 'author': 'Бардуго', 'isbns': ['978-5-17-108822-4'], 'only_isbn': False},
-    # {'title': 'Король шрамов', 'author': 'Бардуго', 'isbns': ['978-5-17-114497-5'], 'only_isbn': False},
-    # {'title': 'Правление волков', 'author': 'Бардуго', 'isbns': ['978-5-17-138086-1'], 'only_isbn': False},
-        ]
-
-book_stasheff = [
-    {'title': 'Зачарованный книжник. Здесь водятся чудовища', 'author': 'Сташеф', 'isbns': ['5-17-019151-0', '5-9577-0067-3'], 'only_isbn': False},
-    {'title': 'Волшебник на пути. Последний путь чародея', 'author': 'Сташеф', 'isbns': ['5-17-037546-8', '5-9713-2303-2', '5-9578-4448-9'], 'only_isbn': False},
-    {'title': 'Волшебник на пути', 'author': 'Сташеф', 'isbns': ['5-17-037546-8', '5-9713-2303-2', '5-9578-4448-9'], 'only_isbn': False},
-    {'title': 'Последний путь чародея', 'author': 'Сташеф', 'isbns': ['5-17-037546-8', '5-9713-2303-2', '5-9578-4448-9'], 'only_isbn': False},
+    # {'title': 'Продажное королевство', 'author': 'Бардуго', 'isbns': ['978-5-17-108910-8'], 'only_isbn': True},
+    {'title': 'Тень и кость', 'author': 'Бардуго', 'isbns': ['978-5-17-105260-7'], 'only_isbn': False},
+    {'title': 'Штурм и буря', 'author': 'Бардуго', 'isbns': ['978-5-17-108603-9'], 'only_isbn': False},
+    {'title': 'Крах и восход', 'author': 'Бардуго', 'isbns': ['978-5-17-108822-4'], 'only_isbn': False},
+    {'title': 'Король шрамов', 'author': 'Бардуго', 'isbns': ['978-5-17-114497-5'], 'only_isbn': False},
+    {'title': 'Правление волков', 'author': 'Бардуго', 'isbns': ['978-5-17-138086-1'], 'only_isbn': False},
         ]
 
 book_simons = [
@@ -218,91 +214,57 @@ book_simons = [
     {'title': 'Утеха падали', 'author': 'Симмонс', 'isbns': ['978-5-17-180042-0'], 'only_isbn': True},
         ]
 
-books_stars_new_fantastic = [
-    {'title': 'Милость богов', 'author': 'Кори', 'isbns': ['978-5-389-25565-4'], 'only_isbn': False},
-    
-    {'title': 'Водяной нож', 'author': 'Бачигалупи', 'isbns': ['978-5-389-25173-1'], 'only_isbn': False},
-    {'title': 'Дети Морайбе', 'author': 'Бачигалупи', 'isbns': ['978-5-389-24983-7'], 'only_isbn': False},
-    {'title': 'Разрушитель кораблей', 'author': 'Бачигалупи', 'isbns': ['978-5-389-24987-5'], 'only_isbn': False},
-
-    {'title': 'Дом солнц', 'author': 'Рейнольдс', 'isbns': ['978-5-389-20484-3'], 'only_isbn': False},
-
-    {'title': 'Империя тишины', 'author': 'Руоккио', 'isbns': ['978-5-389-16258-7'], 'only_isbn': False},
-    {'title': 'Ревущая тьма', 'author': 'Руоккио', 'isbns': ['978-5-389-18304-9'], 'only_isbn': False},
-    {'title': 'Демон в белом', 'author': 'Руоккио', 'isbns': ['978-5-389-19022-1'], 'only_isbn': False},
-    {'title': 'Царства смерти', 'author': 'Руоккио', 'isbns': ['978-5-389-21797-3'], 'only_isbn': False},
-    {'title': 'Прах человеческий', 'author': 'Руоккио', 'isbns': ['978-5-389-23874-9'], 'only_isbn': False},
-
-    {'title': 'Берсеркер', 'author': 'Саберхаген', 'isbns': ['978-5-389-28167-7'], 'only_isbn': True},
-    {'title': 'Маска Марса. Брат Берсеркер. Планета смерти', 'author': 'Саберхаген', 'isbns': ['978-5-389-28167-7'], 'only_isbn': False},
-    {'title': 'Берсеркер', 'author': 'Саберхаген', 'isbns': ['978-5-389-28485-2'], 'only_isbn': True},
-    {'title': 'Непобедимый мутант. Заклятый враг. База берсеркеров', 'author': 'Саберхаген', 'isbns': ['978-5-389-28485-2'], 'only_isbn': False},
-    {'title': 'Берсеркер', 'author': 'Саберхаген', 'isbns': ['978-5-389-28486-9'], 'only_isbn': True},
-    {'title': 'Трон берсеркера. Синяя смерть. Техника обмана', 'author': 'Саберхаген', 'isbns': ['978-5-389-28486-9'], 'only_isbn': False},
-
-    {'title': 'Хроники железных драконов', 'author': 'Суэнвик', 'isbns': ['978-5-389-08947-1'], 'only_isbn': False},
-    {'title': 'Мать железного дракона', 'author': 'Суэнвик', 'isbns': ['978-5-389-18574-6'], 'only_isbn': False},
-]
-
-books_stars_new_fantasy = [
-    {'title': 'Тень среди лета. Предательство среди зимы', 'author': 'Абрахам', 'isbns': ['978-5-389-24960-8'], 'only_isbn': False},
-    {'title': 'Война среди осени. Расплата за весну', 'author': 'Абрахам', 'isbns': ['978-5-389-24961-5'], 'only_isbn': False},
-    {'title': 'Путь дракона', 'author': 'Абрахам', 'isbns': ['978-5-389-24963-9'], 'only_isbn': True},
-    {'title': 'Королевская кровь', 'author': 'Абрахам', 'isbns': ['978-5-389-24964-6'], 'only_isbn': True},
-    {'title': 'Закон тирана', 'author': 'Абрахам', 'isbns': ['978-5-389-24965-3'], 'only_isbn': True},
-
-    # Незакончено, дальше нет
-    {'title': 'Восхождение Сенлина', 'author': 'Бэнкрофт', 'isbns': ['978-5-389-15010-2'], 'only_isbn': False},
-    {'title': 'Рука Сфинкса', 'author': 'Бэнкрофт', 'isbns': ['978-5-389-16115-3'], 'only_isbn': False},
-    {'title': 'Король отверженных', 'author': 'Бэнкрофт', 'isbns': ['978-5-389-18526-5'], 'only_isbn': False},
-
+book_cook = [
     {'title': 'Тирания Ночи', 'author': 'Кук', 'isbns': ['978-5-389-07266-4'], 'only_isbn': False},
     {'title': 'Властелин Безмолвного Королевства', 'author': 'Кук', 'isbns': ['978-5-389-07265-7'], 'only_isbn': False},
     {'title': 'Покоритесь воле Ночи', 'author': 'Кук', 'isbns': ['978-5-389-10267-5'], 'only_isbn': False},
     {'title': 'Жестокие игры богов', 'author': 'Кук', 'isbns': ['978-5-389-11726-6'], 'only_isbn': False},
-
-    {'title': 'Милость королей', 'author': 'Лю', 'isbns': ['978-5-389-23695-0'], 'only_isbn': False},
-    {'title': 'Стена Бурь', 'author': 'Лю', 'isbns': ['978-5-389-24835-'], 'only_isbn': False},
-    {'title': 'Пустующий трон', 'author': 'Лю', 'isbns': ['978-5-389-25856-3'], 'only_isbn': False},
-    {'title': 'Говорящие кости', 'author': 'Лю', 'isbns': ['978-5-389-27114-2'], 'only_isbn': False},
-    
-    {'title': 'Кровавый завет', 'author': 'Макклеллан', 'isbns': ['978-5-389-07270-1'], 'only_isbn': False},
-    {'title': 'Кровавый поход', 'author': 'Макклеллан', 'isbns': ['978-5-389-07269-5'], 'only_isbn': False},
-    {'title': 'Кровавая осень', 'author': 'Макклеллан', 'isbns': ['978-5-389-10393-1'], 'only_isbn': False},
-
-    {'title': 'В тени молнии', 'author': 'Макклеллан', 'isbns': ['978-5-389-25017-8'], 'only_isbn': False},
-
-    {'title': 'Меченый', 'author': 'Бретт', 'isbns': ['978-5-389-07780-5'], 'only_isbn': False},
-    {'title': 'Копье пустыни', 'author': 'Бретт', 'isbns': ['978-5-389-08664-7'], 'only_isbn': False},
-    {'title': 'Дневная битва', 'author': 'Бретт', 'isbns': ['978-5-389-08361-5'], 'only_isbn': False},
-    {'title': 'Трон черепов', 'author': 'Бретт', 'isbns': ['978-5-389-12357-1'], 'only_isbn': False},
-    {'title': 'Королева демонов', 'author': 'Бретт', 'isbns': ['978-5-389-13778-3'], 'only_isbn': False},
     ]
 
 books3_optional_new_authors = [
     {'title': 'Украденный трон. Призыв. Маска призрака', 'author': 'Гейдер', 'isbns': ['978-5-389-19770-1'], 'only_isbn': False},
 
-    {'title': 'Повелители DOOM', 'author': None, 'isbns': [], 'only_isbn': False},
+    # {'title': 'Ложная слепота', 'author': 'Уоттс', 'isbns': [], 'only_isbn': False},
+    {'title': 'Ложная слепота', 'author': 'Эхопраксия Уоттс', 'isbns': ['978-5-17-134779-6'], 'only_isbn': False},
+
+    # {'title': 'Повелители DOOM', 'author': None, 'isbns': [], 'only_isbn': False},
 
     # {'title': 'Восставший из ада', 'author': 'Баркер', 'isbns': [], 'only_isbn': False},
     
-    {'title': 'Нефритовый город', 'author': 'Фонда Ли', 'isbns': None, 'only_isbn': False},
-    {'title': 'Нефритовая война', 'author': 'Фонда Ли', 'isbns': None, 'only_isbn': False},
-    {'title': 'Нефритовое наследие', 'author': 'Фонда Ли', 'isbns': None, 'only_isbn': False},
+    # {'title': 'Нефритовый город', 'author': 'Фонда Ли', 'isbns': None, 'only_isbn': False},
+    # {'title': 'Нефритовая война', 'author': 'Фонда Ли', 'isbns': None, 'only_isbn': False},
+    # {'title': 'Нефритовое наследие', 'author': 'Фонда Ли', 'isbns': None, 'only_isbn': False},
+
+    # {'title': 'Север — Юг', 'author': 'Сказания Меекханского пограничья Вегнер', 'isbns': ['978-5-17-150104-4'], 'only_isbn': True},
+    {'title': 'Восток — Запад', 'author': 'Сказания Меекханского пограничья Вегнер', 'isbns': ['978-5-17-150676-6'], 'only_isbn': True},
+    {'title': 'Небо цвета стали', 'author': 'Сказания Меекханского пограничья Вегнер', 'isbns': ['978-5-17-151265-1'], 'only_isbn': True},
+    {'title': 'Память всех слов', 'author': 'Сказания Меекханского пограничья Вегнер', 'isbns': ['978-5-17-149952-5'], 'only_isbn': True},
+    {'title': 'Каждая мертвая мечта', 'author': 'Сказания Меекханского пограничья Вегнер', 'isbns': ['978-5-17-151955-1'], 'only_isbn': True},
+    # {'title': 'Сказания Меекханского пограничья. Север — Юг', 'author': 'Вегнер', 'isbns': ['978-5-17-150104-4'], 'only_isbn': False},
+    # {'title': 'Сказания Меекханского пограничья. Восток — Запад', 'author': 'Вегнер', 'isbns': ['978-5-17-150676-6'], 'only_isbn': False},
+    # {'title': 'Сказания Меекханского пограничья. Небо цвета стали', 'author': 'Вегнер', 'isbns': ['978-5-17-151265-1'], 'only_isbn': False},
+    # {'title': 'Сказания Меекханского пограничья. Память всех слов', 'author': 'Вегнер', 'isbns': ['978-5-17-149952-5'], 'only_isbn': False},
+    # {'title': 'Сказания Меекханского пограничья. Каждая мертвая мечта', 'author': 'Вегнер', 'isbns': ['978-5-17-151955-1'], 'only_isbn': False},
+    
+    # {'title': 'Слуга Божий', 'author': 'Пекара', 'isbns': ['978-5-04-111852-5'], 'only_isbn': True},
+    {'title': 'Молот ведьм', 'author': 'Пекара', 'isbns': ['978-5-04-122886-6'], 'only_isbn': True},
+    {'title': 'Меч ангелов', 'author': 'Пекара', 'isbns': ['978-5-04-154423-2'], 'only_isbn': True},
+    {'title': 'Ловцы душ', 'author': 'Пекара', 'isbns': ['978-5-04-154425-6'], 'only_isbn': True},
 
     # Квантрелл - Вышло только 3 на русском
     # {'title': 'Восхождение рейнджера', 'author': 'Квантрелл', 'isbns': ['978-5-17-168081-7'], 'only_isbn': False},
     # {'title': 'Империя праха', 'author': 'Квантрелл', 'isbns': ['978-5-17-168082-4'], 'only_isbn': False},
     # {'title': 'Сокровище богов', 'author': 'Квантрелл', 'isbns': ['978-5-17-168083-1'], 'only_isbn': False},
-
+    
     # Уильямс - последний цикл переведен не полностью
-    # {'title': 'Трон из костей дракона', 'author': 'Уильямс', 'isbns': ['978-5-04-112361-1', '978-5-04-113968-1'], 'only_isbn': False},
-    # {'title': 'Скала Прощания', 'author': 'Уильямс', 'isbns': ['978-5-04-154811-7', '978-5-04-159321-6'], 'only_isbn': False},
-    # {'title': 'Башня Зеленого Ангела', 'author': 'Уильямс', 'isbns': ['978-5-04-184848-4', '978-5-04-184847-7'], 'only_isbn': False},
-    # # {'title': 'Корона из ведьминого дерева', 'author': 'Уильямс', 'isbns': ['978-5-04-100153-7', '978-5-04-100436-1'], 'only_isbn': False},
-    # # {'title': 'Империя травы', 'author': 'Уильямс', 'isbns': ['978-5-04-110814-4', '978-5-04-111320-9'], 'only_isbn': False},
-    # # {'title': 'Братья ветра', 'author': 'Уильямс', 'isbns': ['978-5-04-165825-0'], 'only_isbn': False},
-    # # {'title': 'Сердце того, что было утеряно', 'author': 'Уильямс', 'isbns': ['978-5-04-160511-7'], 'only_isbn': False},
+    # {'title': 'Трон из костей дракона', 'author': 'Уильямс', 'isbns': ['978-5-04-112361-1'], 'only_isbn': True},
+    # {'title': 'Трон из костей дракона', 'author': 'Уильямс', 'isbns': ['978-5-04-113968-1'], 'only_isbn': True},
+    # {'title': 'Скала Прощания', 'author': 'Уильямс', 'isbns': ['978-5-04-154811-7', '978-5-04-159321-6'], 'only_isbn': True},
+    # {'title': 'Башня Зеленого Ангела', 'author': 'Уильямс', 'isbns': ['978-5-04-184848-4', '978-5-04-184847-7'], 'only_isbn': True},
+    # {'title': 'Корона из ведьминого дерева', 'author': 'Уильямс', 'isbns': ['978-5-04-100153-7', '978-5-04-100436-1'], 'only_isbn': False},
+    # {'title': 'Империя травы', 'author': 'Уильямс', 'isbns': ['978-5-04-110814-4', '978-5-04-111320-9'], 'only_isbn': False},
+    # {'title': 'Братья ветра', 'author': 'Уильямс', 'isbns': ['978-5-04-165825-0'], 'only_isbn': False},
+    # {'title': 'Сердце того, что было утеряно', 'author': 'Уильямс', 'isbns': ['978-5-04-160511-7'], 'only_isbn': False},
 
     # Кастелл
     # {'title': 'Творец Заклинаний', 'author': 'Кастелл', 'isbns': [], 'only_isbn': False},
@@ -313,6 +275,68 @@ books3_optional_new_authors = [
     # {'title': 'Убийца королевы', 'author': 'Кастелл', 'isbns': [], 'only_isbn': False},
     # {'title': 'Путь аргоси', 'author': 'Кастелл', 'isbns': [], 'only_isbn': False},
     # {'title': 'Алый Крик', 'author': 'Кастелл', 'isbns': [], 'only_isbn': False},
+    ]
+
+books_stars_new_fantastic = [
+    # {'title': 'Милость богов', 'author': 'Кори', 'isbns': ['978-5-389-25565-4'], 'only_isbn': False},
+    
+    # Читал отрывок на флибусте: не зацепило
+    # {'title': 'Водяной нож', 'author': 'Бачигалупи', 'isbns': ['978-5-389-25173-1'], 'only_isbn': False},
+    # {'title': 'Дети Морайбе', 'author': 'Бачигалупи', 'isbns': ['978-5-389-24983-7'], 'only_isbn': False},
+    # {'title': 'Разрушитель кораблей', 'author': 'Бачигалупи', 'isbns': ['978-5-389-24987-5'], 'only_isbn': False},
+
+    # Читал отрывок на флибусте: не зацепило, возможно мало читал
+    # {'title': 'Дом солнц', 'author': 'Рейнольдс', 'isbns': ['978-5-389-20484-3'], 'only_isbn': False},
+
+    # Читал отрывок на флибусте: не зацепило, ваще
+    # {'title': 'Империя тишины', 'author': 'Руоккио', 'isbns': ['978-5-389-16258-7'], 'only_isbn': False},
+    # {'title': 'Ревущая тьма', 'author': 'Руоккио', 'isbns': ['978-5-389-18304-9'], 'only_isbn': False},
+    # {'title': 'Демон в белом', 'author': 'Руоккио', 'isbns': ['978-5-389-19022-1'], 'only_isbn': False},
+    # {'title': 'Царства смерти', 'author': 'Руоккио', 'isbns': ['978-5-389-21797-3'], 'only_isbn': False},
+    # {'title': 'Прах человеческий', 'author': 'Руоккио', 'isbns': ['978-5-389-23874-9'], 'only_isbn': False},
+
+    # Читал отрывок на флибусте: вроде лучше ребят выше
+    {'title': 'Берсеркер', 'author': 'Саберхаген', 'isbns': ['978-5-389-28167-7'], 'only_isbn': True},
+    {'title': 'Маска Марса. Брат Берсеркер. Планета смерти', 'author': 'Саберхаген', 'isbns': ['978-5-389-28167-7'], 'only_isbn': False},
+    # {'title': 'Берсеркер', 'author': 'Саберхаген', 'isbns': ['978-5-389-28485-2'], 'only_isbn': True},
+    {'title': 'Непобедимый мутант. Заклятый враг. База берсеркеров', 'author': 'Саберхаген', 'isbns': ['978-5-389-28485-2'], 'only_isbn': False},
+    # {'title': 'Берсеркер', 'author': 'Саберхаген', 'isbns': ['978-5-389-28486-9'], 'only_isbn': True},
+    {'title': 'Трон берсеркера. Синяя смерть. Техника обмана', 'author': 'Саберхаген', 'isbns': ['978-5-389-28486-9'], 'only_isbn': False},
+
+    # {'title': 'Хроники железных драконов', 'author': 'Суэнвик', 'isbns': ['978-5-389-08947-1'], 'only_isbn': False},
+    # {'title': 'Мать железного дракона', 'author': 'Суэнвик', 'isbns': ['978-5-389-18574-6'], 'only_isbn': False},
+    ]
+
+books_stars_new_fantasy = [
+    # Читал отрывок на флибусте: пролог начал, там жестокое обучение, скипнул, в первой главе непонятный движ
+    {'title': 'Тень среди лета. Предательство среди зимы', 'author': 'Абрахам', 'isbns': ['978-5-389-24960-8'], 'only_isbn': False},
+    {'title': 'Война среди осени. Расплата за весну', 'author': 'Абрахам', 'isbns': ['978-5-389-24961-5'], 'only_isbn': False},
+    # Читал отрывок на флибусте: не понял, по отзывам - не хочу
+    {'title': 'Путь дракона', 'author': 'Абрахам', 'isbns': ['978-5-389-24963-9'], 'only_isbn': True},
+    {'title': 'Королевская кровь', 'author': 'Абрахам', 'isbns': ['978-5-389-24964-6'], 'only_isbn': True},
+    {'title': 'Закон тирана', 'author': 'Абрахам', 'isbns': ['978-5-389-24965-3'], 'only_isbn': True},
+
+    # Незакончено, дальше нет
+    # {'title': 'Восхождение Сенлина', 'author': 'Бэнкрофт', 'isbns': ['978-5-389-15010-2'], 'only_isbn': False},
+    # {'title': 'Рука Сфинкса', 'author': 'Бэнкрофт', 'isbns': ['978-5-389-16115-3'], 'only_isbn': False},
+    # {'title': 'Король отверженных', 'author': 'Бэнкрофт', 'isbns': ['978-5-389-18526-5'], 'only_isbn': False},
+
+    # {'title': 'Милость королей', 'author': 'Лю', 'isbns': ['978-5-389-23695-0'], 'only_isbn': False},
+    # {'title': 'Стена Бурь', 'author': 'Лю', 'isbns': ['978-5-389-24835-'], 'only_isbn': False},
+    # {'title': 'Пустующий трон', 'author': 'Лю', 'isbns': ['978-5-389-25856-3'], 'only_isbn': False},
+    # {'title': 'Говорящие кости', 'author': 'Лю', 'isbns': ['978-5-389-27114-2'], 'only_isbn': False},
+    
+    # {'title': 'Кровавый завет', 'author': 'Макклеллан', 'isbns': ['978-5-389-07270-1'], 'only_isbn': False},
+    # {'title': 'Кровавый поход', 'author': 'Макклеллан', 'isbns': ['978-5-389-07269-5'], 'only_isbn': False},
+    # {'title': 'Кровавая осень', 'author': 'Макклеллан', 'isbns': ['978-5-389-10393-1'], 'only_isbn': False},
+
+    # {'title': 'В тени молнии', 'author': 'Макклеллан', 'isbns': ['978-5-389-25017-8'], 'only_isbn': False},
+
+    # {'title': 'Меченый', 'author': 'Бретт', 'isbns': ['978-5-389-07780-5'], 'only_isbn': False},
+    # {'title': 'Копье пустыни', 'author': 'Бретт', 'isbns': ['978-5-389-08664-7'], 'only_isbn': False},
+    # {'title': 'Дневная битва', 'author': 'Бретт', 'isbns': ['978-5-389-08361-5'], 'only_isbn': False},
+    # {'title': 'Трон черепов', 'author': 'Бретт', 'isbns': ['978-5-389-12357-1'], 'only_isbn': False},
+    # {'title': 'Королева демонов', 'author': 'Бретт', 'isbns': ['978-5-389-13778-3'], 'only_isbn': False},
     ]
 
 books_mir_fant = [
@@ -326,37 +350,84 @@ books_mir_fant = [
     {'title': 'Братство талисмана', 'author': 'Саймак', 'isbns': ['978-5-389-18400-8'], 'only_isbn': True},
     {'title': 'Все ловушки Земли', 'author': 'Саймак', 'isbns': ['978-5-389-18402-2'], 'only_isbn': True},
 
-    {'title': 'Паломничество на Землю', 'author': 'Шекли', 'isbns': ['978-5-389-15837-5'], 'only_isbn': True},
-    {'title': 'Координаты чудес', 'author': 'Шекли', 'isbns': ['978-5-389-18047-5'], 'only_isbn': True},
-]
+    # {'title': 'Паломничество на Землю', 'author': 'Шекли', 'isbns': ['978-5-389-15837-5'], 'only_isbn': True},
+    # {'title': 'Координаты чудес', 'author': 'Шекли', 'isbns': ['978-5-389-18047-5'], 'only_isbn': True},
+    ]
 
 book_new_russian = [
+    # Торин
     {'title': 'Мистер Вечный Канун', 'author': 'Торин', 'isbns': ['978-5-00214-122-7', '978-5-00195-734-8', '978-5-00195-790-4'], 'only_isbn': False},
     {'title': 'Моё пост-имаго', 'author': 'Торин', 'isbns': ['978-5-00214-483-9'], 'only_isbn': False},
 
-    {'title': 'Заступа: Все оттенки падали', 'author': 'Белов', 'isbns': ['978-5-17-163405-6'], 'only_isbn': False},
-    {'title': 'Заступа: Чернее черного', 'author': 'Белов', 'isbns': ['978-5-17-170204-5'], 'only_isbn': False},
-    {'title': 'Заступа: Грядущая тьма', 'author': 'Белов', 'isbns': ['978-5-17-177968-9'], 'only_isbn': False},
+    # Мрачный Взвод
+    # {'title': 'Ведьмин час', 'author': 'Хоффман', 'isbns': ['978-5-00214-184-5'], 'only_isbn': False},
+    # {'title': 'Двенадцать дней Коляды', 'author': 'Хоффман', 'isbns': ['978-5-00214-399-3'], 'only_isbn': False},
+    # {'title': 'Пробуждение Нави', 'author': 'Хоффман', 'isbns': ['978-5-00214-418-1'], 'only_isbn': False},
 
-    {'title': 'Жнецы страданий', 'author': 'Харитонова', 'isbns': ['978-5-517-03107-5'], 'only_isbn': False},
-    {'title': 'Наследники скорби', 'author': 'Харитонова', 'isbns': ['978-5-517-03108-2'], 'only_isbn': False},
-    {'title': 'Пленники Раздора', 'author': 'Харитонова', 'isbns': ['978-5-517-03109-9'], 'only_isbn': False},
+    # Заступа
+    # {'title': 'Заступа: Все оттенки падали', 'author': 'Белов', 'isbns': ['978-5-17-163405-6'], 'only_isbn': False},
+    # {'title': 'Заступа: Чернее черного', 'author': 'Белов', 'isbns': ['978-5-17-170204-5'], 'only_isbn': False},
+    # {'title': 'Заступа: Грядущая тьма', 'author': 'Белов', 'isbns': ['978-5-17-177968-9'], 'only_isbn': False},
 
-    {'title': 'Канашибари. Пока не погаснет последний фонарь', 'author': 'Шэн', 'isbns': ['978-5-35-310823-8'], 'only_isbn': True},
-    {'title': 'Канашибари. Пока не погаснет последний фонарь', 'author': 'Шэн', 'isbns': ['978-5-353-10899-3'], 'only_isbn': True},
-    {'title': 'Канашибари. Пока не погаснет последний фонарь', 'author': 'Шэн', 'isbns': ['978-5-353-10986-0'], 'only_isbn': True},
-    {'title': 'Канашибари. Пока не погаснет последний фонарь', 'author': 'Шэн', 'isbns': ['978-5-353-11553-3'], 'only_isbn': True},
-]
+    # Ходящие в ночи
+    # {'title': 'Жнецы страданий', 'author': 'Ходящие в ночи Харитонова', 'isbns': ['978-5-517-03107-5'], 'only_isbn': False},
+    # {'title': 'Наследники скорби', 'author': 'Ходящие в ночи Харитонова', 'isbns': ['978-5-517-03108-2'], 'only_isbn': False},
+    # {'title': 'Пленники Раздора', 'author': 'Ходящие в ночи Харитонова', 'isbns': ['978-5-517-03109-9'], 'only_isbn': False},
 
-books_kristoff = [
-    {'title': 'Империя вампиров', 'author': 'Кристофф', 'isbns': ['978-5-17-118802-3'], 'only_isbn': False},
-    {'title': 'Империя проклятых', 'author': 'Кристофф', 'isbns': ['978-5-17-118809-2'], 'only_isbn': False},
+    # {'title': 'Канашибари 1', 'author': 'Шэн', 'isbns': ['978-5-35-310823-8'], 'only_isbn': True},
+    # {'title': 'Канашибари 2', 'author': 'Шэн', 'isbns': ['978-5-353-10899-3'], 'only_isbn': True},
+    # {'title': 'Канашибари 3', 'author': 'Шэн', 'isbns': ['978-5-353-10986-0'], 'only_isbn': True},
+    # {'title': 'Канашибари 4', 'author': 'Шэн', 'isbns': ['978-5-353-11553-3'], 'only_isbn': True},
+    # {'title': 'Канашибари. Пока не погаснет последний фонарь', 'author': 'Шэн', 'isbns': ['978-5-35-310823-8'], 'only_isbn': True},
+    # {'title': 'Канашибари. Пока не погаснет последний фонарь', 'author': 'Шэн', 'isbns': ['978-5-353-10899-3'], 'only_isbn': True},
+    # {'title': 'Канашибари. Пока не погаснет последний фонарь', 'author': 'Шэн', 'isbns': ['978-5-353-10986-0'], 'only_isbn': True},
+    # {'title': 'Канашибари. Пока не погаснет последний фонарь', 'author': 'Шэн', 'isbns': ['978-5-353-11553-3'], 'only_isbn': True},
     ]
 
+books_kristoff = [
+    {'title': 'Империя вампиров', 'author': 'Кристофф', 'isbns': ['978-5-17-118802-3'], 'only_isbn': True},
+    {'title': 'Империя проклятых', 'author': 'Кристофф', 'isbns': ['978-5-17-118809-2'], 'only_isbn': True},
+    ]
+
+books_other_new = [
+    {'title': 'Страсти по Лейбовицу. Святой Лейбовиц и Дикая Лошадь', 'author': 'Миллер', 'isbns': ['5-17-010453-7', '5-7921-0443-3'], 'only_isbn': False},
+    # {'title': 'Гимн Лейбовицу', 'author': 'Миллер', 'isbns': ['978-5-17-099469-4'], 'only_isbn': False},
+
+    {'title': 'Тень и коготь', 'author': 'Вулф', 'isbns': ['978-5-04-164780-3'], 'only_isbn': False},
+    {'title': 'Меч и Цитадель', 'author': 'Вулф', 'isbns': ['978-5-04-168415-0'], 'only_isbn': False},
+    # {'title': 'Солнце и Замок', 'author': 'Вулф', 'isbns': ['978-5-04-180326-1'], 'only_isbn': False},
+    # {'title': 'Литания Длинного Солнца', 'author': 'Вулф', 'isbns': ['978-5-04-211311-6'], 'only_isbn': False},
+    # {'title': 'Эпифания Длинного Солнца', 'author': 'Вулф', 'isbns': ['978-5-04-200727-9'], 'only_isbn': False},
+    # {'title': 'Волны и джунгли', 'author': 'Вулф', 'isbns': ['978-5-04-217214-4'], 'only_isbn': False},
+    {'title': 'Круговорот и тени', 'author': 'Вулф', 'isbns': ['978-5-04-217217-5'], 'only_isbn': False},
+
+    # {'title': 'Сказания Умирающей Земли', 'author': 'Вэнс', 'isbns': ['978-5-04-168429-7'], 'only_isbn': False},
+    {'title': 'Легенды умирающей Земли', 'author': 'Вэнс', 'isbns': ['978-5-04-175804-2'], 'only_isbn': False},
+
+    # {'title': 'Вокзал потерянных снов', 'author': 'Мьевиль', 'isbns': [], 'only_isbn': False},
+    # {'title': 'Шрам', 'author': 'Мьевиль', 'isbns': [], 'only_isbn': False},
+    # {'title': 'Железный Совет', 'author': 'Мьевиль', 'isbns': [], 'only_isbn': False},
+
+    # {'title': 'Терновый Король', 'author': 'Киз', 'isbns': ['978-5-04-187541-1'], 'only_isbn': False},
+    {'title': 'Мертвый принц', 'author': 'Киз', 'isbns': ['978-5-04-203647-7'], 'only_isbn': False},
+    # {'title': 'Кровавый рыцарь', 'author': 'Киз', 'isbns': ['978-5-04-206704-4'], 'only_isbn': False},
+    # {'title': 'Настоящая королева', 'author': 'Киз', 'isbns': ['978-5-04-211307-9'], 'only_isbn': False},
+
+    {'title': 'Север — Юг', 'author': 'Сказания Меекханского пограничья Вегнер', 'isbns': ['978-5-17-150104-4'], 'only_isbn': True},
+
+    {'title': 'Слуга Божий', 'author': 'Пекара', 'isbns': ['978-5-04-111852-5'], 'only_isbn': True},
+
+    # {'title': '', 'author': '', 'isbns': [], 'only_isbn': False},
+    ]
 
 # {'title': '', 'author': '', 'isbns': [], 'only_isbn': False},
 # {'title': '', 'author': '', 'isbns': None, 'only_isbn': False},
 books.extend(books1_to_complete_series)
+
+books.extend(books_pehov)
+books.extend(books_Aizada)
+books.extend(books_salvatore)
+# books.extend(books_bardugo)
 
 # books.extend(books_zero_priority)
 # books.extend(books2_optional_old_authors)
@@ -367,33 +438,20 @@ books.extend(books1_to_complete_series)
 # books.extend(books_McCaffrey)
 # books.extend(books_mcCammon)
 # books.extend(books_Feist)
+# books.extend(book_cook)
 
 # books.extend(books_Sanderson_extended)
 # books.extend(books_Pratchett_extended)
 # books.extend(books_brast)
-# books.extend(book_simons)
 
-# books.extend(books3_optional_new_authors)
-# books.extend(books_stars_new_fantasy)
+books.extend(books_other_new)
+# books = []
 # books.extend(books_stars_new_fantastic)
-# books.extend(books_mir_fant)
+# # books.extend(book_simons)
+# books.extend(books_stars_new_fantasy)
+# # books.extend(books_kristoff)
+# # books.extend(books_mir_fant)
 # books.extend(book_new_russian)
-# books.extend(books_kristoff)
-
-books.extend(books_pehov)
-books.extend(book_stasheff)
-books.extend(books_Aizada)
-books.extend(books_salvatore)
-books.extend(books_bardugo)
+books.extend(books3_optional_new_authors)
 
 all_books = books
-
-# all_books = []
-
-# all_books.extend(book_new_russian)
-# all_books.extend(books_kristoff)
-
-# all_books.extend(books_stars_new_fantastic)
-# all_books.extend(books_stars_new_fantasy)
-# all_books.extend(books_mir_fant)
-# all_books.extend(books3_optional_new_authors)

@@ -11,6 +11,7 @@ from .common import (
 @try_and_log_decor("Проверка на noresult")
 async def _noresults(page: Page):
     noresults = await page.locator("h2#search-not-result").count()
+    noresults += await page.get_by_text("Товары не найдены").count()
     if noresults > 0:
         return True
     

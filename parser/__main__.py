@@ -30,7 +30,8 @@ async def __run__(fn, books: EBook|list[EBook], headless = True, test_context = 
             storage_state = state_path
         # Контекст задается для все сессии. После некоторые вещи сменить не выйдет. 
         viewport = {"width": 1920, "height": 1080}
-        user_agent=f"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36"
+        # user_agent=f"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36"
+        user_agent=f"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36"
         # user_agent=None
         # if sys.platform == "linux":
         #     user_agent=f"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
@@ -51,7 +52,8 @@ async def __run__(fn, books: EBook|list[EBook], headless = True, test_context = 
                         # "--disable-infobars",
                         "--no-sandbox",
                         # "--disable-dev-shm-usage",
-                        "--disable-gpu"
+                        # "--disable-gpu"
+                        # "--use-gl=swiftshader" # NOTE: для сервера и подложить правдоподобный UNMASKED_RENDERER_WEBGL через init-script
                                 ]
                                                 )
             
@@ -90,13 +92,15 @@ async def __run__(fn, books: EBook|list[EBook], headless = True, test_context = 
                             timezone_id="Asia/Almaty",
                             permissions=["geolocation"],
                             geolocation={"latitude": 52.265415, "longitude": 76.977453},
+                            ignore_https_errors = True, # NOTE: test ignore tsl
                             # storage_state = storage_state,
                             args = [
                                 "--start-maximized", 
                                 "--no-sandbox",
                                 # "--disable-dev-shm-usage",
-                                "--disable-gpu",
-                                # # NOTE: Две опции альтернативной загружки cach/coocki прошлой сессии
+                                # "--disable-gpu",
+                                # "--use-gl=swiftshader" # NOTE: для сервера и подложить правдоподобный UNMASKED_RENDERER_WEBGL через init-script
+                                # # NOTE: Две опции альтернативной загрузки cach/coocki прошлой сессии
                                 # '--restore-last-session', 
                                 # "--hide-crash-restore-bubble",
                                     ]
@@ -112,7 +116,10 @@ async def __run__(fn, books: EBook|list[EBook], headless = True, test_context = 
 
             # context.my_data = {}
             # context.my_data["zero_page"] = await context.new_page()
-            # await context.my_data["zero_page"].goto("https://ozon.kz/product/3909169867/?__rr=1")
+            # # await context.my_data["zero_page"].goto("https://ozon.kz/product/3909169867")
+            # await context.my_data["zero_page"].goto("https://www.browserscan.net/ru/user-agent")
+            # await asyncio.to_thread(input, "Продолжить? ")
+            # input("!")
 
         # Создать контекст
         await create_context(context)
@@ -143,10 +150,10 @@ async def one_book(context, book: EBook):
         # results = await asyncio.gather(
         stores = [
             wb(context = context, book = book),
-            wb(context = context, book = book, alter_search = True),
+            # wb(context = context, book = book, alter_search = True),
             flip(context = context, book = book),
             kaspi(context = context, book = book),
-            ozon(context = context, book = book, alter_search = True),
+            # ozon(context = context, book = book, alter_search = True),
             ozon(context = context, book = book)
              ]
         # if sys.platform != "linux":
