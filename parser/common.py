@@ -80,9 +80,10 @@ def try_and_log_decor(header: str, repeats: int = 1):
         return wrapper
     return decorator
 
-async def human_mouse_move(page, target_x, target_y, steps=25):
+async def human_mouse_move(page, steps=25):
     box = await page.evaluate("() => ({w: window.innerWidth, h: window.innerHeight})")
     start_x, start_y = random.randint(0, box["w"]), random.randint(0, box["h"])
+    target_x, target_y, = random.randint(0, box["w"]), random.randint(0, box["h"])
     for i in range(steps):
         x = start_x + (target_x - start_x) * i / steps + random.uniform(-3, 3)
         y = start_y + (target_y - start_y) * i / steps + random.uniform(-3, 3)
@@ -205,8 +206,10 @@ async def goto_url(page: Page, url: str):
 
 @try_and_log_decor("Ожидание страницы", repeats=3)
 async def wait_page(page: Page, parser_config: ParserConfig):
+    await human_mouse_move(page)
     await page.wait_for_load_state(parser_config.wait_for_load_stat)
     await page.wait_for_timeout(parser_config.wait_for_load_time)
+    # await human_mouse_move(page)
 
 @try_and_log_decor("Обработка одной карточки", repeats=3)
 async def parse_card(page: Page, card: Locator, book: EBook, parser_config: ParserConfig) -> ShopCard:
@@ -324,6 +327,9 @@ async def run_parser(context: BrowserContext, book: EBook, parser_config: Parser
 
 @try_and_log_decor("Создание контекста", repeats=3)
 async def run_create_context(context: BrowserContext, parser_config: ParserConfig):
+    # TODO: для отладки
+    # await screen_and_save_page(dir_path = './logs/zero_page', page = context.my_data["zero_page"], file_prefix=f"zero_")
+    
     page = await context.new_page()
     CURRENT_PAGE.set(page)
     ERROR_PREFIX.set(f"{parser_config.store}")
@@ -365,3 +371,5 @@ async def run_parser_test(context: BrowserContext, book: EBook, parser_config: P
 #         #     await wait_page(page, parser_config)
 # 
 
+async def _noop(*args, **kwargs):
+    pass

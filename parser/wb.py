@@ -4,7 +4,8 @@ from .common import (
     EBook, ShopCard, ParserConfig,
     run_parser, try_and_log_decor, 
     run_parser_test, run_create_context,
-    nextpage_gen_cards,
+    nextpage_gen_cards, 
+    _noop, human_mouse_move,
     tqdm, re, dt, 
     utils,
     )
@@ -196,7 +197,7 @@ async def _gen_cards_(page: Page, parser_config: ParserConfig):
     yield block
 
 @try_and_log_decor("Дополнительное ожидание страницы", repeats=3)
-async def _extra_wait_cat(page: Page):
+async def _extra_wait_cat(page: Page, human_moves = human_mouse_move): #fn_extra_wait_cat
     loading = await page.locator("div.general-preloader j-initial-preloader").count()
     trys = 0
     while loading != 0 and trys < 50:
@@ -218,7 +219,10 @@ async def _extra_wait_cat(page: Page):
         tqdm.write(f"{reload_time=}ms")
 
         await page.wait_for_timeout(reload_time)
+        await page.reload()
+        await human_moves(page)
         await page.wait_for_load_state()
+        await human_moves(page)
     
     await expect(page.locator("div.product-card-list")).to_be_attached(timeout=7500)
 

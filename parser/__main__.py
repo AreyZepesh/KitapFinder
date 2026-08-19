@@ -7,7 +7,7 @@ if __name__  == '__main__':
 
 from parser.common import (
     async_playwright,
-    asyncio, dt,
+    asyncio, dt, BrowserContext,
     EBook,
     tqdm, utils
     )
@@ -18,6 +18,28 @@ from parser.flip import main as flip
 from parser.kaspi import main as kaspi
 
 import json
+
+async def context_extender(context: BrowserContext):
+    # Для Chrome (New) = passed в антиботе
+    await context.add_init_script("""if (!window.chrome) {
+                            window.chrome = { runtime: {} };
+                        }""")
+    
+    await context.add_init_script("""Object.defineProperty(navigator, 'plugins', {
+                            get: () => {
+                                const arr = [1, 2, 3, 4, 5].map(() => ({name: 'Chrome PDF Plugin'}));
+                                arr.__proto__ = PluginArray.prototype;
+                                return arr;
+                            }
+                        });""")
+    
+    # context.my_data = {}
+    # context.my_data["zero_page"] = await context.new_page()
+    # # # await context.my_data["zero_page"].goto("https://ozon.kz/product/3909169867")
+    # # await context.my_data["zero_page"].goto("https://www.browserscan.net/ru/user-agent")
+    # await context.my_data["zero_page"].goto("https://bot.sannysoft.com/")
+    # # await asyncio.to_thread(input, "Продолжить? ")
+    # input("!")
 
 async def __run__(fn, books: EBook|list[EBook], headless = True, test_context = False):
     async with async_playwright() as p:
@@ -38,6 +60,16 @@ async def __run__(fn, books: EBook|list[EBook], headless = True, test_context = 
         #     viewport = {"width": 1280, "height": 1024}
         executable_path = r"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
         executable_path = None
+        args = [
+            "--start-maximized", 
+            "--no-sandbox",
+            # "--disable-dev-shm-usage",
+            "--disable-gpu",
+            "--use-gl=swiftshader" # NOTE: для сервера и может понадобится подложить правдоподобный UNMASKED_RENDERER_WEBGL через init-script
+            # # NOTE: Две опции альтернативной загрузки cach/coocki прошлой сессии
+            # '--restore-last-session', 
+            # "--hide-crash-restore-bubble",
+                ]
 
         if not test_context:
             browser = await p.chromium.launch(
@@ -46,16 +78,8 @@ async def __run__(fn, books: EBook|list[EBook], headless = True, test_context = 
                         # channel="chromium",
                         proxy = None,
                         headless = headless,
-                        args = [
-                        "--start-maximized", 
-                        # '--disable-blink-features=AutomationControlled', # дублируется в patchright, включать в playright
-                        # "--disable-infobars",
-                        "--no-sandbox",
-                        # "--disable-dev-shm-usage",
-                        # "--disable-gpu"
-                        # "--use-gl=swiftshader" # NOTE: для сервера и подложить правдоподобный UNMASKED_RENDERER_WEBGL через init-script
-                                ]
-                                                )
+                        args = args,
+                            )
             
             context = await browser.new_context(
                         viewport=viewport,
@@ -71,13 +95,9 @@ async def __run__(fn, books: EBook|list[EBook], headless = True, test_context = 
                         is_mobile=False,
                         storage_state = storage_state,
                                                 )
-
-            context.my_data = {}
-            context.my_data["zero_page"] = await context.new_page()
-            # посмотреть юсерагент
-            # await context.my_data["zero_page"].goto("https://www.browserscan.net/ru/user-agent")
-            # await asyncio.to_thread(input, "Продолжить? ")
-            # input("!")
+            
+            await context_extender(context)
+            
 
         if test_context:
             context = await p.chromium.launch_persistent_context(
@@ -94,18 +114,9 @@ async def __run__(fn, books: EBook|list[EBook], headless = True, test_context = 
                             geolocation={"latitude": 52.265415, "longitude": 76.977453},
                             ignore_https_errors = True, # NOTE: test ignore tsl
                             # storage_state = storage_state,
-                            args = [
-                                "--start-maximized", 
-                                "--no-sandbox",
-                                # "--disable-dev-shm-usage",
-                                # "--disable-gpu",
-                                # "--use-gl=swiftshader" # NOTE: для сервера и подложить правдоподобный UNMASKED_RENDERER_WEBGL через init-script
-                                # # NOTE: Две опции альтернативной загрузки cach/coocki прошлой сессии
-                                # '--restore-last-session', 
-                                # "--hide-crash-restore-bubble",
-                                    ]
-                                            )
-                                            
+                            args = args,
+                                )
+            
             if storage_state:    
                 # NOTE: загрузка данных прошлой сессии
                 state = json.load(open(storage_state, encoding="utf-8"))
@@ -114,12 +125,7 @@ async def __run__(fn, books: EBook|list[EBook], headless = True, test_context = 
                 cookies = utils.state_filter(state, "ozon.kz")["cookies"]
                 await context.add_cookies(cookies)
 
-            # context.my_data = {}
-            # context.my_data["zero_page"] = await context.new_page()
-            # # await context.my_data["zero_page"].goto("https://ozon.kz/product/3909169867")
-            # await context.my_data["zero_page"].goto("https://www.browserscan.net/ru/user-agent")
-            # await asyncio.to_thread(input, "Продолжить? ")
-            # input("!")
+            await context_extender(context)
 
         # Создать контекст
         await create_context(context)

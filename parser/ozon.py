@@ -3,9 +3,10 @@ from .common import (
     BrowserContext, Locator, APIResponse,
     EBook, ShopCard, ParserConfig,
     run_parser, try_and_log_decor, 
-    run_parser_test, run_create_context,
+    run_parser_test, run_create_context, 
+    _noop, human_mouse_move,
     tqdm, ERROR_PREFIX, dt,
-    re,
+    re, 
     )
 
 @try_and_log_decor("Проверка на noresult")
@@ -215,13 +216,15 @@ async def _gen_cards(page: Page, parser_config: ParserConfig):
     #     tqdm.write(f"{part_indexes}") 
 
 @try_and_log_decor("Дополнительное ожидание страницы", repeats=3)
-async def _extra_wait_cat(page: Page):
+async def _extra_wait_cat(page: Page, human_moves = human_mouse_move): #fn_extra_wait_cat
     antibot = await page.locator('[src*="ozon.kz/challenge.html"]').count()
     antibot += await page.get_by_text('Похоже, нет соединения').count()
     if antibot > 0:
         tqdm.write(f"ozon словили антибота: {page.url}, пробуем перезагрузить")
         await page.reload()
+        await human_moves(page)
         await page.wait_for_timeout(10000)
+        await human_moves(page)
 
     await page.wait_for_load_state("networkidle")
     await page.wait_for_timeout(500) # Тестовая пауза
