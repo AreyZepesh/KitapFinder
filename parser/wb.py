@@ -19,6 +19,7 @@ async def _extra_urls(page: Page):
     
     await page.wait_for_timeout(200)
     await page.reload() # часто с первой загрузки данные не корректные, обновление это лечит 
+    await human_mouse_move(page)
 
     if replaced:
         return True

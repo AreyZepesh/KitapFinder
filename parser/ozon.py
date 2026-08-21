@@ -221,6 +221,8 @@ async def _extra_wait_cat(page: Page, human_moves = human_mouse_move): #fn_extra
     antibot += await page.get_by_text('Похоже, нет соединения').count()
     if antibot > 0:
         tqdm.write(f"ozon словили антибота: {page.url}, пробуем перезагрузить")
+        # await page.context.clear_cookies(domain="ozon.ru")
+        # await page.context.clear_cookies(domain="ozon.kz")
         await page.reload()
         await human_moves(page)
         await page.wait_for_timeout(10000)

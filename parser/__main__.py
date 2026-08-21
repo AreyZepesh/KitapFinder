@@ -20,6 +20,8 @@ from parser.kaspi import main as kaspi
 import json
 
 async def context_extender(context: BrowserContext):
+    tqdm.write(f"{context.browser.version=}")
+    
     # Для Chrome (New) = passed в антиботе
     await context.add_init_script("""if (!window.chrome) {
                             window.chrome = { runtime: {} };
@@ -58,8 +60,12 @@ async def __run__(fn, books: EBook|list[EBook], headless = True, test_context = 
         # if sys.platform == "linux":
         #     user_agent=f"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
         #     viewport = {"width": 1280, "height": 1024}
-        executable_path = r"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
         executable_path = None
+        # executable_path = r"C:\Users\AreyZepesh\AppData\Local\ms-playwright\chromium-1223\chrome-win64\chrome.exe"
+        # # executable_path = r"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
+        # if not os.path.exists(executable_path):
+        #     executable_path = None
+        channel = "chromium"
         args = [
             "--start-maximized", 
             "--no-sandbox",
@@ -74,8 +80,7 @@ async def __run__(fn, books: EBook|list[EBook], headless = True, test_context = 
         if not test_context:
             browser = await p.chromium.launch(
                         executable_path=executable_path,
-                        # channel="chrome",
-                        # channel="chromium",
+                        channel=channel,
                         proxy = None,
                         headless = headless,
                         args = args,
@@ -104,7 +109,7 @@ async def __run__(fn, books: EBook|list[EBook], headless = True, test_context = 
                             executable_path=executable_path,
                             user_data_dir="./parser/profile",
                             user_agent=user_agent,
-                            # channel="chrome",
+                            channel=channel,
                             headless=headless,
                             viewport=viewport,
                             proxy = None,
@@ -145,6 +150,10 @@ async def __run__(fn, books: EBook|list[EBook], headless = True, test_context = 
 
 
 async def create_context(context):
+    # await wb(context = context, book = None, create_context = True)
+    # await flip(context = context, book = None, create_context = True)
+    # await kaspi(context = context, book = None, create_context = True)
+    # await ozon(context = context, book = None, create_context = True)
      await asyncio.gather(
             wb(context = context, book = None, create_context = True),
             flip(context = context, book = None, create_context = True),
