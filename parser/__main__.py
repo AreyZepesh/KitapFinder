@@ -20,7 +20,7 @@ from parser.kaspi import main as kaspi
 import json
 
 async def context_extender(context: BrowserContext):
-    tqdm.write(f"{context.browser.version=}")
+    # tqdm.write(f"{context.browser.version=}")
     
     # Для Chrome (New) = passed в антиботе
     await context.add_init_script("""if (!window.chrome) {
@@ -165,10 +165,10 @@ async def one_book(context, book: EBook):
         # results = await asyncio.gather(
         stores = [
             wb(context = context, book = book),
-            # wb(context = context, book = book, alter_search = True),
+            wb(context = context, book = book, alter_search = True),
             flip(context = context, book = book),
             kaspi(context = context, book = book),
-            # ozon(context = context, book = book, alter_search = True),
+            ozon(context = context, book = book, alter_search = True),
             ozon(context = context, book = book)
              ]
         # if sys.platform != "linux":

@@ -81,6 +81,7 @@ def try_and_log_decor(header: str, repeats: int = 1):
     return decorator
 
 async def human_mouse_move(page, steps=25):
+    # return
     box = await page.evaluate("() => ({w: window.innerWidth, h: window.innerHeight})")
     start_x, start_y = random.randint(0, box["w"]), random.randint(0, box["h"])
     target_x, target_y, = random.randint(0, box["w"]), random.randint(0, box["h"])
@@ -318,9 +319,9 @@ async def run_parser(context: BrowserContext, book: EBook, parser_config: Parser
                 break
             # else:
             #     tqdm.write(f"{parser_config.store} {added=}")
-    if parser_config.store.lower() == "wb" and len(all_items) == 0:
-        await page.evaluate("window.scrollTo(0, 0)")
-        await screen_and_save_page(dir_path = './logs/err/zero', page = page, file_prefix=f"{parser_config.store}_", file_suffix=f"_{book.title}")
+    # if parser_config.store.lower() == "wb" and len(all_items) == 0:
+    #     await page.evaluate("window.scrollTo(0, 0)")
+    #     await screen_and_save_page(dir_path = './logs/err/zero', page = page, file_prefix=f"{parser_config.store}_", file_suffix=f"_{book.title}")
     #     input("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
     await page.close()
     return all_items

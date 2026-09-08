@@ -220,7 +220,7 @@ async def _extra_wait_cat(page: Page, human_moves = human_mouse_move): #fn_extra
     antibot = await page.locator('[src*="ozon.kz/challenge.html"]').count()
     antibot += await page.get_by_text('Похоже, нет соединения').count()
     if antibot > 0:
-        tqdm.write(f"ozon словили антибота: {page.url}, пробуем перезагрузить")
+        # tqdm.write(f"ozon словили антибота: {page.url}, пробуем перезагрузить")
         # await page.context.clear_cookies(domain="ozon.ru")
         # await page.context.clear_cookies(domain="ozon.kz")
         await page.reload()
@@ -259,7 +259,7 @@ async def main(context: BrowserContext, book: EBook, alter_search = False, creat
     parser_config = ParserConfig(
         store = "ozon",
         base_url = base_url,
-        wait_for_load_stat = "networkidle",
+        # wait_for_load_stat = "networkidle",
         wait_for_load_time = 500,
 
         fn_noresults = _noresults, 

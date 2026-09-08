@@ -212,12 +212,12 @@ async def _extra_wait_cat(page: Page, human_moves = human_mouse_move): #fn_extra
     antibot = await page.get_by_text("Подозрительная активность").count()
     # antibot += await page.get_by_text("подождите").count()
     if antibot > 0:
-        tqdm.write(f"WB Ждем страницу, так как вылез антибот: {page.url}")
+        # tqdm.write(f"WB Ждем страницу, так как вылез антибот: {page.url}")
         reload_time = await page.locator('meta[http-equiv="refresh"]').first.get_attribute('content')
         reload_time = utils.normalizePrice(reload_time)
         reload_time += 10
         reload_time *= 1000
-        tqdm.write(f"{reload_time=}ms")
+        # tqdm.write(f"{reload_time=}ms")
 
         await page.wait_for_timeout(reload_time)
         await page.reload()

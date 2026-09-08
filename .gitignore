@@ -1,11 +1,12 @@
-*/*
 **/__pycache__/*
+*.db
+*.env
+*venv/*
+*/*
 !parser/*
 **/profile
 **/profile/*
 !services/*
 .note.md
-test*.*
-*.db
-*.env
+*test*.*
 state*.json
