@@ -1,6 +1,6 @@
 from models import EBook, ShopCard
-from z_test_books import all_books, books_Aizada
-from utils import save_objects, save_image_from_bytes
+from z_test_books import all_books
+from utils import save_objects
 from services.html_generator import render_html_page
 
 from shutil import rmtree
@@ -27,7 +27,6 @@ def main():
 
     books = []
     for book in all_books:
-    # for book in books_Aizada:
         books.append(EBook(**book))
    
     # books = [
@@ -35,28 +34,19 @@ def main():
     #     EBook("Ключ из желтого металла", "Фрай"),
     #     EBook("Преступление и наказание", "Достоевский"), 
     #     ]
-
-    # books = [EBook("Преступление и наказание", "Достоевский")]
-    # books = [EBook("Остров Сахалин", "Чехов", ['978-5-389-28937-6'])]
-    # books = [EBook(**{'title': 'Виконт де Бражелон, или Еще десять лет спустя', 'author': 'Дюма', 'isbns': ['978-5-389-24464-1'], 'only_isbn': True},)]
-    # books = [EBook(**{'title': 'Террор', 'author': 'Симмонс', 'isbns': [], 'only_isbn': False, 'need_check_author': True},)]
     # books = [EBook(**{'title': 'Ведьма. Матерь Тьмы', 'author': 'Лейбер', 'isbns': [], 'only_isbn': False},)]
+
     headless = True
-    test_context = False
+    persistent_context = True
+
+    # persistent_context = False
+    
     # books = [books[0]]
     # headless = False
-    test_context = True
     
-    run(books=books, headless = headless, test_context = test_context)
-    # <button class="rb" onclick="reload()">Обновить</button>
+    run(books=books, headless = headless, persistent_context = persistent_context)
     for b in books:
         b.sort_by_price()
-        # text = f"{b.get_search_text()}: {len(b.prices)}\n"
-        # with open(f"./logs/resutls_{time_start}.txt", 'a', encoding="utf8") as file:
-        #     file.write(text)
-        #     for p in b.prices:
-        #         file.write(f"{p.price}: {p.get_url()} ({p.type_search})\n")
-        #     file.write(f"\n")
 
     print(time_start)
     print(dt.now().strftime("%Y-%m-%d %H-%M"))
