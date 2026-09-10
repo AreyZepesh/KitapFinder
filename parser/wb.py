@@ -3,11 +3,11 @@ from .engine import (
     BrowserContext, Locator, APIResponse,
     EBook, ShopCard, ParserConfig,
     run_parser, try_and_log_decor, 
-    run_parser_test, run_create_context,
+    run_create_context,
     nextpage_gen_cards, 
     _noop, human_mouse_move,
     tqdm, re, dt, 
-    utils,
+    normalizePrice
     )
 
 @try_and_log_decor("Смена url")
@@ -214,7 +214,7 @@ async def _extra_wait_cat(page: Page, human_moves = human_mouse_move): #fn_extra
     if antibot > 0:
         # tqdm.write(f"WB Ждем страницу, так как вылез антибот: {page.url}")
         reload_time = await page.locator('meta[http-equiv="refresh"]').first.get_attribute('content')
-        reload_time = utils.normalizePrice(reload_time)
+        reload_time = normalizePrice(reload_time)
         reload_time += 10
         reload_time *= 1000
         # tqdm.write(f"{reload_time=}ms")
@@ -258,7 +258,7 @@ async def main(context: BrowserContext, book: EBook, alter_search = False, creat
     if alter_search:
         base_url = "https://global.wildberries.ru/catalog/0/search.aspx?search="
     parser_config = ParserConfig(
-        store = "WB",
+        store = "wb",
         base_url = base_url,
         isbn_prefix = True,
 

@@ -4,9 +4,9 @@ from parser.engine import (
     async_playwright,
     asyncio, dt, BrowserContext,
     EBook,
-    tqdm, utils
+    tqdm, 
     )
-
+from .utils import state_filter
 from parser.wb import main as wb
 from parser.ozon import main as ozon
 from parser.flip import main as flip
@@ -122,7 +122,7 @@ async def __run__(fn, books: EBook|list[EBook], headless = True, persistent_cont
                 state = json.load(open(storage_state, encoding="utf-8"))
                 # cookies = state["cookies"]
                 # получаем только ozon state
-                cookies = utils.state_filter(state, "ozon.kz")["cookies"]
+                cookies = state_filter(state, "ozon.kz")["cookies"]
                 await context.add_cookies(cookies)
 
             await context_extender(context)

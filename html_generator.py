@@ -2,8 +2,8 @@ from bs4 import BeautifulSoup
 from bs4.element import PageElement, Tag
 from collections import defaultdict
 import base64
-from utils import load_objects
-from models import ShopCard, EBook
+from saveloads import load_objects
+from parser.domain import ShopCard, EBook
 from datetime import datetime as dt
 
 def img_to_data_uri(img_bytes: bytes, mime="image/jpeg") -> str:

@@ -3,7 +3,7 @@ from itertools import combinations
 from tqdm import tqdm
 import cv2
 import numpy as np
-from models import ShopCard
+from parser.domain import ShopCard
 import sys
 
 def find_duplicate_via_hash(img_bytes1: bytes, img_bytes2: bytes, **kwargs) -> bool:

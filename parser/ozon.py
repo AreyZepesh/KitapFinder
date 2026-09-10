@@ -3,7 +3,7 @@ from .engine import (
     BrowserContext, Locator, APIResponse,
     EBook, ShopCard, ParserConfig,
     run_parser, try_and_log_decor, 
-    run_parser_test, run_create_context, 
+    run_create_context, 
     _noop, human_mouse_move,
     tqdm, ERROR_PREFIX, dt,
     re, 

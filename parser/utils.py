@@ -6,16 +6,6 @@ def normalizePrice(string: str) -> int:
     if string:
         return int("".join(c for c in string if  c.isdecimal()))
 
-def save_objects(path: str, data: list) -> None:
-    with open(path, "wb") as file:
-        pickle.dump(data, file)
-    pass
-
-def load_objects(path: str) -> list:
-    with open(path, "rb") as file:
-        data = pickle.load(file)
-    return data
-
 def save_image_from_bytes(image_bytes, path):
     from PIL import Image
     from io import BytesIO
@@ -31,21 +21,10 @@ def save_image_from_bytes(image_bytes, path):
         # Сохраняем как PNG
         img.save(f"{path}.png", format="PNG")
 
-def save_to_file(data, path):
-        with open(path, "w", encoding="utf8") as f:
-            f.write(data)
-
 def prettify_html(html_content):
     from bs4 import BeautifulSoup
     soup = BeautifulSoup(html_content, "html.parser")
     return soup.prettify()
-
-# def is_target(url, domain_url):
-#     if not url:
-#         return False
-#     print(url, domain_url)
-#     print(url.endswith(domain_url))
-#     return urlparse(url).netloc.endswith(domain_url)
 
 def state_filter(data: dict, domain_url: str):
     filtered_cookies = []
@@ -70,3 +49,7 @@ def state_filter(data: dict, domain_url: str):
         "cookies": filtered_cookies,
         "origins": filtered_origins
         }
+
+async def _noop(*args, **kwargs):
+        """Пустая функция по умолчанию (ничего не делает, no operation)."""
+        pass

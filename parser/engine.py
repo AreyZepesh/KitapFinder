@@ -1,9 +1,4 @@
-# import os, sys
-# os.chdir( os.path.abspath( os.path.dirname( os.path.dirname(__file__) ) ) )
-# sys.path.append( os.getcwd() )
-
 from patchright.async_api import (
-# from playwright.async_api import (
     async_playwright, expect, 
     Page, BrowserContext, Locator, APIResponse,
     TimeoutError)
@@ -15,8 +10,9 @@ import traceback
 import contextvars
 import re, sys, random
 
-import utils
-from models import EBook, ShopCard, ParserConfig
+from .utils import prettify_html, normalizePrice, _noop
+from .domain import EBook, ShopCard
+from .config import ParserConfig
 
 ERROR_PREFIX = contextvars.ContextVar("Ошибка")
 LOG_URL = contextvars.ContextVar("")
@@ -28,7 +24,7 @@ async def screen_and_save_page(dir_path: str, page: Page, file_prefix: str = "",
     base_path = f"{dir_path}/{file_prefix}{dt.now().strftime("%Y-%m-%d %H-%M-%S")}{file_suffix}"
     await page.screenshot(path=f"{base_path}.png")
     with open(f"{base_path}.html", "w", encoding="utf-8-sig") as f:
-        f.write(utils.prettify_html(await page.content()))
+        f.write(prettify_html(await page.content()))
 
 def try_and_log_decor(header: str, repeats: int = 1):
     """Асинхронный декоратор с повтором и логированием ошибок."""
@@ -223,7 +219,7 @@ async def parse_card(page: Page, card: Locator, book: EBook, parser_config: Pars
                 if book.author and not book.is_AUTHOR_in_STR(card_title):
                     # tqdm.write(f"{await parser_config.get_card_article(card)}   {book.author=}   {card_title=}") #  TODO Для отладки
                     return 
-        price = utils.normalizePrice( await parser_config.get_card_price(card) )
+        price = normalizePrice( await parser_config.get_card_price(card) )
         if price is None:
             return
         article = await parser_config.get_card_article(card)
@@ -239,7 +235,7 @@ async def parse_card(page: Page, card: Locator, book: EBook, parser_config: Pars
     # except TimeoutError:
     #     raise
     # except Exception as ex:
-        # ex.add_note(f"HTML элемента:\n {utils.prettify_html(await card.evaluate('element => element.outerHTML'))}")
+        # ex.add_note(f"HTML элемента:\n {prettify_html(await card.evaluate('element => element.outerHTML'))}")
         # await card.screenshot(path=f"./logs/{book.title}_{parser_config.store}_{dt.now().strftime("%Y-%m-%d %H-%M")}.png")
     #     raise #ex
 
@@ -356,21 +352,4 @@ async def run_create_context(context: BrowserContext, parser_config: ParserConfi
     #     input("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
         
     await page.close()
-    pass
-
-@try_and_log_decor("Парсим данные ТЕСТ: основная функция")
-async def run_parser_test(context: BrowserContext, book: EBook, parser_config: ParserConfig) ->  list[ShopCard]:
-    """Парсер, принимает контекст и объект книги, возвращает список объектов с 'карточками'"""
-    pass
-#         # Кликанье на автора показала себя неэффективно на всех магазинах: 
-#         # результатов гораздо меньше, а времени уходит гораздо больше... 
-#         # данный блок должен стоять до проверка на noresult
-#         # click_author = await parser_config.fn_click_author(page, book.author)
-#         # if click_author:
-#         #     if click_author == "noresults":
-#         #         continue
-#         #     await wait_page(page, parser_config)
-# 
-
-async def _noop(*args, **kwargs):
     pass

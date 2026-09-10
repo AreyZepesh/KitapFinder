@@ -1,7 +1,7 @@
-from models import EBook, ShopCard
+from parser.domain import EBook, ShopCard
 from z_test_books import all_books
-from utils import save_objects
-from services.html_generator import render_html_page
+from saveloads import save_objects
+from html_generator import render_html_page
 
 from shutil import rmtree
 import os, sys
