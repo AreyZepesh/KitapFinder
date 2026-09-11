@@ -42,7 +42,14 @@ class EBook():
     only_isbn: bool = field(default=False)
     prices: list[ShopCard] = field(default_factory=list)
     alt_author: str = field(default=None)
-    need_check_author: bool = field(default=False)
+    need_check_author: bool = field(default=False) # TODO: возможно на удаление, после тестов 
+    # Код из parser.engine.parse_card
+    # if book.is_TITLE_in_STR(card_title):
+        # if book.need_check_author:
+            # card_title = card_title.replace("| Книга б/у", "")
+            # if parser_config.store == "ozon" and "|" in card_title:
+            #     if book.author and not book.is_AUTHOR_in_STR(card_title):
+            #         return 
 
     def get_search_text(self):
         if self.author:

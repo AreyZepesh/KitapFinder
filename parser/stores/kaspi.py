@@ -1,4 +1,4 @@
-from .engine import (
+from parser.engine import (
     expect, Page,
     BrowserContext, Locator, APIResponse,
     EBook, ShopCard, ParserConfig,
@@ -84,6 +84,8 @@ async def main(context: BrowserContext, book: EBook, create_context = False) -> 
     parser_config = ParserConfig(
         store = "kaspi",
         base_url = f"https://kaspi.kz/shop/search/?q=:availableInZone:551010000:category:Books&text=",
+        
+        skip_scroll = True,
 
         fn_noresults = _noresults, 
         fn_city = _city,
@@ -102,14 +104,3 @@ async def main(context: BrowserContext, book: EBook, create_context = False) -> 
     if create_context:
         return await run_create_context(context, parser_config)
     return await run_parser(context, book, parser_config)
-
-def _no_only_isbn_urls(base_url, book):
-    import copy
-    from .engine import get_search_urls
-    if book.only_isbn:
-        book_k = copy.deepcopy(book)
-        book_k.only_isbn = False
-        search_urls = get_search_urls(base_url, book_k) 
-    else:
-        search_urls = get_search_urls(base_url, book)
-    return search_urls

@@ -1,4 +1,4 @@
-from .engine import (
+from parser.engine import (
     expect, Page,
     BrowserContext, Locator, APIResponse,
     EBook, ShopCard, ParserConfig,
@@ -263,6 +263,9 @@ async def main(context: BrowserContext, book: EBook, alter_search = False, creat
         isbn_prefix = True,
 
         wait_for_load_time = 1000,
+
+        should_continue_on_empty = True,
+        # should_screen_on_empty = True,
 
         fn_extra_goto = _extra_urls,
         fn_extra_wait_cat = _extra_wait_cat,

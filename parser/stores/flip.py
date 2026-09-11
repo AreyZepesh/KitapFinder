@@ -1,4 +1,4 @@
-from .engine import (
+from parser.engine import (
     expect, Page,
     BrowserContext, Locator, APIResponse,
     EBook, ShopCard, ParserConfig,

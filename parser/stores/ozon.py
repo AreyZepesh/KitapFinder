@@ -1,4 +1,4 @@
-from .engine import (
+from parser.engine import (
     expect, Page,
     BrowserContext, Locator, APIResponse,
     EBook, ShopCard, ParserConfig,
@@ -261,6 +261,8 @@ async def main(context: BrowserContext, book: EBook, alter_search = False, creat
         base_url = base_url,
         # wait_for_load_stat = "networkidle",
         wait_for_load_time = 500,
+
+        should_continue_on_empty = True,
 
         fn_noresults = _noresults, 
         fn_extra_wait_cat = _extra_wait_cat,

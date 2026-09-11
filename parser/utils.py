@@ -1,6 +1,3 @@
-import pickle
-from urllib.parse import urlparse
-
 def normalizePrice(string: str) -> int:
     """Нормализует цену, делает из строки число"""
     if string:

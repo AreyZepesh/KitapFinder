@@ -7,10 +7,10 @@ from parser.engine import (
     tqdm, 
     )
 from .utils import state_filter
-from parser.wb import main as wb
-from parser.ozon import main as ozon
-from parser.flip import main as flip
-from parser.kaspi import main as kaspi
+from parser.stores.wb import main as wb
+from parser.stores.ozon import main as ozon
+from parser.stores.flip import main as flip
+from parser.stores.kaspi import main as kaspi
 
 import json
 

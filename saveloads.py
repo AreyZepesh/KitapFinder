@@ -1,5 +1,4 @@
 import pickle
-from urllib.parse import urlparse
 
 def save_objects(path: str, data: list) -> None:
     with open(path, "wb") as file:

@@ -16,7 +16,11 @@ class ParserConfig():
     store: str = field(default="")
     base_url: str = field(default="")
     isbn_prefix: bool = field(default=False)
-    isbn_escaping_dash: bool = field(default=False)
+    isbn_escaping_dash: bool = field(default=False) # экранируем тире в isbn
+    
+    skip_scroll: bool = field(default=False) # engine.scroll_to_last 
+    should_continue_on_empty: bool = field(default=False) # engine.run_parser, запускать для магазина если результатов 0
+    should_screen_on_empty: bool = field(default=False) # engine.run_parser, для магазина если результатов 0
 
     wait_for_load_stat: str = field(default=None)
     wait_for_load_time: int = field(default=500)
@@ -28,7 +32,6 @@ class ParserConfig():
     fn_login: Callable[[Any], None] = field(default=_noop) # переключение валюты
     fn_currency: Callable[[Any], None] = field(default=_noop) # переключение валюты
     fn_city: Callable[[Any], None] = field(default=_noop) # выбор города
-
 
     get_card_locator: Callable[[Any], Any] = field(default=_noop)
     get_nextpage_locator: Callable[[Any], Any] = field(default=_noop)
