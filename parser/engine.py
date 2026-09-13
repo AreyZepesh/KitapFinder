@@ -274,12 +274,6 @@ async def run_create_context(context: BrowserContext, parser_config: ParserConfi
     await goto_url(page, parser_config.base_url+"Достоевский")
     await wait_page(page, parser_config)
     await parser_config.fn_extra_wait_cat(page)
-    # if sys.platform == "linux":
-    #     await page.wait_for_timeout(1000)
-    # if sys.platform == "win32":
-    #     if await parser_config.fn_login(page):
-    #         await goto_url(page, parser_config.base_url+"Достоевский")
-    #         await wait_page(page, parser_config)
 
     # проверяем и переключаем валюту
     await parser_config.fn_currency(page)

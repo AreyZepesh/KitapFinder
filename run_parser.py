@@ -54,7 +54,6 @@ def main():
     save_objects("./tmp/data.pkl", books)
     render_html_page(books, "index_full")
 
-    # if sys.platform == "win32":
     for b in books:
         if len(b.prices) > 250:
             continue
