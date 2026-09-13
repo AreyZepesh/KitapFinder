@@ -1,10 +1,19 @@
+from patchright.async_api import (
+    expect, 
+    Page, BrowserContext, 
+    Locator, APIResponse,
+    )
+import re
+from tqdm.asyncio import tqdm
+
+from parser.utils import _noop
+from parser.domain import EBook, ShopCard
+from parser.config import ParserConfig
 from parser.engine import (
-    expect, Page,
-    BrowserContext, Locator, APIResponse,
-    EBook, ShopCard, ParserConfig,
     run_parser, try_and_log_decor, 
-    nextpage_gen_cards,
-    tqdm,
+    run_create_context,
+    nextpage_gen_cards, 
+    human_mouse_move,
     )
 
 @try_and_log_decor("Проверка на noresult")

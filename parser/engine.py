@@ -1,18 +1,22 @@
 ﻿from patchright.async_api import (
-    async_playwright, expect, 
-    Page, BrowserContext, Locator, APIResponse,
-    TimeoutError)
+    # expect, 
+    Page, BrowserContext, 
+    Locator, APIResponse,
+    # TimeoutError,
+    )
 import asyncio
 from datetime import datetime as dt
 from tqdm.asyncio import tqdm
 from functools import wraps
 import traceback
 import contextvars
-import re, sys, random
+import random
+# import re
+# import sys
 
-from .utils import prettify_html, normalizePrice, _noop
-from .domain import EBook, ShopCard
-from .config import ParserConfig
+from parser.utils import prettify_html, normalizePrice, _noop
+from parser.domain import EBook, ShopCard
+from parser.config import ParserConfig
 
 ERROR_PREFIX = contextvars.ContextVar("Ошибка")
 LOG_URL = contextvars.ContextVar("")

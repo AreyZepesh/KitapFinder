@@ -1,11 +1,19 @@
+from patchright.async_api import (
+    expect, 
+    Page, BrowserContext, 
+    Locator, APIResponse,
+    )
+import re
+# from tqdm.asyncio import tqdm
+
+# from parser.utils import _noop
+from parser.domain import EBook, ShopCard
+from parser.config import ParserConfig
 from parser.engine import (
-    expect, Page,
-    BrowserContext, Locator, APIResponse,
-    EBook, ShopCard, ParserConfig,
     run_parser, try_and_log_decor, 
     run_create_context,
-    nextpage_gen_cards,
-    tqdm, re,
+    nextpage_gen_cards, 
+    # human_mouse_move,
     )
 
 @try_and_log_decor("Проверка на noresult")
@@ -74,7 +82,7 @@ async def _card_cover(card: Locator, page: Page) -> APIResponse:
         return req
     except Exception as ex:
         ex.add_note(f"URL изображения: {img_url}")
-        tqdm.write(f"URL изображения: {img_url}")
+        # tqdm.write(f"URL изображения: {img_url}")
         raise ex
 
 # async def _card_info(card: Locator):

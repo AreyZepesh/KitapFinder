@@ -1,18 +1,17 @@
 ﻿import os
+import asyncio
+import json
+# import dt
+from tqdm.asyncio import tqdm
+from patchright.async_api import async_playwright, BrowserContext
 
-from parser.engine import (
-    async_playwright,
-    asyncio, dt, BrowserContext,
-    EBook,
-    tqdm, 
-    )
-from .utils import state_filter
+from parser.domain import EBook
+from parser.utils import state_filter
 from parser.stores.wb import main as wb
 from parser.stores.ozon import main as ozon
 from parser.stores.flip import main as flip
 from parser.stores.kaspi import main as kaspi
 
-import json
 
 async def context_extender(context: BrowserContext):
     # tqdm.write(f"{context.browser.version=}")

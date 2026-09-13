@@ -1,10 +1,11 @@
 from collections import defaultdict
 from itertools import combinations
-from tqdm import tqdm
+from tqdm.asyncio import tqdm
 import cv2
 import numpy as np
-from parser.domain import ShopCard
 import sys
+
+from parser.domain import ShopCard
 
 def find_duplicate_via_hash(img_bytes1: bytes, img_bytes2: bytes, **kwargs) -> bool:
     """Сравниваем хеш двух байтмассивов изображение, возвращает True если совпадают"""

@@ -27,7 +27,7 @@ class ShopCard():
         return
     
     def save_cover(self, alt_path: bool = False):
-        from .utils import save_image_from_bytes
+        from parser.utils import save_image_from_bytes
 
         path = f"{self.cover_path}-cover"
         if alt_path:
@@ -107,7 +107,7 @@ class EBook():
         self.prices = temp_price
 
     def optimize_stores_by_cover(self, from_covers_per_store = 0):
-        from .covers import optimize_stores_by_cover
+        from parser.covers import optimize_stores_by_cover
         self.prices = optimize_stores_by_cover(self.prices, from_covers_per_store = from_covers_per_store)
         self.sort_by_price() 
 

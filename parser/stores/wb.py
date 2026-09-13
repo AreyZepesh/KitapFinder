@@ -1,13 +1,19 @@
+from patchright.async_api import (
+    expect, 
+    Page, BrowserContext, 
+    Locator, APIResponse,
+    )
+import re
+# from tqdm.asyncio import tqdm
+
+# from parser.utils import _noop
+from parser.domain import EBook, ShopCard
+from parser.config import ParserConfig
 from parser.engine import (
-    expect, Page,
-    BrowserContext, Locator, APIResponse,
-    EBook, ShopCard, ParserConfig,
     run_parser, try_and_log_decor, 
     run_create_context,
-    nextpage_gen_cards, 
-    _noop, human_mouse_move,
-    tqdm, re, dt, 
-    normalizePrice
+    # nextpage_gen_cards, 
+    human_mouse_move,
     )
 
 @try_and_log_decor("Смена url")
@@ -206,15 +212,13 @@ async def _extra_wait_cat(page: Page, human_moves = human_mouse_move): #fn_extra
         await page.wait_for_timeout(5000)
         loading = await page.locator("div.general-preloader j-initial-preloader").count()
         trys += 1
-    if trys > 0:
-        tqdm.write(f"{page.url=}: {loading=}, {trys=}")
         
     antibot = await page.get_by_text("Подозрительная активность").count()
     # antibot += await page.get_by_text("подождите").count()
     if antibot > 0:
         # tqdm.write(f"WB Ждем страницу, так как вылез антибот: {page.url}")
         reload_time = await page.locator('meta[http-equiv="refresh"]').first.get_attribute('content')
-        reload_time = normalizePrice(reload_time)
+        reload_time = int("".join(c for c in reload_time if  c.isdecimal())) if reload_time else 0
         reload_time += 10
         reload_time *= 1000
         # tqdm.write(f"{reload_time=}ms")

@@ -1,7 +1,7 @@
 ﻿from dataclasses import dataclass, field
 from typing import Callable, Any
 
-from .utils import _noop
+from parser.utils import _noop
 
 @dataclass
 class ParserConfig():
