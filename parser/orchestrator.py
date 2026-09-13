@@ -11,7 +11,7 @@ from parser.stores.wb import main as wb
 from parser.stores.ozon import main as ozon
 from parser.stores.flip import main as flip
 from parser.stores.kaspi import main as kaspi
-
+from shared.paths import PROFILE_DIR
 
 async def context_extender(context: BrowserContext):
     # tqdm.write(f"{context.browser.version=}")
@@ -39,9 +39,9 @@ async def context_extender(context: BrowserContext):
 
 async def __run__(fn, books: EBook|list[EBook], headless = True, persistent_context = True):
     async with async_playwright() as p:
-        state_path = "./parser/state.json"
+        state_path = PROFILE_DIR/"state_no_persistent.json"
         if persistent_context:
-            state_path = "./parser/profile/state.json"
+            state_path = PROFILE_DIR/"state_persistent.json"
         # загружаем состояние контекста
         storage_state = None
         if os.path.exists(state_path):
@@ -101,7 +101,7 @@ async def __run__(fn, books: EBook|list[EBook], headless = True, persistent_cont
         if persistent_context:
             context = await p.chromium.launch_persistent_context(
                             executable_path=executable_path,
-                            user_data_dir="./parser/profile",
+                            user_data_dir=str(PROFILE_DIR),
                             user_agent=user_agent,
                             channel=channel,
                             headless=headless,

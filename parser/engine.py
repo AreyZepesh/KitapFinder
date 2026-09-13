@@ -17,6 +17,7 @@ import random
 from parser.utils import prettify_html, normalizePrice, _noop
 from parser.domain import EBook, ShopCard
 from parser.config import ParserConfig
+from shared.paths import LOGS_DIR #, TMP_DIR
 
 ERROR_PREFIX = contextvars.ContextVar("Ошибка")
 LOG_URL = contextvars.ContextVar("")
@@ -24,9 +25,7 @@ CURRENT_PAGE = contextvars.ContextVar("")
 
 async def screen_and_save_page(dir_path: str, page: Page, file_prefix: str = "", file_suffix: str = ""):
     await page.evaluate("window.scrollTo(0, 0)")
-    while dir_path[-1] == "/":
-        dir_path = dir_path[:-1]
-    base_path = f"{dir_path}/{file_prefix}{dt.now().strftime("%Y-%m-%d %H-%M-%S")}{file_suffix}"
+    base_path = dir_path/f"{file_prefix}{dt.now().strftime("%Y-%m-%d %H-%M-%S")}{file_suffix}"
     await page.screenshot(path=f"{base_path}.png")
     with open(f"{base_path}.html", "w", encoding="utf-8-sig") as f:
         f.write(prettify_html(await page.content()))
@@ -49,7 +48,7 @@ def try_and_log_decor(header: str, repeats: int = 1):
                         
                         if trys+1 == repeats: # выводить ошибку только если она провалила последнюю попытку
                             page: Page = CURRENT_PAGE.get()
-                            await screen_and_save_page(dir_path = './logs/err', page = page)
+                            await screen_and_save_page(dir_path = LOGS_DIR/'err', page = page)
 
                             try:
                                 tb_lines = str(ex).split("\n")
@@ -67,7 +66,7 @@ def try_and_log_decor(header: str, repeats: int = 1):
                                 tqdm.write(f"\n... и ошибка сокращения ошибки)))")
                                 tqdm.write(f"{path_ex}")
 
-                        with open(f"./logs/_error.txt", 'a', encoding="utf8") as error_file:
+                        with open(LOGS_DIR/"_error.txt", 'a', encoding="utf8") as error_file:
                             error_file.write(base_out+"\n")
                             error_file.write(LOG_URL.get() + "\n")
                             error_file.write(f"{fn.__name__}\n")
@@ -202,13 +201,13 @@ async def parse_card(page: Page, card: Locator, book: EBook, parser_config: Pars
         if price is None:
             return
         article = await parser_config.get_card_article(card)
-        cover_path = f"./tmp/SCREEN-{dt.now().strftime("%Y-%m-%d")}/{book.title.replace(":","")}/{parser_config.store}_{price}_{article}.png"
+        # cover_path = TMP_DIR/f"SCREEN-{dt.now().strftime("%Y-%m-%d")}/{book.title.replace(":","")}/{parser_config.store}_{price}_{article}.png"
         cover_bytes = await image_from_response( await parser_config.get_card_cover(card, page) )
         return ShopCard(
             price = price, 
             store = parser_config.store, 
             article = article, 
-            cover_path = cover_path, 
+            # cover_path = cover_path, 
             cover_bytes = cover_bytes,
             )
 
@@ -223,7 +222,7 @@ async def run_parser(context: BrowserContext, book: EBook, parser_config: Parser
     for url in search_urls:
         LOG_URL.set(url[0])
         # TODO: Затычка сохраняющая ссылки, не нужна будет на этапе БД, 
-        with open(f"./logs/_urls.txt", 'a', encoding="utf8") as file:
+        with open(LOGS_DIR/"_urls.txt", 'a', encoding="utf8") as file:
             file.write(book.title + " " + url[0] + "\n")
         await goto_url(page, url[0])
 
@@ -258,14 +257,14 @@ async def run_parser(context: BrowserContext, book: EBook, parser_config: Parser
             # else:
             #     tqdm.write(f"{parser_config.store} {added=}")
     if parser_config.should_screen_on_empty and len(all_items) == 0:
-        await screen_and_save_page(dir_path = './logs/err/zero', page = page, file_prefix=f"{parser_config.store}_", file_suffix=f"_{book.title}")
+        await screen_and_save_page(dir_path = LOGS_DIR/'err/zero', page = page, file_prefix=f"{parser_config.store}_", file_suffix=f"_{book.title}")
     await page.close()
     return all_items
 
 @try_and_log_decor("Создание контекста", repeats=3)
 async def run_create_context(context: BrowserContext, parser_config: ParserConfig):
     # TODO: для отладки
-    # await screen_and_save_page(dir_path = './logs/zero_page', page = context.my_data["zero_page"], file_prefix=f"zero_")
+    # await screen_and_save_page(dir_path = LOGS_DIR/'err/zero_page', page = context.my_data["zero_page"], file_prefix=f"zero_")
     
     page = await context.new_page()
     CURRENT_PAGE.set(page)

@@ -1,5 +1,6 @@
 from dataclasses import dataclass, field, asdict
 from collections import defaultdict
+# from shared.paths import TMP_DIR
 
 STORE_URLS= {
     "wb": "https://global.wildberries.ru/catalog/{article}/detail.aspx",
@@ -14,7 +15,7 @@ class ShopCard():
     store: str
     article: str = field(compare=False)
     type_search: str = field(default=None, compare=False)
-    cover_path: str = field(default=None, compare=False)
+    # cover_path: str = field(default=None, compare=False)
     cover_bytes: bytes = field(default_factory=bytes, compare=False)
 
     def to_dict(self):
@@ -135,7 +136,7 @@ class EBook():
         Для фикса этого добавил проверку наличия точки и длины title больше 2"""
         # def save_to_csv(s1,s2,r):
             # import csv
-            # with open("./tmp/name.csv", 'a', encoding="utf-8-sig", newline="") as file:
+            # with open(TMP_DIR/"name.csv", 'a', encoding="utf-8-sig", newline="") as file:
             #     writer = csv.writer(file, delimiter=";")
                 # writer.writerow([s1,s2,r])
 

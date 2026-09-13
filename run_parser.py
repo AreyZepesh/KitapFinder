@@ -1,3 +1,5 @@
+import shared.env
+
 from parser.domain import EBook, ShopCard
 from z_test_books import all_books
 from saveloads import save_objects
@@ -7,22 +9,13 @@ from shutil import rmtree
 import os, sys
 from datetime import datetime as dt
 from parser import run
+from shared.paths import rm_log_files
+from shared.paths import TMP_DIR
+
 
 def main():
-    if os.path.exists("./logs/_urls.txt"):
-        os.remove("./logs/_urls.txt")
-    if os.path.exists("./logs/_error.txt"):
-        os.remove("./logs/_error.txt")
-    if os.path.exists(f"./logs/err"):
-        rmtree(f"./logs/err")
-    if os.path.exists(f"./tmp/SCREEN-{dt.now().strftime("%Y-%m-%d")}"):
-        rmtree(f"./tmp/SCREEN-{dt.now().strftime("%Y-%m-%d")}")
-    if os.path.exists(f"./tmp/SCREEN-ALT-{dt.now().strftime("%Y-%m-%d")}"):
-        rmtree(f"./tmp/SCREEN-ALT-{dt.now().strftime("%Y-%m-%d")}")
-    if os.path.exists(f"./logs/_nores"):
-        rmtree(f"./logs/_nores")
-    if os.path.exists(f"./logs/wb"):
-        rmtree(f"./logs/wb")
+    rm_log_files()
+
     time_start = dt.now().strftime("%Y-%m-%d %H-%M")
 
     books = []
@@ -51,7 +44,7 @@ def main():
     print(time_start)
     print(dt.now().strftime("%Y-%m-%d %H-%M"))
 
-    save_objects("./tmp/data.pkl", books)
+    save_objects(TMP_DIR/"data.pkl", books)
     render_html_page(books, "index_full")
 
     for b in books:
@@ -60,7 +53,7 @@ def main():
         b.optimize_stores_by_cover(from_covers_per_store = 0)
         # b.save_covers(alt_path = True)
     print(dt.now().strftime("%Y-%m-%d %H-%M"))
-    save_objects("./tmp/data_opt.pkl", books)
+    save_objects(TMP_DIR/"data_opt.pkl", books)
 
     render_html_page(books)
 
