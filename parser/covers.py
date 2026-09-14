@@ -3,7 +3,6 @@ from itertools import combinations
 from tqdm.asyncio import tqdm
 import cv2
 import numpy as np
-import sys
 
 from parser.domain import ShopCard
 from shared.env import get_bool_env

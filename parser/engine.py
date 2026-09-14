@@ -264,7 +264,7 @@ async def run_parser(context: BrowserContext, book: EBook, parser_config: Parser
 @try_and_log_decor("Создание контекста", repeats=3)
 async def run_create_context(context: BrowserContext, parser_config: ParserConfig):
     # TODO: для отладки
-    # await screen_and_save_page(dir_path = LOGS_DIR/'err/zero_page', page = context.my_data["zero_page"], file_prefix=f"zero_")
+    # await screen_and_save_page(dir_path = LOGS_DIR/'zero_page', page = context.my_data["zero_page"], file_prefix=f"zero_")
     
     page = await context.new_page()
     CURRENT_PAGE.set(page)

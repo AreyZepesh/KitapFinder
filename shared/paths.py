@@ -1,6 +1,9 @@
-﻿from pathlib import Path
+﻿import shared.env
+
+from pathlib import Path
 from shutil import rmtree
 import os
+
 
 env_base_dir = os.getenv( "KITAPFINDER_BASE_DIR")
 local_base_dir = Path(__file__).parent.parent.absolute()
@@ -23,11 +26,7 @@ def rm_log_files():
         if file_path.exists():
             os.remove(file_path)
 
-    dirs = [
-        "err", 
-        # "_nores", 
-        # "wb", 
-        "zero_page"]
+    dirs = ["err", "zero_page"]
     for dir in dirs:
         dir_path = Path(LOGS_DIR / dir)
         if os.path.exists(dir_path):
