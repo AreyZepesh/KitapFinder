@@ -23,7 +23,11 @@ def rm_log_files():
         if file_path.exists():
             os.remove(file_path)
 
-    dirs = ["err", "_nores", "wb", "zero_page"]
+    dirs = [
+        "err", 
+        # "_nores", 
+        # "wb", 
+        "zero_page"]
     for dir in dirs:
         dir_path = Path(LOGS_DIR / dir)
         if os.path.exists(dir_path):

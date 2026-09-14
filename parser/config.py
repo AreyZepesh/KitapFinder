@@ -5,9 +5,6 @@ from parser.utils import _noop
 
 @dataclass
 class ParserConfig():
-    def get(self, key, default = None):
-        return getattr(self, key, default)
-    
     def get_max_depth(self, item_in_block):
         if item_in_block == 0:
             return self.element_limit

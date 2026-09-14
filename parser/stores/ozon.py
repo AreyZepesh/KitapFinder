@@ -16,6 +16,8 @@ from parser.engine import (
     human_mouse_move,
     )
 
+COOKIE_DOMAIN = "ozon.kz"
+
 @try_and_log_decor("Проверка на noresult")
 async def _noresults(page: Page):
     noresults1 = await page.get_by_text("По вашему запросу товаров сейчас нет").count() 

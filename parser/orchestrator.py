@@ -8,7 +8,7 @@ from patchright.async_api import async_playwright, BrowserContext
 from parser.domain import EBook
 from parser.utils import state_filter
 from parser.stores.wb import main as wb
-from parser.stores.ozon import main as ozon
+from parser.stores.ozon import main as ozon, COOKIE_DOMAIN as OZON_COOKIE_DOMAIN
 from parser.stores.flip import main as flip
 from parser.stores.kaspi import main as kaspi
 from shared.paths import PROFILE_DIR
@@ -44,7 +44,7 @@ async def __run__(fn, books: EBook|list[EBook], headless = True, persistent_cont
             state_path = PROFILE_DIR/"state_persistent.json"
         # загружаем состояние контекста
         storage_state = None
-        if os.path.exists(state_path):
+        if state_path.exists():
             storage_state = state_path
         # Контекст задается для все сессии. После некоторые вещи сменить не выйдет. 
         viewport = {"width": 1920, "height": 1080}
@@ -121,7 +121,7 @@ async def __run__(fn, books: EBook|list[EBook], headless = True, persistent_cont
                 state = json.load(open(storage_state, encoding="utf-8"))
                 # cookies = state["cookies"]
                 # получаем только ozon state
-                cookies = state_filter(state, "ozon.kz")["cookies"]
+                cookies = state_filter(state, OZON_COOKIE_DOMAIN)["cookies"]
                 await context.add_cookies(cookies)
 
             await context_extender(context)
