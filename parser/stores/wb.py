@@ -203,32 +203,31 @@ async def _gen_cards_(page: Page, parser_config: ParserConfig):
 
     yield block
 
+@try_and_log_decor("Поиск антибота")
+async def _detect_antibot(page: Page) -> bool: #fn_detect_antibot
+    antibot = await page.get_by_text("Подозрительная активность").count()
+    # antibot += await page.get_by_text("подождите").count()
+    return antibot > 0
+
+@try_and_log_decor("Вычесление времени ожидания антибота")
+async def _get_antibot_wait_time(page: Page) -> bool: #fn_get_antibot_wait_time
+    reload_time = await page.locator('meta[http-equiv="refresh"]').first.get_attribute('content')
+    reload_time = int("".join(c for c in reload_time if  c.isdecimal())) if reload_time else 0
+    reload_time += 10
+    reload_time *= 1000
+    return reload_time
+
 @try_and_log_decor("Дополнительное ожидание страницы", repeats=3)
 async def _extra_wait_cat(page: Page, human_moves = human_mouse_move): #fn_extra_wait_cat
     loading = await page.locator("div.general-preloader j-initial-preloader").count()
     trys = 0
     while loading != 0 and trys < 50:
         # tqdm.write(f"{page.url=}: {loading=}, {trys=}")
-        await page.wait_for_timeout(5000)
+        await human_moves(page)
+        await page.wait_for_timeout(4000)
         loading = await page.locator("div.general-preloader j-initial-preloader").count()
         trys += 1
-        
-    antibot = await page.get_by_text("Подозрительная активность").count()
-    # antibot += await page.get_by_text("подождите").count()
-    if antibot > 0:
-        # tqdm.write(f"WB Ждем страницу, так как вылез антибот: {page.url}")
-        reload_time = await page.locator('meta[http-equiv="refresh"]').first.get_attribute('content')
-        reload_time = int("".join(c for c in reload_time if  c.isdecimal())) if reload_time else 0
-        reload_time += 10
-        reload_time *= 1000
-        # tqdm.write(f"{reload_time=}ms")
 
-        await page.wait_for_timeout(reload_time)
-        await page.reload()
-        await human_moves(page)
-        await page.wait_for_load_state()
-        await human_moves(page)
-    
     await expect(page.locator("div.product-card-list")).to_be_attached(timeout=7500)
 
     cookie = page.locator("div.fixed-block__cookies:has(button)")
@@ -275,7 +274,10 @@ async def main(context: BrowserContext, book: EBook, alter_search = False, creat
         fn_extra_wait_cat = _extra_wait_cat,
         fn_noresults = _noresults, 
         fn_currency = _currency,
-        
+
+        fn_detect_antibot = _detect_antibot,
+        fn_get_antibot_wait_time = _get_antibot_wait_time,
+
         # get_card_locator = lambda page: page.locator('//div[@class="product-card-list"]').get_by_role('article'),
         get_card_locator = lambda page: page.locator('div.product-card-list > article[data-card-index]'),
         # get_nextpage_locator = lambda page: page.locator("a.pagination-next:has-text('Следующая страница')"),

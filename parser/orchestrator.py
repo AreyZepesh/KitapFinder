@@ -127,7 +127,7 @@ async def __run__(fn, books: EBook|list[EBook], headless = True, persistent_cont
             await context_extender(context)
 
         # Создать контекст
-        await create_context(context)
+        await create_webcontext(context)
         await fn(context, books)
 
         # сохраняем состояние контекста
@@ -143,7 +143,7 @@ async def __run__(fn, books: EBook|list[EBook], headless = True, persistent_cont
             await context.close()
 
 
-async def create_context(context):
+async def create_webcontext(context):
     # await wb(context = context, book = None, create_context = True)
     # await flip(context = context, book = None, create_context = True)
     # await kaspi(context = context, book = None, create_context = True)
@@ -182,10 +182,6 @@ async def list_books(context, books: list[EBook]):
         # Паралельный запуск
         pbar = tqdm(books, ncols=80, desc="Парсим книжки")
         for book in pbar:
-        # for book in books:
-            # print(book.title)
-            # pbar.set_description(book.title)
-
             await one_book(context, book)
 
 def run(books: EBook|list[EBook], headless = True, **kwargs):

@@ -1,7 +1,8 @@
+from patchright._impl._errors import TimeoutError
 from patchright.async_api import (
     expect, 
     Page, BrowserContext, 
-    Locator, APIResponse,
+    Locator, APIResponse, 
     )
 import re
 # from tqdm.asyncio import tqdm
@@ -13,7 +14,7 @@ from parser.engine import (
     run_parser, try_and_log_decor, 
     run_create_context,
     # nextpage_gen_cards, 
-    human_mouse_move,
+    human_mouse_move, wait_page,
     )
 
 COOKIE_DOMAIN = "ozon.kz"
@@ -150,7 +151,8 @@ async def _gen_cards(page: Page, parser_config: ParserConfig):
     async def _get_last_article(locator_element: Locator, parser_config: ParserConfig):
         return await parser_config.get_card_article(locator_element.last)
 
-    await _extra_wait_cat(page)
+    # await _extra_wait_cat(page)
+    await wait_page(page, parser_config)
 
     zero_part_css = 'div#contentScrollPaginator div[data-replace-layout-path]:has(div[data-widget="tileGridDesktop"])'
     zero_part = page.locator(f'{zero_part_css}')
@@ -224,21 +226,26 @@ async def _gen_cards(page: Page, parser_config: ParserConfig):
     #     tqdm.write(f"{completed_items}") 
     #     tqdm.write(f"{part_indexes}") 
 
-@try_and_log_decor("Дополнительное ожидание страницы", repeats=3)
-async def _extra_wait_cat(page: Page, human_moves = human_mouse_move): #fn_extra_wait_cat
+@try_and_log_decor("Поиск антибота")
+async def _detect_antibot(page: Page) -> bool: #fn_detect_antibot
     antibot = await page.locator('[src*="ozon.kz/challenge.html"]').count()
     antibot += await page.get_by_text('Похоже, нет соединения').count()
-    if antibot > 0:
-        # tqdm.write(f"ozon словили антибота: {page.url}, пробуем перезагрузить")
-        # await page.context.clear_cookies(domain="ozon.ru")
-        # await page.context.clear_cookies(domain="ozon.kz")
-        await page.reload()
-        await human_moves(page)
-        await page.wait_for_timeout(10000)
-        await human_moves(page)
+    return antibot > 0
 
-    await page.wait_for_load_state("networkidle")
-    await page.wait_for_timeout(500) # Тестовая пауза
+@try_and_log_decor("Вычесление времени ожидания антибота")
+async def _get_antibot_wait_time(page: Page) -> bool: #fn_get_antibot_wait_time
+    return 10000
+
+@try_and_log_decor("Дополнительное ожидание страницы", repeats=3)
+async def _extra_wait_cat(page: Page, human_moves = human_mouse_move): #fn_extra_wait_cat
+    await human_moves(page)
+    try:
+        await page.wait_for_load_state("networkidle")
+    except TimeoutError:
+        await human_moves(page)
+        await page.wait_for_timeout(500)
+    except:
+        raise
     await expect(page.locator("div.container")).to_be_attached()
     await expect(page.locator("div#contentScrollPaginator")).to_be_attached()
 
@@ -279,6 +286,9 @@ async def main(context: BrowserContext, book: EBook, alter_search = False, creat
         fn_login = _login,
         fn_currency = _currency,
         fn_city = _city,
+
+        fn_detect_antibot = _detect_antibot,
+        fn_get_antibot_wait_time = _get_antibot_wait_time,
 
         # get_card_locator = lambda page: page.locator('div[data-widget="tileGridDesktop"] > div[data-index][class][style]'),
         get_card_locator = lambda page: page.locator('div[data-widget="tileGridDesktop"] div[data-index][class][style]'),

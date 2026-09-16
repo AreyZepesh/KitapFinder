@@ -30,6 +30,11 @@ class ParserConfig():
     fn_currency: Callable[[Any], None] = field(default=_noop) # переключение валюты
     fn_city: Callable[[Any], None] = field(default=_noop) # выбор города
 
+    fn_detect_antibot: Callable[[Any], bool] = field(default=_noop)  # True, если поймали антибот-страниц
+    fn_get_antibot_wait_time: Callable[[Any], bool] = field(default=_noop) 
+    # Возвращает время ожидания в мс, специфичное для магазина. 
+    # Если магазин не может определить точное время — возвращает разумный дефолт сам.
+
     get_card_locator: Callable[[Any], Any] = field(default=_noop)
     get_nextpage_locator: Callable[[Any], Any] = field(default=_noop)
     element_limit: int = field(default=250)

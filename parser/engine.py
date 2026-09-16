@@ -18,6 +18,7 @@ from parser.utils import prettify_html, normalizePrice, _noop
 from parser.domain import EBook, ShopCard
 from parser.config import ParserConfig
 from shared.paths import LOGS_DIR #, TMP_DIR
+from parser.exceptions import ParserControlException, AntibotDetectedError
 
 ERROR_PREFIX = contextvars.ContextVar("Ошибка")
 LOG_URL = contextvars.ContextVar("")
@@ -30,7 +31,7 @@ async def screen_and_save_page(dir_path: str, page: Page, file_prefix: str = "",
     with open(f"{base_path}.html", "w", encoding="utf-8-sig") as f:
         f.write(prettify_html(await page.content()))
 
-def try_and_log_decor(header: str, repeats: int = 1):
+def try_and_log_decor(header: str, repeats: int = 1, page_shot = True):
     """Асинхронный декоратор с повтором и логированием ошибок."""
     def decorator(fn):
         @wraps(fn)
@@ -38,6 +39,8 @@ def try_and_log_decor(header: str, repeats: int = 1):
             for trys in range(repeats):
                 try:
                    return await fn(*args, **kwargs)
+                except ParserControlException:
+                    raise # сигнальные исключения не ретраим и не глушим
                 except Exception as ex:
                         base_out = "\n".join([
                                 f"{dt.now().strftime("%Y-%m-%d %H-%M-%S")}",
@@ -47,8 +50,9 @@ def try_and_log_decor(header: str, repeats: int = 1):
                         tqdm.write(f"{base_out}")
                         
                         if trys+1 == repeats: # выводить ошибку только если она провалила последнюю попытку
-                            page: Page = CURRENT_PAGE.get()
-                            await screen_and_save_page(dir_path = LOGS_DIR/'err', page = page)
+                            if page_shot:
+                                page: Page = CURRENT_PAGE.get()
+                                await screen_and_save_page(dir_path = LOGS_DIR/'err', page = page)
 
                             try:
                                 tb_lines = str(ex).split("\n")
@@ -193,6 +197,15 @@ async def wait_page(page: Page, parser_config: ParserConfig):
     await page.wait_for_timeout(parser_config.wait_for_load_time)
     # await human_mouse_move(page)
 
+@try_and_log_decor("Перезагрузка страница из за антибота", repeats=3)
+async def recover_from_antibot(page: Page, parser_config: ParserConfig):
+    tqdm.write(f"[{parser_config.store}] Антибот, восстанавливаемся")
+    wait_ms = await parser_config.fn_get_antibot_wait_time(page)
+    await human_mouse_move(page)
+    await page.wait_for_timeout(wait_ms)
+    await page.reload()
+    await wait_page(page, parser_config)
+
 @try_and_log_decor("Обработка одной карточки", repeats=3)
 async def parse_card(page: Page, card: Locator, book: EBook, parser_config: ParserConfig) -> ShopCard:
     card_title = await parser_config.get_card_title(card)
@@ -231,7 +244,14 @@ async def run_parser(context: BrowserContext, book: EBook, parser_config: Parser
         if await parser_config.fn_extra_goto(page):
             await wait_page(page, parser_config)
             
+        # Антибот блок, чаще всего ловится на этом этапе
         await parser_config.fn_extra_wait_cat(page)
+        trys = 0
+        while await parser_config.fn_detect_antibot(page) and trys < 3:
+            tqdm.write(f"\n!!! Словили отвал на дополнительном ожидании, пробуем антибот\n")
+            await recover_from_antibot(page, parser_config)
+            trys +=1
+            tqdm.write(f"\n{book.title}: {parser_config.store} {trys=}")
 
         if await parser_config.fn_noresults(page):
             continue
