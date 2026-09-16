@@ -82,8 +82,8 @@ def try_and_log_decor(header: str, repeats: int = 1, page_shot = True):
 async def human_mouse_move(page, steps=25):
     # return
     box = await page.evaluate("() => ({w: window.innerWidth, h: window.innerHeight})")
-    start_x, start_y = random.randint(0, box["w"]), random.randint(0, box["h"])
-    target_x, target_y, = random.randint(0, box["w"]), random.randint(0, box["h"])
+    start_x, start_y = random.randint(0, box["w"]), random.randint(box["h"]//4, box["h"])
+    target_x, target_y, = random.randint(0, box["w"]), random.randint(box["h"]//4, box["h"])
     for i in range(steps):
         x = start_x + (target_x - start_x) * i / steps + random.uniform(-3, 3)
         y = start_y + (target_y - start_y) * i / steps + random.uniform(-3, 3)
@@ -198,13 +198,23 @@ async def wait_page(page: Page, parser_config: ParserConfig):
     # await human_mouse_move(page)
 
 @try_and_log_decor("Перезагрузка страница из за антибота", repeats=3)
-async def recover_from_antibot(page: Page, parser_config: ParserConfig):
+async def recover_from_antibot(page: Page, parser_config: ParserConfig, max_page_reloads: int = 3):
     tqdm.write(f"[{parser_config.store}] Антибот, восстанавливаемся")
-    wait_ms = await parser_config.fn_get_antibot_wait_time(page)
-    await human_mouse_move(page)
-    await page.wait_for_timeout(wait_ms)
-    await page.reload()
-    await wait_page(page, parser_config)
+    for attempt in range(max_page_reloads):
+        wait_ms = await parser_config.fn_get_antibot_wait_time(page)
+        await human_mouse_move(page)
+        await page.wait_for_timeout(wait_ms)
+        await page.reload()
+        await wait_page(page, parser_config)
+        tqdm.write(f"Попытка: {attempt+1}")
+        if not await parser_config.fn_detect_antibot(page):
+            tqdm.write("антибот не найден")
+            return
+        
+    s = f"{parser_config.store}: антибот остался после {max_page_reloads} reload"
+    tqdm.write("Антибот остался")
+    tqdm.write(s)
+    raise AntibotDetectedError(s)
 
 @try_and_log_decor("Обработка одной карточки", repeats=3)
 async def parse_card(page: Page, card: Locator, book: EBook, parser_config: ParserConfig) -> ShopCard:
@@ -224,6 +234,27 @@ async def parse_card(page: Page, card: Locator, book: EBook, parser_config: Pars
             cover_bytes = cover_bytes,
             )
 
+async def wait_and_reload(page: Page, parser_config: ParserConfig, reload = False):
+    if reload:
+        await page.reload()
+
+    await wait_page(page, parser_config)
+
+    if await parser_config.fn_extra_goto(page):
+        await wait_page(page, parser_config)
+        
+    await parser_config.fn_extra_wait_cat(page)
+
+    # Антибот блок, чаще всего ловится на этом этапе
+    if await parser_config.fn_detect_antibot(page):
+        tqdm.write("Мы входим в recover_from_antibot")
+        # try:
+        await recover_from_antibot(page, parser_config)
+        # except Exception as e:
+        #     tqdm.write(f"Ошибка: {e}")
+        #     raise e
+        tqdm.write("Мы вышли из recover_from_antibot")
+
 @try_and_log_decor("Парсим данные: основная функция")
 async def run_parser(context: BrowserContext, book: EBook, parser_config: ParserConfig) ->  list[ShopCard]:
     """Парсер, принимает контекст и объект книги, возвращает список объектов с 'карточками'"""
@@ -239,22 +270,17 @@ async def run_parser(context: BrowserContext, book: EBook, parser_config: Parser
             file.write(book.title + " " + url[0] + "\n")
         await goto_url(page, url[0])
 
-        await wait_page(page, parser_config)
-
-        if await parser_config.fn_extra_goto(page):
-            await wait_page(page, parser_config)
+        await wait_and_reload(page, parser_config)
             
-        # Антибот блок, чаще всего ловится на этом этапе
-        await parser_config.fn_extra_wait_cat(page)
-        trys = 0
-        while await parser_config.fn_detect_antibot(page) and trys < 3:
-            tqdm.write(f"\n!!! Словили отвал на дополнительном ожидании, пробуем антибот\n")
-            await recover_from_antibot(page, parser_config)
-            trys +=1
-            tqdm.write(f"\n{book.title}: {parser_config.store} {trys=}")
-
         if await parser_config.fn_noresults(page):
-            continue
+            if parser_config.should_reload_page_if_nores:
+                tqdm.write(f"  >>>   Нет результатов, пробуем обновить страницу")
+                await wait_and_reload(page, parser_config, reload = True)
+                if await parser_config.fn_noresults(page):
+                    tqdm.write(f"  >>>   Всё еще: Нет результатов")
+                    continue
+            else:
+                continue
 
         async for block in parser_config.generator_cards(page, parser_config):
             # Каталог прогружается постранично/поблочно через генератор,

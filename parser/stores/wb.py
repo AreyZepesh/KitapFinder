@@ -22,12 +22,6 @@ async def _extra_urls(page: Page):
     replaced = await page.locator("a.searching-results__query-replaced").first.is_visible()
     if replaced:
         await page.goto(page.url+"&nocorrection=1")
-    
-    await page.wait_for_timeout(200)
-    await page.reload() # часто с первой загрузки данные не корректные, обновление это лечит 
-    await human_mouse_move(page)
-
-    if replaced:
         return True
 
 @try_and_log_decor("Проверка на noresult")
@@ -159,50 +153,6 @@ async def _gen_cards(page: Page, parser_config: ParserConfig):
 
         yield block
 
-
-async def _gen_cards_(page: Page, parser_config: ParserConfig):
-    """ Генератор списка локаторов карточек, возвращает locator \n
-    Этот возвращает один раз, уже прокрученную страницу
-    Время выполнения на 65 книг было 27:54
-    """
-    @try_and_log_decor("Генератор списка карточек: скролл", repeats = 3)
-    async def _page_scroll_to(page: Page, locator_element: Locator = None, mouse_wheel: bool = False):
-        if locator_element:
-            await locator_element.scroll_into_view_if_needed()
-
-        if mouse_wheel:
-            height = await page.evaluate("() => window.innerHeight")
-            scroll_to = height * 3
-            await page.mouse.wheel(0, scroll_to)
-        await page.wait_for_timeout(200)
-
-    cards_returned = 0
-    cards_loaded = 0
-    retries = 0
-    block = parser_config.get_card_locator(page)
-
-    # tqdm.write(f"До цикла: {total_cards=} {retries=} {cards_loaded=}")
-    while retries < 3 and cards_returned < parser_config.element_limit:
-        cards_loaded = await block.count()
-
-        if cards_loaded > cards_returned:
-            # tqdm.write(f"Нормальноый ход, крутим до последнего элемента: {cards_returned=} {retries=} {cards_loaded=}")
-            retries = 0
-            cards_returned = cards_loaded
-            await _page_scroll_to(page, locator_element = block.last)
-        # elif cards_loaded == 0 or cards_loaded == cards:
-        elif cards_loaded == 0 and cards_loaded != cards_returned:
-            raise Exception(f"Неожиданная ошибка, сейчас карточек ноль, но недавно было больше: {cards_returned=} {retries=} {cards_loaded=}")
-        else:
-            retries += 1
-            # tqdm.write(f"Вход в ручную прокрутку: {cards_returned=} {retries=} {cards_loaded=}")
-            await _page_scroll_to(page, mouse_wheel = True)
-
-    # else:
-    #     tqdm.write(f"while отработал: {cards_returned=} {retries=} {cards_loaded=}")
-
-    yield block
-
 @try_and_log_decor("Поиск антибота")
 async def _detect_antibot(page: Page) -> bool: #fn_detect_antibot
     antibot = await page.get_by_text("Подозрительная активность").count()
@@ -217,7 +167,7 @@ async def _get_antibot_wait_time(page: Page) -> bool: #fn_get_antibot_wait_time
     reload_time *= 1000
     return reload_time
 
-@try_and_log_decor("Дополнительное ожидание страницы", repeats=3)
+@try_and_log_decor("Дополнительное ожидание страницы", repeats=1)
 async def _extra_wait_cat(page: Page, human_moves = human_mouse_move): #fn_extra_wait_cat
     loading = await page.locator("div.general-preloader j-initial-preloader").count()
     trys = 0
@@ -269,6 +219,7 @@ async def main(context: BrowserContext, book: EBook, alter_search = False, creat
 
         should_continue_on_empty = True,
         # should_screen_on_empty = True,
+        # should_reload_page_if_nores = True,
 
         fn_extra_goto = _extra_urls,
         fn_extra_wait_cat = _extra_wait_cat,

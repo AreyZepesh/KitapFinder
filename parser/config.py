@@ -18,6 +18,7 @@ class ParserConfig():
     skip_scroll: bool = field(default=False) # engine.scroll_to_last 
     should_continue_on_empty: bool = field(default=False) # engine.run_parser, запускать для магазина если результатов 0
     should_screen_on_empty: bool = field(default=False) # engine.run_parser, для магазина если результатов 0
+    should_reload_page_if_nores: bool = field(default=False)
 
     wait_for_load_stat: str = field(default=None)
     wait_for_load_time: int = field(default=500)

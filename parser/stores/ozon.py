@@ -236,7 +236,7 @@ async def _detect_antibot(page: Page) -> bool: #fn_detect_antibot
 async def _get_antibot_wait_time(page: Page) -> bool: #fn_get_antibot_wait_time
     return 10000
 
-@try_and_log_decor("Дополнительное ожидание страницы", repeats=3)
+@try_and_log_decor("Дополнительное ожидание страницы", repeats=1)
 async def _extra_wait_cat(page: Page, human_moves = human_mouse_move): #fn_extra_wait_cat
     await human_moves(page)
     try:
