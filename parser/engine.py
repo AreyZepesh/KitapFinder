@@ -82,11 +82,14 @@ def try_and_log_decor(header: str, repeats: int = 1, page_shot = True):
 async def human_mouse_move(page, steps=25):
     # return
     box = await page.evaluate("() => ({w: window.innerWidth, h: window.innerHeight})")
-    start_x, start_y = random.randint(0, box["w"]), random.randint(box["h"]//4, box["h"])
-    target_x, target_y, = random.randint(0, box["w"]), random.randint(box["h"]//4, box["h"])
+    not_up = box["h"]//4
+    start_x, start_y = random.randint(0, box["w"]), random.randint(not_up, box["h"])
+    target_x, target_y, = random.randint(0, box["w"]), random.randint(not_up, box["h"])
     for i in range(steps):
         x = start_x + (target_x - start_x) * i / steps + random.uniform(-3, 3)
         y = start_y + (target_y - start_y) * i / steps + random.uniform(-3, 3)
+        if y <= not_up:
+            y =  random.randint(target_y, target_y)
         await page.mouse.move(x, y)
         await asyncio.sleep(random.uniform(0.005, 0.02))
 
@@ -309,9 +312,6 @@ async def run_parser(context: BrowserContext, book: EBook, parser_config: Parser
 
 @try_and_log_decor("Создание контекста", repeats=3)
 async def run_create_context(context: BrowserContext, parser_config: ParserConfig):
-    # TODO: для отладки
-    # await screen_and_save_page(dir_path = LOGS_DIR/'zero_page', page = context.my_data["zero_page"], file_prefix=f"zero_")
-    
     page = await context.new_page()
     CURRENT_PAGE.set(page)
     ERROR_PREFIX.set(f"{parser_config.store}")
@@ -325,8 +325,11 @@ async def run_create_context(context: BrowserContext, parser_config: ParserConfi
     # указываем адрес
     await parser_config.fn_city(page)
 
-    # if parser_config.store.lower() == "wb":
-        # await asyncio.to_thread(input, "Продолжить? ")
+    # if parser_config.store.lower() in [
+    #     "wb", 
+    #     # "ozon",
+    #     ]:
+    #     await asyncio.to_thread(input, f"Продолжить? {parser_config.store}")
         
     await page.close()
     pass

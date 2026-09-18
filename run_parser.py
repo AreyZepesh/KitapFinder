@@ -12,12 +12,12 @@ from parser import run
 from shared.paths import rm_log_files
 from shared.paths import TMP_DIR
 
-def __run__(books: EBook|list[EBook], headless: bool = True, persistent_context: bool = True, save_res = True, is_test = False):
+def __run__(books: EBook|list[EBook], headless: bool = True, persistent_context: bool = True, save_res = True, is_test = False, need_zero_page: bool = False):
     rm_log_files()
 
     time_start = dt.now().strftime("%Y-%m-%d %H-%M")
 
-    run(books=books, headless = headless, persistent_context = persistent_context)
+    run(books=books, headless = headless, persistent_context = persistent_context, need_zero_page = need_zero_page)
 
     print(time_start)
     print(dt.now().strftime("%Y-%m-%d %H-%M"))
@@ -46,17 +46,20 @@ def run_regular():
     books = [EBook(**book) for book in regular_books]
     __run__(books=books)
 
-def run_custom_list(list_book: list = all_book):
-    books = [EBook(**book) for book in list_book]
+def run_custom_list(list_books: list = None):
+    if list_books is None:
+        list_books = all_book
+    books = [EBook(**book) for book in list_books]
     __run__(books=books, headless = True)
 
-def run_short_test(headless = False):
+def run_short_test(headless = False, list_books = None, need_zero_page: bool = False):
     # тестовый список: одна книга, которая почти всегда в наличии, остальные опционально
-    books = [
-        EBook(**{'title': 'Три мушкетера', 'author': 'Дюма', 'isbns': ['978-5-389-19881-4'], 'only_isbn': False}),
-        EBook(**{'title': 'Влад Талтош', 'author': 'Браст', 'isbns': ["978-5-04-211206-5"], 'only_isbn': True}), 
-        ]
-    __run__(books = books, headless = headless, is_test = True)
+    if list_books is None:
+        list_books = [
+            EBook(**{'title': 'Три мушкетера', 'author': 'Дюма', 'isbns': ['978-5-389-19881-4'], 'only_isbn': False}),
+            EBook(**{'title': 'Влад Талтош', 'author': 'Браст', 'isbns': ["978-5-04-211206-5"], 'only_isbn': True}), 
+            ]
+    __run__(books = list_books, headless = headless, is_test = True, need_zero_page = need_zero_page)
 
 def main():
     run_regular()
