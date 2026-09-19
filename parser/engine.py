@@ -20,9 +20,9 @@ from parser.config import ParserConfig
 from shared.paths import LOGS_DIR #, TMP_DIR
 from parser.exceptions import ParserControlException, AntibotDetectedError
 
-ERROR_PREFIX = contextvars.ContextVar("Ошибка")
-LOG_URL = contextvars.ContextVar("")
-CURRENT_PAGE = contextvars.ContextVar("")
+ERROR_PREFIX = contextvars.ContextVar("Ошибка", default="")
+LOG_URL = contextvars.ContextVar("", default="")
+CURRENT_PAGE = contextvars.ContextVar("", default=None)
 
 async def screen_and_save_page(dir_path: str, page: Page, file_prefix: str = "", file_suffix: str = ""):
     await page.evaluate("window.scrollTo(0, 0)")
@@ -52,7 +52,8 @@ def try_and_log_decor(header: str, repeats: int = 1, page_shot = True):
                         if trys+1 == repeats: # выводить ошибку только если она провалила последнюю попытку
                             if page_shot:
                                 page: Page = CURRENT_PAGE.get()
-                                await screen_and_save_page(dir_path = LOGS_DIR/'err', page = page)
+                                if page is not None:
+                                    await screen_and_save_page(dir_path = LOGS_DIR/'err', page = page)
 
                             try:
                                 tb_lines = str(ex).split("\n")
@@ -79,17 +80,20 @@ def try_and_log_decor(header: str, repeats: int = 1, page_shot = True):
         return wrapper
     return decorator
 
-async def human_mouse_move(page, steps=25):
-    # return
-    box = await page.evaluate("() => ({w: window.innerWidth, h: window.innerHeight})")
-    not_up = box["h"]//4
-    start_x, start_y = random.randint(0, box["w"]), random.randint(not_up, box["h"])
-    target_x, target_y, = random.randint(0, box["w"]), random.randint(not_up, box["h"])
+async def human_mouse_move(page: Page, skip_move: bool = False, steps: int = 25):
+    if skip_move:
+        return 
+    if not page.context.window_box:
+        await page.wait_for_timeout(200)
+        page.context.window_box = await page.evaluate("() => ({w: window.innerWidth, h: window.innerHeight})")
+    # not_up = page.context.window_box["h"]//3
+    start_x, start_y = random.randint(0, page.context.window_box["w"]), random.randint(0, page.context.window_box["h"])
+    target_x, target_y, = random.randint(0, page.context.window_box["w"]), random.randint(0, page.context.window_box["h"])
     for i in range(steps):
         x = start_x + (target_x - start_x) * i / steps + random.uniform(-3, 3)
         y = start_y + (target_y - start_y) * i / steps + random.uniform(-3, 3)
-        if y <= not_up:
-            y =  random.randint(target_y, target_y)
+        # if y <= not_up:
+        #     y =  random.randint(target_y, target_y)
         await page.mouse.move(x, y)
         await asyncio.sleep(random.uniform(0.005, 0.02))
 
@@ -195,17 +199,17 @@ async def goto_url(page: Page, url: str):
 
 @try_and_log_decor("Ожидание страницы", repeats=3)
 async def wait_page(page: Page, parser_config: ParserConfig):
-    await human_mouse_move(page)
+    await human_mouse_move(page, parser_config.skip_human_move)
     await page.wait_for_load_state(parser_config.wait_for_load_stat)
     await page.wait_for_timeout(parser_config.wait_for_load_time)
-    # await human_mouse_move(page)
+    # await human_mouse_move(page, parser_config.skip_human_move)
 
 @try_and_log_decor("Перезагрузка страница из за антибота", repeats=3)
 async def recover_from_antibot(page: Page, parser_config: ParserConfig, max_page_reloads: int = 3):
     tqdm.write(f"[{parser_config.store}] Антибот, восстанавливаемся")
     for attempt in range(max_page_reloads):
         wait_ms = await parser_config.fn_get_antibot_wait_time(page)
-        await human_mouse_move(page)
+        await human_mouse_move(page, parser_config.skip_human_move)
         await page.wait_for_timeout(wait_ms)
         await page.reload()
         await wait_page(page, parser_config)

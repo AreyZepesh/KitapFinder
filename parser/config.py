@@ -16,6 +16,7 @@ class ParserConfig():
     isbn_escaping_dash: bool = field(default=False) # экранируем тире в isbn
     
     skip_scroll: bool = field(default=False) # engine.scroll_to_last 
+    skip_human_move: bool = field(default=False) 
     should_continue_on_empty: bool = field(default=False) # engine.run_parser, запускать для магазина если результатов 0
     should_screen_on_empty: bool = field(default=False) # engine.run_parser, для магазина если результатов 0
     should_reload_page_if_nores: bool = field(default=False)

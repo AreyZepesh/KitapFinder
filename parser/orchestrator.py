@@ -19,7 +19,7 @@ from shared.paths import PROFILE_DIR, TMP_DIR, LOGS_DIR
 
 STORE_TASKS = {
     "wb": lambda ctx, book: wb(context=ctx, book=book),
-    # "wb_alt": lambda ctx, book: wb(context=ctx, book=book, alter_search=True),ёё
+    # "wb_alt": lambda ctx, book: wb(context=ctx, book=book, alter_search=True),
     "flip": lambda ctx, book: flip(context=ctx, book=book),
     "kaspi": lambda ctx, book: kaspi(context=ctx, book=book),
     "ozon": lambda ctx, book: ozon(context=ctx, book=book, alter_search=True),
@@ -131,6 +131,8 @@ async def browser_context(headless: bool = True, persistent_context: bool = True
                             window.chrome = { runtime: {} };
                         }""")
         
+        context.window_box = {}
+        
         try:
             if need_zero_page:
                 await create_zero_page(context)
@@ -181,13 +183,17 @@ async def run_books_with_recovery(books: EBook|list[EBook], headless: bool = Tru
 
 
 async def create_webcontext(context):
-     await asyncio.gather(
+     results = await asyncio.gather(
             wb(context = context, book = None, create_context = True),
             flip(context = context, book = None, create_context = True),
             kaspi(context = context, book = None, create_context = True),
             ozon(context = context, book = None, create_context = True),
-            # return_exceptions=True,
+            return_exceptions=True,
             )
+     
+     for res in results:
+        if isinstance(res, Exception):
+            tqdm.write(f"Прогрев магазина не удался: {res!r}")
 
 
 async def one_book(context, book: EBook, labels: list[str] | None = None) -> list[str]:

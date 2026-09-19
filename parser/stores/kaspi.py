@@ -94,6 +94,7 @@ async def main(context: BrowserContext, book: EBook, create_context = False) -> 
         base_url = f"https://kaspi.kz/shop/search/?q=:availableInZone:551010000:category:Books&text=",
         
         skip_scroll = True,
+        skip_human_move = True,
 
         fn_noresults = _noresults, 
         fn_city = _city,

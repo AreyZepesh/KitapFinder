@@ -71,6 +71,9 @@ async def main(context: BrowserContext, book: EBook, create_context = False) -> 
         isbn_escaping_dash = True,
         fn_noresults = _noresults, 
         # fn_click_author = _click_author,
+        wait_for_load_time = 1000,
+        
+        skip_human_move = True,
 
         get_card_locator = lambda page: page.locator('div.new-product'),
         get_nextpage_locator = lambda page: page.locator("a[data-page]:has-text('Вперед')"),
