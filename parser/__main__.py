@@ -1,4 +1,4 @@
-from parser.engine import EBook
+from parser.domain import EBook
 from parser.orchestrator import run
 
 def main(books: EBook|list[EBook], headless = True, persistent_context = True):

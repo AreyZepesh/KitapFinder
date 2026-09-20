@@ -1,4 +1,4 @@
-﻿from patchright.async_api import (
+from patchright.async_api import (
     # expect, 
     Page, BrowserContext, 
     Locator, APIResponse,

@@ -26,15 +26,7 @@ class ShopCard():
         if pattern:
             return pattern.format(article=self.article)
         return
-    
-    def save_cover(self, alt_path: bool = False):
-        from parser.utils import save_image_from_bytes
 
-        path = f"{self.cover_path}-cover"
-        if alt_path:
-            path = path.replace("SCREEN-", "SCREEN-ALT-")
-        save_image_from_bytes(self.cover_bytes, path)
-    
 @dataclass
 class EBook():
     title: str
