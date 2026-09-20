@@ -1,11 +1,19 @@
-from .common import (
-    expect, Page,
-    BrowserContext, Locator, APIResponse,
-    EBook, ShopCard, ParserConfig,
+from patchright.async_api import (
+    expect, 
+    Page, BrowserContext, 
+    Locator, APIResponse,
+    )
+import re
+# from tqdm.asyncio import tqdm
+
+# from parser.utils import _noop
+from parser.domain import EBook, ShopCard
+from parser.config import ParserConfig
+from parser.engine import (
     run_parser, try_and_log_decor, 
-    run_parser_test, run_create_context,
-    nextpage_gen_cards,
-    tqdm, re,
+    run_create_context,
+    nextpage_gen_cards, 
+    # human_mouse_move,
     )
 
 @try_and_log_decor("Проверка на noresult")
@@ -74,7 +82,7 @@ async def _card_cover(card: Locator, page: Page) -> APIResponse:
         return req
     except Exception as ex:
         ex.add_note(f"URL изображения: {img_url}")
-        tqdm.write(f"URL изображения: {img_url}")
+        # tqdm.write(f"URL изображения: {img_url}")
         raise ex
 
 # async def _card_info(card: Locator):
@@ -84,6 +92,9 @@ async def main(context: BrowserContext, book: EBook, create_context = False) -> 
     parser_config = ParserConfig(
         store = "kaspi",
         base_url = f"https://kaspi.kz/shop/search/?q=:availableInZone:551010000:category:Books&text=",
+        
+        skip_scroll = True,
+        skip_human_move = True,
 
         fn_noresults = _noresults, 
         fn_city = _city,
@@ -102,14 +113,3 @@ async def main(context: BrowserContext, book: EBook, create_context = False) -> 
     if create_context:
         return await run_create_context(context, parser_config)
     return await run_parser(context, book, parser_config)
-
-def _no_only_isbn_urls(base_url, book):
-    import copy
-    from .common import get_search_urls
-    if book.only_isbn:
-        book_k = copy.deepcopy(book)
-        book_k.only_isbn = False
-        search_urls = get_search_urls(base_url, book_k) 
-    else:
-        search_urls = get_search_urls(base_url, book)
-    return search_urls

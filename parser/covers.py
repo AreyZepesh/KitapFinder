@@ -1,10 +1,11 @@
 from collections import defaultdict
 from itertools import combinations
-from tqdm import tqdm
+from tqdm.asyncio import tqdm
 import cv2
 import numpy as np
-from models import ShopCard
-import sys
+
+from parser.domain import ShopCard
+from shared.env import get_bool_env
 
 def find_duplicate_via_hash(img_bytes1: bytes, img_bytes2: bytes, **kwargs) -> bool:
     """Сравниваем хеш двух байтмассивов изображение, возвращает True если совпадают"""
@@ -189,7 +190,8 @@ def optimize_stores_by_cover(data: list[ShopCard], from_covers_per_store = 0):
 
         # сравнение и оптимизации с высокими требованиями к железу - только на основном компе с виндой
         # TODO не забыть убрать, если будет железо мощнее
-        if sys.platform == "win32":
+        if get_bool_env("ENABLE_HEAVY_DEDUP", default=True): 
+            # NOTE: по умолчанию включено, так как ограничивать нужно лишь на слабых машинах
             # Прогоняем сравнение через OpenCV
             duplicates = _connected_indices(price_cards, find_dublicate_via_opencv, 
                                             # **{"method": "akaze", "reference_score": 0.5}

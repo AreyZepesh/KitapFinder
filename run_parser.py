@@ -1,79 +1,68 @@
-from models import EBook, ShopCard
-from z_test_books import all_books, books_Aizada
-from utils import save_objects, save_image_from_bytes
-from services.html_generator import render_html_page
+import shared.env
+
+from parser.domain import EBook, ShopCard
+from z_test_books import regular_books, extra_books_1, extra_books_2, all_book
+from saveloads import save_objects
+from html_generator import render_html_page
 
 from shutil import rmtree
 import os, sys
 from datetime import datetime as dt
 from parser import run
+from shared.paths import rm_log_files
+from shared.paths import TMP_DIR
 
-def main():
-    if os.path.exists("./logs/_urls.txt"):
-        os.remove("./logs/_urls.txt")
-    if os.path.exists("./logs/_error.txt"):
-        os.remove("./logs/_error.txt")
-    if os.path.exists(f"./logs/err"):
-        rmtree(f"./logs/err")
-    if os.path.exists(f"./tmp/SCREEN-{dt.now().strftime("%Y-%m-%d")}"):
-        rmtree(f"./tmp/SCREEN-{dt.now().strftime("%Y-%m-%d")}")
-    if os.path.exists(f"./tmp/SCREEN-ALT-{dt.now().strftime("%Y-%m-%d")}"):
-        rmtree(f"./tmp/SCREEN-ALT-{dt.now().strftime("%Y-%m-%d")}")
-    if os.path.exists(f"./logs/_nores"):
-        rmtree(f"./logs/_nores")
-    if os.path.exists(f"./logs/wb"):
-        rmtree(f"./logs/wb")
+def __run__(books: EBook|list[EBook], headless: bool = True, persistent_context: bool = True, save_res = True, is_test = False, need_zero_page: bool = False):
+    rm_log_files()
+
     time_start = dt.now().strftime("%Y-%m-%d %H-%M")
 
-    books = []
-    for book in all_books:
-    # for book in books_Aizada:
-        books.append(EBook(**book))
-   
-    # books = [
-    #     # EBook(**{'title': '', 'author': '', 'isbns': [], 'only_isbn': False},),
-    #     EBook("Ключ из желтого металла", "Фрай"),
-    #     EBook("Преступление и наказание", "Достоевский"), 
-    #     ]
-
-    # books = [EBook("Преступление и наказание", "Достоевский")]
-    # books = [EBook("Остров Сахалин", "Чехов", ['978-5-389-28937-6'])]
-    # books = [EBook(**{'title': 'Виконт де Бражелон, или Еще десять лет спустя', 'author': 'Дюма', 'isbns': ['978-5-389-24464-1'], 'only_isbn': True},)]
-    # books = [EBook(**{'title': 'Террор', 'author': 'Симмонс', 'isbns': [], 'only_isbn': False, 'need_check_author': True},)]
-    # books = [EBook(**{'title': 'Ведьма. Матерь Тьмы', 'author': 'Лейбер', 'isbns': [], 'only_isbn': False},)]
-    headless = True
-    test_context = False
-    # books = [books[0]]
-    # headless = False
-    test_context = True
-    
-    run(books=books, headless = headless, test_context = test_context)
-    # <button class="rb" onclick="reload()">Обновить</button>
-    for b in books:
-        b.sort_by_price()
-        # text = f"{b.get_search_text()}: {len(b.prices)}\n"
-        # with open(f"./logs/resutls_{time_start}.txt", 'a', encoding="utf8") as file:
-        #     file.write(text)
-        #     for p in b.prices:
-        #         file.write(f"{p.price}: {p.get_url()} ({p.type_search})\n")
-        #     file.write(f"\n")
+    run(books=books, headless = headless, persistent_context = persistent_context, need_zero_page = need_zero_page)
 
     print(time_start)
     print(dt.now().strftime("%Y-%m-%d %H-%M"))
 
-    save_objects("./tmp/data.pkl", books)
-    render_html_page(books, "index_full")
+    if is_test:
+        return
 
-    # if sys.platform == "win32":
+    for b in books:
+        b.sort_by_price()
+
+    if save_res:
+        save_objects(TMP_DIR/"data.pkl", books)
+        render_html_page(books, "index_full")
+
     for b in books:
         if len(b.prices) > 250:
             continue
         b.optimize_stores_by_cover(from_covers_per_store = 0)
-        # b.save_covers(alt_path = True)
     print(dt.now().strftime("%Y-%m-%d %H-%M"))
-    save_objects("./tmp/data_opt.pkl", books)
 
-    render_html_page(books)
+    if save_res:
+        save_objects(TMP_DIR/"data_opt.pkl", books)
+        render_html_page(books)
+
+def run_regular():
+    books = [EBook(**book) for book in regular_books]
+    __run__(books=books)
+
+def run_custom_list(list_books: list = None):
+    if list_books is None:
+        list_books = all_book
+    books = [EBook(**book) for book in list_books]
+    __run__(books=books, headless = True)
+
+def run_short_test(headless = False, list_books = None, need_zero_page: bool = False):
+    # тестовый список: одна книга, которая почти всегда в наличии, остальные опционально
+    if list_books is None:
+        list_books = [
+            EBook(**{'title': 'Три мушкетера', 'author': 'Дюма', 'isbns': ['978-5-389-19881-4'], 'only_isbn': False}),
+            EBook(**{'title': 'Влад Талтош', 'author': 'Браст', 'isbns': ["978-5-04-211206-5"], 'only_isbn': True}), 
+            ]
+    __run__(books = list_books, headless = headless, is_test = True, need_zero_page = need_zero_page)
+
+def main():
+    run_regular()
 
 if __name__  == '__main__':
     main()

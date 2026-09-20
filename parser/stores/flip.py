@@ -1,11 +1,19 @@
-from .common import (
-    expect, Page,
-    BrowserContext, Locator, APIResponse,
-    EBook, ShopCard, ParserConfig,
+from patchright.async_api import (
+    # expect, 
+    Page, BrowserContext, 
+    Locator, APIResponse,
+    )
+import re
+# from tqdm.asyncio import tqdm
+
+# from parser.utils import _noop
+from parser.domain import EBook, ShopCard
+from parser.config import ParserConfig
+from parser.engine import (
     run_parser, try_and_log_decor, 
-    run_parser_test, run_create_context,
-    nextpage_gen_cards,
-    tqdm, re,
+    run_create_context,
+    nextpage_gen_cards, 
+    # human_mouse_move,
     )
 
 @try_and_log_decor("Проверка на noresult")
@@ -63,6 +71,9 @@ async def main(context: BrowserContext, book: EBook, create_context = False) -> 
         isbn_escaping_dash = True,
         fn_noresults = _noresults, 
         # fn_click_author = _click_author,
+        wait_for_load_time = 1000,
+        
+        skip_human_move = True,
 
         get_card_locator = lambda page: page.locator('div.new-product'),
         get_nextpage_locator = lambda page: page.locator("a[data-page]:has-text('Вперед')"),

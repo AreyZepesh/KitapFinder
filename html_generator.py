@@ -2,9 +2,11 @@ from bs4 import BeautifulSoup
 from bs4.element import PageElement, Tag
 from collections import defaultdict
 import base64
-from utils import load_objects
-from models import ShopCard, EBook
 from datetime import datetime as dt
+
+from saveloads import load_objects
+from parser.domain import ShopCard, EBook
+from shared.paths import OUTPUT_DIR
 
 def img_to_data_uri(img_bytes: bytes, mime="image/jpeg") -> str:
     if img_bytes is None:
@@ -352,13 +354,15 @@ def render_html_page(books: list[EBook], html_filename: str = "index"):
         render_book_table(soup, book)
 
     # сохраняем в файл
-    with open(f"./output/{html_filename}.html", "w", encoding="utf-8") as file:
+    with open(OUTPUT_DIR/f"{html_filename}.html", "w", encoding="utf-8") as file:
         file.write(soup.prettify())
 
 def main():
     # грузим книжки из списка
-    books = load_objects("./tmp/data_opt.pkl")
-    render_html_page(books)
+    # from shared.paths import TMP_DIR
+    # books = load_objects(TMP_DIR/"data_opt.pkl")
+    # render_html_page(books)
+    ...
 
 if __name__  == '__main__':
     main()

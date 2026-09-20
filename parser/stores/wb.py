@@ -1,13 +1,19 @@
-from .common import (
-    expect, Page,
-    BrowserContext, Locator, APIResponse,
-    EBook, ShopCard, ParserConfig,
+from patchright.async_api import (
+    expect, 
+    Page, BrowserContext, 
+    Locator, APIResponse,
+    )
+import re
+# from tqdm.asyncio import tqdm
+
+# from parser.utils import _noop
+from parser.domain import EBook, ShopCard
+from parser.config import ParserConfig
+from parser.engine import (
     run_parser, try_and_log_decor, 
-    run_parser_test, run_create_context,
-    nextpage_gen_cards, 
-    _noop, human_mouse_move,
-    tqdm, re, dt, 
-    utils,
+    run_create_context,
+    # nextpage_gen_cards, 
+    human_mouse_move,
     )
 
 @try_and_log_decor("Смена url")
@@ -16,12 +22,6 @@ async def _extra_urls(page: Page):
     replaced = await page.locator("a.searching-results__query-replaced").first.is_visible()
     if replaced:
         await page.goto(page.url+"&nocorrection=1")
-    
-    await page.wait_for_timeout(200)
-    await page.reload() # часто с первой загрузки данные не корректные, обновление это лечит 
-    await human_mouse_move(page)
-
-    if replaced:
         return True
 
 @try_and_log_decor("Проверка на noresult")
@@ -153,78 +153,31 @@ async def _gen_cards(page: Page, parser_config: ParserConfig):
 
         yield block
 
+@try_and_log_decor("Поиск антибота")
+async def _detect_antibot(page: Page) -> bool: #fn_detect_antibot
+    antibot = await page.get_by_text("Подозрительная активность").count()
+    # antibot += await page.get_by_text("подождите").count()
+    return antibot > 0
 
-async def _gen_cards_(page: Page, parser_config: ParserConfig):
-    """ Генератор списка локаторов карточек, возвращает locator \n
-    Этот возвращает один раз, уже прокрученную страницу
-    Время выполнения на 65 книг было 27:54
-    """
-    @try_and_log_decor("Генератор списка карточек: скролл", repeats = 3)
-    async def _page_scroll_to(page: Page, locator_element: Locator = None, mouse_wheel: bool = False):
-        if locator_element:
-            await locator_element.scroll_into_view_if_needed()
+@try_and_log_decor("Вычесление времени ожидания антибота")
+async def _get_antibot_wait_time(page: Page) -> bool: #fn_get_antibot_wait_time
+    reload_time = await page.locator('meta[http-equiv="refresh"]').first.get_attribute('content')
+    reload_time = int("".join(c for c in reload_time if  c.isdecimal())) if reload_time else 0
+    reload_time += 10
+    reload_time *= 1000
+    return reload_time
 
-        if mouse_wheel:
-            height = await page.evaluate("() => window.innerHeight")
-            scroll_to = height * 3
-            await page.mouse.wheel(0, scroll_to)
-        await page.wait_for_timeout(200)
-
-    cards_returned = 0
-    cards_loaded = 0
-    retries = 0
-    block = parser_config.get_card_locator(page)
-
-    # tqdm.write(f"До цикла: {total_cards=} {retries=} {cards_loaded=}")
-    while retries < 3 and cards_returned < parser_config.element_limit:
-        cards_loaded = await block.count()
-
-        if cards_loaded > cards_returned:
-            # tqdm.write(f"Нормальноый ход, крутим до последнего элемента: {cards_returned=} {retries=} {cards_loaded=}")
-            retries = 0
-            cards_returned = cards_loaded
-            await _page_scroll_to(page, locator_element = block.last)
-        # elif cards_loaded == 0 or cards_loaded == cards:
-        elif cards_loaded == 0 and cards_loaded != cards_returned:
-            raise Exception(f"Неожиданная ошибка, сейчас карточек ноль, но недавно было больше: {cards_returned=} {retries=} {cards_loaded=}")
-        else:
-            retries += 1
-            # tqdm.write(f"Вход в ручную прокрутку: {cards_returned=} {retries=} {cards_loaded=}")
-            await _page_scroll_to(page, mouse_wheel = True)
-
-    # else:
-    #     tqdm.write(f"while отработал: {cards_returned=} {retries=} {cards_loaded=}")
-
-    yield block
-
-@try_and_log_decor("Дополнительное ожидание страницы", repeats=3)
+@try_and_log_decor("Дополнительное ожидание страницы", repeats=1)
 async def _extra_wait_cat(page: Page, human_moves = human_mouse_move): #fn_extra_wait_cat
     loading = await page.locator("div.general-preloader j-initial-preloader").count()
     trys = 0
     while loading != 0 and trys < 50:
         # tqdm.write(f"{page.url=}: {loading=}, {trys=}")
-        await page.wait_for_timeout(5000)
+        await human_moves(page)
+        await page.wait_for_timeout(4000)
         loading = await page.locator("div.general-preloader j-initial-preloader").count()
         trys += 1
-    if trys > 0:
-        tqdm.write(f"{page.url=}: {loading=}, {trys=}")
-        
-    antibot = await page.get_by_text("Подозрительная активность").count()
-    # antibot += await page.get_by_text("подождите").count()
-    if antibot > 0:
-        # tqdm.write(f"WB Ждем страницу, так как вылез антибот: {page.url}")
-        reload_time = await page.locator('meta[http-equiv="refresh"]').first.get_attribute('content')
-        reload_time = utils.normalizePrice(reload_time)
-        reload_time += 10
-        reload_time *= 1000
-        # tqdm.write(f"{reload_time=}ms")
 
-        await page.wait_for_timeout(reload_time)
-        await page.reload()
-        await human_moves(page)
-        await page.wait_for_load_state()
-        await human_moves(page)
-    
     await expect(page.locator("div.product-card-list")).to_be_attached(timeout=7500)
 
     cookie = page.locator("div.fixed-block__cookies:has(button)")
@@ -258,17 +211,24 @@ async def main(context: BrowserContext, book: EBook, alter_search = False, creat
     if alter_search:
         base_url = "https://global.wildberries.ru/catalog/0/search.aspx?search="
     parser_config = ParserConfig(
-        store = "WB",
+        store = "wb",
         base_url = base_url,
         isbn_prefix = True,
 
         wait_for_load_time = 1000,
 
+        should_continue_on_empty = True,
+        # should_screen_on_empty = True,
+        # should_reload_page_if_nores = True,
+
         fn_extra_goto = _extra_urls,
         fn_extra_wait_cat = _extra_wait_cat,
         fn_noresults = _noresults, 
         fn_currency = _currency,
-        
+
+        fn_detect_antibot = _detect_antibot,
+        fn_get_antibot_wait_time = _get_antibot_wait_time,
+
         # get_card_locator = lambda page: page.locator('//div[@class="product-card-list"]').get_by_role('article'),
         get_card_locator = lambda page: page.locator('div.product-card-list > article[data-card-index]'),
         # get_nextpage_locator = lambda page: page.locator("a.pagination-next:has-text('Следующая страница')"),
